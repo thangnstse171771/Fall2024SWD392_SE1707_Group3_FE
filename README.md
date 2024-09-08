@@ -35,12 +35,18 @@
 ## 🛠️ Cài đặt
 
 1. Clone repository này:
+
    ##gitbash
+
    git clone https://github.com/your-username/your-repo.git
+
    cd your-repo
 2. Cài đặt các gói phụ thuộc:
+
   npm install
+
 3. Chạy ứng dụng:
+
   npm start
 
 
