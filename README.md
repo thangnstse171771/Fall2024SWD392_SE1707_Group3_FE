@@ -36,11 +36,11 @@
 
 1. Clone repository này:
 
-   ##gitbash
+##gitbash
 
-   git clone https://github.com/your-username/your-repo.git
+git clone https://github.com/your-username/your-repo.git
 
-   cd your-repo
+cd your-repo
 2. Cài đặt các gói phụ thuộc:
 
   npm install
