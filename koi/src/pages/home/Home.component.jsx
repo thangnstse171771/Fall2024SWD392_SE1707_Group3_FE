@@ -3,7 +3,7 @@ import About from "../About/About";
 function Home() {
   return (
     <h1>
-      Home Page
+      Home Page 1
       <About />
     </h1>
   );
