@@ -3,6 +3,7 @@ import Home from "../pages/home/Home.component";
 import About from "../pages/About/About";
 import Header from "../components/Header/Header.component";
 import Footer from "../components/Footer/Footer.component";
+import Login from "../pages/Login/Login.component";
 
 export const router = createBrowserRouter([
   {
@@ -24,5 +25,9 @@ export const router = createBrowserRouter([
         element: <About />,
       },
     ],
+  },
+  {
+    path: "/login",
+    element: <Login />,
   },
 ]);
