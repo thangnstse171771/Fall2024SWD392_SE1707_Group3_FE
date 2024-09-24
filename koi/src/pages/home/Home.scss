@@ -1,0 +1,31 @@
+.home-page {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  height: 100vh; // optional to center vertically within the viewport
+
+  .home-card {
+    display: flex;
+    flex-direction: row; // This ensures the image and text are aligned horizontally
+    align-items: center;
+    padding: 20px;
+  }
+
+  .fish-art {
+    width: auto; // Adjust width as needed
+    height: 450px;
+    margin-right: 20px; // Adds space between the image and the text
+
+  }
+
+  .welcome-text {
+    color: orange;
+    font-size: 20px;
+    .welcome-context {
+        font-size: 17px;
+        color: black;
+        font-weight: bold;
+        font-style: oblique;
+    }
+  }
+}
