@@ -3,7 +3,7 @@ import "./Login.scss";
 import api from "../../config/axios";
 import koiLogo from "../../assets/koilogo.png";
 import koiBackground from "../../assets/koibackground.jpg";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -84,7 +84,7 @@ const Login = () => {
             </div>
             <div className="signup">
               <p>
-                Don't have an account? <a href="/register">Register!</a>
+                Don't have an account? <Link to='/Sign-in'>Register!</Link>
               </p>
             </div>
           </form>
