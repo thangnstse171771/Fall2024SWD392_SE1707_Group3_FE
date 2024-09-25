@@ -26,7 +26,7 @@ function Home() {
           <p className="content-list">Determine the ideal amount of food!</p>
           <p className="content-list">Manage your ponds!</p>
         </div>
-        <img src={KoiFishArt2} alt="Fish image" className="fish-image"/>
+        <img src={KoiFishArt2} alt="Fish image" className="fish-image" />
       </div>
     </div>
   );

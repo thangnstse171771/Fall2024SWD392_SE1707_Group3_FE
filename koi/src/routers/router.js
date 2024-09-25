@@ -5,6 +5,7 @@ import Header from "../components/Header/Header.component";
 import Footer from "../components/Footer/Footer.component";
 import Login from "../pages/Login/Login.component";
 import Signup from "../pages/Signup/Signup.component";
+import ManageKoi from "../pages/Manage Koi/ManageKoi.component";
 
 export const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ export const router = createBrowserRouter([
       {
         path: "/about",
         element: <About />,
+      },
+      {
+        path: "/manage",
+        element: <ManageKoi />,
       },
     ],
   },

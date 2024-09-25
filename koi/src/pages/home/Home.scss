@@ -18,7 +18,7 @@
   }
 
   .welcome-text {
-    color: orange;
+    color: rgb(180, 0, 0);
     font-size: 20px;
     .welcome-context {
       font-size: 17px;
@@ -38,7 +38,7 @@
 
   .content-text {
     margin-left: 270px;
-    color: orange;
+    color: rgb(180, 0, 0);
     font-size: 20px;
 
     .content-list {
@@ -47,7 +47,7 @@
       font-weight: bold;
     }
   }
-  
+
   .fish-image {
     width: 625px; // Adjust as needed
     height: auto;
