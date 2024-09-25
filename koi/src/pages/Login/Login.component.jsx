@@ -79,7 +79,7 @@ const Login = () => {
             </button>
             <div className="alternative-login">
               <p>Or</p>
-              <button className="google-login">Login with Google</button>
+              <button className="google-login">Login with google</button>
             </div>
             <div className="signup">
               <p>
