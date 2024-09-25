@@ -1,9 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Login.scss";
+import api from "../../config/axios";
 import koiLogo from "../../assets/koilogo.png";
 import koiBackground from "../../assets/koibackground.jpg";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await api.post("/api/user/login", {
+        email: email,
+        password: password,
+      });
+
+      const { data } = response.data;
+
+      alert("Login successful!");
+      navigate("/dashboard");
+    } catch (error) {
+      setErrorMessage("Login failed. Please check your email or password.");
+      console.error("Error logging in:", error);
+    }
+  };
+
   return (
     <div
       className="login-container"
@@ -14,16 +40,31 @@ const Login = () => {
           <img src={koiLogo} alt="Koi Logo" className="logo" />
         </div>
         <div className="form-section">
-          <form className="login-form">
+          <form className="login-form" onSubmit={handleSubmit}>
             <h2>Login</h2>
             <p>Login to access your account</p>
+            {errorMessage && <p className="error-message">{errorMessage}</p>}
             <div className="input-group">
               <label htmlFor="email">Email</label>
-              <input type="email" id="email" placeholder="nguoichothue" />
+              <input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="nguoichothue@mail.com"
+                required
+              />
             </div>
             <div className="input-group">
               <label htmlFor="password">Password</label>
-              <input type="password" id="password" placeholder="*********" />
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="*********"
+                required
+              />
             </div>
             <div className="login-options">
               <div className="remember-me">

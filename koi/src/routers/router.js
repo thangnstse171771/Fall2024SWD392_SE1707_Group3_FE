@@ -4,6 +4,7 @@ import About from "../pages/About/About";
 import Header from "../components/Header/Header.component";
 import Footer from "../components/Footer/Footer.component";
 import Login from "../pages/Login/Login.component";
+import Signup from "../pages/Signup/Signup.component";
 
 export const router = createBrowserRouter([
   {
@@ -29,5 +30,9 @@ export const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/Sign-in",
+    element: <Signup />,
   },
 ]);
