@@ -4,6 +4,7 @@ import api from "../../config/axios";
 import koiLogo from "../../assets/koilogo.png";
 import koiBackground from "../../assets/koibackground.jpg";
 import { useNavigate, Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -22,8 +23,10 @@ const Login = () => {
 
       const { data } = response.data;
 
-      alert("Login successful!");
-      navigate("/dashboard");
+      toast.success("Login successful!");
+      navigate("/");
+      // Luôn lưu token vào sessionStorage hoặc localStorage
+      sessionStorage.setItem("token", data.token); // Bạn có thể thay thành localStorage nếu muốn lưu lâu dài
     } catch (error) {
       setErrorMessage("Login failed. Please check your email or password.");
       console.error("Error logging in:", error);
@@ -67,10 +70,6 @@ const Login = () => {
               />
             </div>
             <div className="login-options">
-              <div className="remember-me">
-                <input type="checkbox" id="remember" />
-                <label htmlFor="remember">Remember Me</label>
-              </div>
               <a href="/forgot-password" className="forgot-password">
                 Forgot Password?
               </a>
@@ -84,7 +83,7 @@ const Login = () => {
             </div>
             <div className="signup">
               <p>
-                Don't have an account? <Link to='/Sign-in'>Register!</Link>
+                Don't have an account? <Link to="/Sign-in">Register!</Link>
               </p>
             </div>
           </form>
