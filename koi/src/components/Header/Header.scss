@@ -1,9 +1,28 @@
-.header {
-  background-color: orange;
-  padding: 10px;
-  color: white; // Optional: to make the text more readable
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5px 30px;
+  background-color: rgb(180, 0, 0);
+}
 
-  h1 {
-    margin: 0;
-  }
+.navbar-logo h2 {
+  color: white;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 15px;
+}
+
+.navbar-links a {
+  color: white;
+  text-decoration: none;
+  padding: 8px 16px;
+  transition: background-color 0.3s;
+}
+
+.navbar-links a:hover {
+  background-color: #c03939;
+  border-radius: 4px;
 }

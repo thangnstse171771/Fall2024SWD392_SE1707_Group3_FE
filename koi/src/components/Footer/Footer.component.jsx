@@ -1,8 +1,10 @@
+import "./Footer.scss";
+
 function Footer() {
   return (
-    <footer>
-      <p>Footer</p>
-    </footer>
+    <div className="footer">
+      <p className="footer-text">© 2024 Koi health care app</p>
+    </div>
   );
 }
 

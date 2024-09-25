@@ -3,7 +3,7 @@ import "./Signup.scss";
 import api from "../../config/axios";
 import koiLogo from "../../assets/koilogo.png";
 import koiBackground from "../../assets/koibackground.jpg";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const Signup = () => {
@@ -115,7 +115,7 @@ const Signup = () => {
             </div>
             <div className="login">
               <p>
-                Already have an account? <a href="/login">Login!</a>
+                Already have an account? <Link to="/login">Login!</Link>
               </p>
             </div>
           </form>
