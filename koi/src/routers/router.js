@@ -6,6 +6,8 @@ import Footer from "../components/Footer/Footer.component";
 import Login from "../pages/Login/Login.component";
 import Signup from "../pages/Signup/Signup.component";
 import ManageKoi from "../pages/Manage Koi/ManageKoi.component";
+import ManageHome from "../pages/ManageCustomer/ManageHome";
+// import CustomerList from "../pages/ManageCustomer/CustomerList";
 
 export const router = createBrowserRouter([
   {
@@ -29,6 +31,10 @@ export const router = createBrowserRouter([
       {
         path: "/manage",
         element: <ManageKoi />,
+      },
+      {
+        path: "/CustomerList",
+        element: <ManageHome />,
       },
     ],
   },
