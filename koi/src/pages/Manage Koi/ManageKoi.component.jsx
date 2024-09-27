@@ -1,11 +1,7 @@
-import './ManageKoi.scss';
+import "./ManageKoi.scss";
 
-function ManageKoi () {
-  return (
-    <div className="manage-page">
-      Manage Page
-    </div>
-  );
+function ManageKoi() {
+  return <div className="manage-page">Manage Page</div>;
 }
 
 export default ManageKoi;
