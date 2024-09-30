@@ -9,7 +9,7 @@ function Header() {
       </div>
       <div className="navbar-links">
         <Link to="/">HOME</Link>
-        <Link to="/manage">MANAGE KOI</Link>
+        <Link to="/manage-koi">MANAGE KOI</Link>
         <Link to="/login">LOGIN</Link>
       </div>
     </nav>
