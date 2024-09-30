@@ -10,6 +10,7 @@ function Header() {
       <div className="navbar-links">
         <Link to="/">HOME</Link>
         <Link to="/manage-koi">MANAGE KOI</Link>
+        <Link to="/profile">PROFILE</Link>
         <Link to="/login">LOGIN</Link>
       </div>
     </nav>

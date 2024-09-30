@@ -6,6 +6,7 @@ import Footer from "../components/Footer/Footer.component";
 import Login from "../pages/Login/Login.component";
 import Signup from "../pages/Signup/Signup.component";
 import ManageKoi from "../pages/Manage Koi/ManageKoi.component";
+import Profile from "../pages/Profile/Profile.component";
 import MyKoi from "../pages/My Koi/MyKoi.component";
 import MyPond from "../pages/My Pond/MyPond.component";
 
@@ -43,6 +44,10 @@ export const router = createBrowserRouter([
       {
         path: "/manage-koi/water-parameters",
         element: <MyPond />,
+      },
+      {
+        path: "/profile",
+        element: <Profile />,
       },
     ],
   },
