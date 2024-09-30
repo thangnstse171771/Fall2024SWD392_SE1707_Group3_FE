@@ -33,7 +33,7 @@ function ManageKoi() {
           className="manage-koi-logos"
         />
         <Link to="/manage-koi/water-parameters" className="manage-koi-text">
-          <h1>Water Paramters</h1>
+          <h1>Water Parameters</h1>
         </Link>
       </div>
     </div>
