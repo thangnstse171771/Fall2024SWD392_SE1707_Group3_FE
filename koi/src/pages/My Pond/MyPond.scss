@@ -1,3 +1,69 @@
 .my-pond-page {
-  height: 100vh;
+  margin-bottom: 100px;
+
+  .my-pond-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 25px;
+
+    .add-pond-button {
+      background-color: rgb(180, 0, 0);
+      color: white;
+      height: 35px;
+      width: auto;
+      border-radius: 7px;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      font-size: 15px;
+
+      &:hover {
+        background-color: #b76363;
+      }
+    }
+  }
+
+  .pond-table {
+    margin: 0 auto;
+    width: 90%;
+    border-spacing: 0;
+    background-color: #f8f7f7;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.229);
+  }
+
+  .pond-table th,
+  .pond-table td {
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 16px;
+  }
+
+  .pond-table-head {
+    background-color: rgb(192, 88, 88);
+    font-weight: 600;
+    color: white;
+    width: 90%;
+    text-align: left;
+    font-size: 16px;
+  }
+
+  .pond-table tbody tr:hover {
+    background-color: #f0f5ff;
+  }
+
+  .pond-table-body {
+    .lake-action-buttons {
+      text-align: right;
+
+      .edit-lake-button {
+        margin-right: 30px; /* Adds space to the right of the first button */
+      }
+
+      .delete-lake-button {
+        margin-right: 15px;
+      }
+    }
+  }
 }
