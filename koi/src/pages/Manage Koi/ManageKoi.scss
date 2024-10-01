@@ -1,38 +1,40 @@
 .manage-koi-page {
   display: flex;
-  justify-content: space-between; // or `center`, `flex-start` based on your need
-  flex-wrap: wrap; // Wrap to the next line if there are too many cards
-  gap: 40px; // Adds spacing between cards, you can adjust the value
-  padding: 25px;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 40px; // Adds space between cards
+  padding: 25px; // Optional padding for the container
   height: 100vh;
-
-  .manage-koi-card-link {
-    text-decoration: none; // Removes underline from the link
-    flex: 1;
-  }
+  margin-bottom: 50px;
 
   .manage-koi-card {
-    text-decoration: none;
-    height: 300px;
-    color: white;
-    flex: 1; // Makes all cards equal in width
+    max-width: calc(
+      33.33% - 20px
+    ); // Ensures that cards don't stretch wider than 1/3rd of the width
+    flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 20px;
-    box-shadow: 2px 2px 5px rgba(95, 91, 91, 0.764); // Optional, adds some shadow effect
-    background-color: rgb(180, 0, 0); // Background color for the card
+    text-align: center;
+    background-color: rgb(180, 0, 0); // Optional background color
     border-radius: 20px; // Optional, rounds the corners of the cards
+    height: 300px;
+    padding: 20px;
+    text-decoration: none; // Removes link underline
+    box-shadow: 2px 2px 5px rgba(95, 91, 91, 0.764); // Optional, adds some shadow effect
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
 
     &:hover {
       box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.63); // Add a stronger shadow on hover
       border-color: #000101; // Change border color on hover
+      background-color: rgb(192, 48, 5);
     }
 
     .manage-koi-logos {
-      width: 105px;
+      width: 105px; // Customize the size of your image
+      height: auto;
+      margin-bottom: 10px;
     }
 
     .manage-koi-text {

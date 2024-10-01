@@ -8,34 +8,34 @@ import { Link } from "react-router-dom";
 function ManageKoi() {
   return (
     <div className="manage-koi-page">
-      <div className="manage-koi-card">
-        <img src={MyKoiIcon} alt="My Koi Logo" className="manage-koi-logos" />
-        <Link to="/manage-koi/my-koi" className="manage-koi-text">
-          <h1>My Koi</h1>
-        </Link>
-      </div>
+      <Link to="/manage-koi/my-koi" className="manage-koi-card">
+        <div>
+          <img src={MyKoiIcon} alt="My Koi Logo" className="manage-koi-logos" />
+          <h1 className="manage-koi-text">My Koi</h1>
+        </div>
+      </Link>
 
-      <div className="manage-koi-card">
-        <img
-          src={MyKoiPondIcon}
-          alt="My Pond Logo"
-          className="manage-koi-logos"
-        />
-        <Link to="/manage-koi/my-pond" className="manage-koi-text">
-          <h1>My Pond</h1>
-        </Link>
-      </div>
+      <Link to="/manage-koi/my-pond" className="manage-koi-card">
+        <div>
+          <img
+            src={MyKoiPondIcon}
+            alt="My Pond Logo"
+            className="manage-koi-logos"
+          />
+          <h1 className="manage-koi-text">My Pond</h1>
+        </div>
+      </Link>
 
-      <div className="manage-koi-card">
-        <img
-          src={WaterParametersIcon}
-          alt="My Koi Logo"
-          className="manage-koi-logos"
-        />
-        <Link to="/manage-koi/water-parameters" className="manage-koi-text">
-          <h1>Water Parameters</h1>
-        </Link>
-      </div>
+      <Link to="/manage-koi/water-parameters" className="manage-koi-card">
+        <div>
+          <img
+            src={WaterParametersIcon}
+            alt="My Koi Logo"
+            className="manage-koi-logos"
+          />
+          <h1 className="manage-koi-text">Water Parameters</h1>
+        </div>
+      </Link>
     </div>
   );
 }
