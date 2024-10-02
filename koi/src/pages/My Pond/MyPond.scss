@@ -59,10 +59,18 @@
 
       .edit-lake-button {
         margin-right: 30px; /* Adds space to the right of the first button */
+        &:hover {
+          border-color: black;
+          color: black;
+        }
       }
 
       .delete-lake-button {
         margin-right: 15px;
+        &:hover {
+          border-color: red;
+          color: red;
+        }
       }
     }
   }

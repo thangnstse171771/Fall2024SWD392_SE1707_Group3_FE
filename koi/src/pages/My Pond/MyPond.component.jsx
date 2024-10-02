@@ -3,9 +3,45 @@ import "./MyPond.scss";
 
 import { Button } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import AddPondPopup from "./AddPondPopup.component";
 
 function MyPond() {
   const [pondData, setPondData] = useState([]);
+  const [open, setOpen] = useState(false);
+
+  const showPopup = () => {
+    setOpen(true);
+  };
+
+  const handleCancel = () => {
+    setOpen(false);
+  };
+
+  const handleSubmit = async (newPond) => {
+    try {
+      // POST request to add a new pond to the API
+      const response = await fetch(
+        "https://66fa93b3afc569e13a9c472e.mockapi.io/api/KoiLake/Lake",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(newPond),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Error adding pond");
+      }
+
+      const data = await response.json();
+      setPondData([...pondData, data]); // Update local state with the newly added pond
+      setOpen(false);
+    } catch (error) {
+      console.error("Error adding pond:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchPondData = async () => {
@@ -30,7 +66,14 @@ function MyPond() {
           <h1>Ponds</h1>
         </div>
         <div>
-          <button className="add-pond-button">Add Pond</button>
+          <button onClick={showPopup} className="add-pond-button">
+            Add Pond
+          </button>
+          <AddPondPopup
+            open={open}
+            onSubmit={handleSubmit}
+            handleCancel={handleCancel}
+          />
         </div>
       </div>
       <div className="my-pond-page-body">
