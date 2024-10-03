@@ -19,8 +19,8 @@ const Signup = () => {
     e.preventDefault();
 
     try {
-      const response = await api.post("/api/user/register", {
-        userType: "Customer",
+      const response = await api.post("/api/auth/register", {
+        usertype: "Customer",
         username: username,
         email: email,
         password: password,
