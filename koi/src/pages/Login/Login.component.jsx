@@ -7,7 +7,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState(""); // Changed from email to username
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
@@ -16,8 +16,8 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await api.post("/api/user/login", {
-        email: email,
+      const response = await api.post("/api/auth/login", {
+        username: username, // Send the username instead of email
         password: password,
       });
 
@@ -25,10 +25,10 @@ const Login = () => {
 
       toast.success("Login successful!");
       navigate("/");
-      // Luôn lưu token vào sessionStorage hoặc localStorage
-      sessionStorage.setItem("token", data.token); // Bạn có thể thay thành localStorage nếu muốn lưu lâu dài
+      // Save the token in sessionStorage or localStorage
+      sessionStorage.setItem("token", data.token);
     } catch (error) {
-      setErrorMessage("Login failed. Please check your email or password.");
+      setErrorMessage("Login failed. Please check your username or password.");
       console.error("Error logging in:", error);
     }
   };
@@ -48,13 +48,13 @@ const Login = () => {
             <p>Login to access your account</p>
             {errorMessage && <p className="error-message">{errorMessage}</p>}
             <div className="input-group">
-              <label htmlFor="email">Email</label>
+              <label htmlFor="username">Username</label>
               <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="nguoichothue@mail.com"
+                type="text"
+                id="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Enter your username"
                 required
               />
             </div>
@@ -79,7 +79,7 @@ const Login = () => {
             </button>
             <div className="alternative-login">
               <p>Or</p>
-              <button className="google-login">Login with google</button>
+              <button className="google-login">Login with Google</button>
             </div>
             <div className="signup">
               <p>
