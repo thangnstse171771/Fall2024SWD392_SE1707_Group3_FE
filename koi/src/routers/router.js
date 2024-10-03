@@ -6,15 +6,11 @@ import Footer from "../components/Footer/Footer.component";
 import Login from "../pages/Login/Login.component";
 import Signup from "../pages/Signup/Signup.component";
 import ManageKoi from "../pages/Manage Koi/ManageKoi.component";
-<<<<<<< HEAD
-import ManageHome from "../pages/ManageCustomer/ManageHome";
-// import CustomerList from "../pages/ManageCustomer/CustomerList";
-=======
 import Profile from "../pages/Profile/Profile.component";
 import MyKoi from "../pages/My Koi/MyKoi.component";
 import MyPond from "../pages/My Pond/MyPond.component";
 import WaterParameters from "../pages/Water Parameters/WaterParameters.component";
->>>>>>> bd23f24ffe5c67914ee428bfe30cff70dc9ef1d9
+import ManageHome from "../pages/ManageCustomer/ManageHome";
 
 export const router = createBrowserRouter([
   {
@@ -40,10 +36,6 @@ export const router = createBrowserRouter([
         element: <ManageKoi />,
       },
       {
-<<<<<<< HEAD
-        path: "/CustomerList",
-        element: <ManageHome />,
-=======
         path: "/manage-koi/my-koi",
         element: <MyKoi />,
       },
@@ -58,7 +50,10 @@ export const router = createBrowserRouter([
       {
         path: "/profile",
         element: <Profile />,
->>>>>>> bd23f24ffe5c67914ee428bfe30cff70dc9ef1d9
+      },
+      {
+        path: "/customerList",
+        element: <ManageHome />,
       },
     ],
   },

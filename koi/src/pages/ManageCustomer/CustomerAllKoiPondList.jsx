@@ -10,23 +10,25 @@ import {
 } from "@mui/material";
 import { Button } from "antd";
 import { useNavigate } from "react-router-dom";
+import api from "../../config/axios"; // Import your axios configuration
 
 export default function CustomerList() {
   const [customers, setCustomers] = useState([]);
   const navigate = useNavigate();
 
-  // Fetch API
+  // Fetch API from backend using axios
   const fetchCustomers = async () => {
     try {
-      const response = await fetch("http://localhost:3000/api/user/getalluser");
-      const data = await response.json();
-      setCustomers(data);
+      const response = await api.get("/api/user/getalluser"); // Use axios here
+      setCustomers(response.data); // Assuming the data is directly in response.data
     } catch (error) {
-      console.error("Error fetching customers:", error);
+      console.error(error.response.data);
+      console.error(error.response.data);
+      console.error(error.response.data);
     }
   };
 
-  // Call API when component renders
+  // Call the API when the component first renders
   useEffect(() => {
     fetchCustomers();
   }, []);
@@ -36,14 +38,16 @@ export default function CustomerList() {
       <Table style={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell style={{ width: "20%" }}>ID</TableCell>
-            <TableCell style={{ width: "30%" }} align="center">
+            <TableCell align="center" style={{ width: "20%" }}>
+              ID
+            </TableCell>
+            <TableCell align="center" style={{ width: "30%" }}>
               Customer Name
             </TableCell>
-            <TableCell style={{ width: "40%" }} align="center">
+            <TableCell align="center" style={{ width: "40%" }}>
               Email
             </TableCell>
-            <TableCell style={{ width: "10%" }} align="center">
+            <TableCell align="center" style={{ width: "10%" }}>
               Action
             </TableCell>
           </TableRow>
@@ -51,10 +55,10 @@ export default function CustomerList() {
         <TableBody>
           {customers.map((customer) => (
             <TableRow key={customer.id}>
-              <TableCell>{customer.id}</TableCell>
-              <TableCell align="right">{customer.name}</TableCell>
-              <TableCell align="right">{customer.email}</TableCell>
-              <TableCell align="right">
+              <TableCell align="center">{customer.id}</TableCell>
+              <TableCell align="center">{customer.name}</TableCell>
+              <TableCell align="center">{customer.email}</TableCell>
+              <TableCell align="center">
                 <Button onClick={() => navigate(`/customer/${customer.id}`)}>
                   View
                 </Button>
