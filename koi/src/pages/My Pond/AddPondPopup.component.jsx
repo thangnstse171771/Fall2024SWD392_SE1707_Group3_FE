@@ -1,12 +1,14 @@
 import React from "react";
-import { Modal, Form, Input, InputNumber, Button } from "antd";
+import { Modal, Form, Input, Button } from "antd";
 
-const AddPondPopup = ({ open, onSubmit, handleCancel }) => {
-  const onFinish = (values) => {
-    onSubmit(values);
-    console.log(values);
-  };
-
+const AddPondPopup = ({
+  open,
+  onSubmit,
+  handleCancel,
+  pondData,
+  handleInputChange,
+  loading,
+}) => {
   return (
     <Modal
       title="Add New Pond"
@@ -14,73 +16,109 @@ const AddPondPopup = ({ open, onSubmit, handleCancel }) => {
       onCancel={handleCancel}
       footer={null}
     >
-      <Form onFinish={onFinish} layout="vertical">
+      <Form onFinish={onSubmit} layout="vertical">
         <Form.Item
           label="Pond Name"
-          name="pondName"
           rules={[{ required: true, message: "Please input the pond name!" }]}
         >
-          <Input placeholder="Enter pond name" />
-        </Form.Item>
-
-        <Form.Item
-          label="Pond Image URL"
-          name="pondImage"
-          rules={[
-            { required: true, message: "Please input the pond image URL!" },
-          ]}
-        >
-          <Input placeholder="Enter pond image URL" />
-        </Form.Item>
-
-        <Form.Item
-          label="Pond Size"
-          name="pondSize"
-          rules={[{ required: true, message: "Please input the pond size!" }]}
-        >
-          <Input placeholder="Enter pond size" />
-        </Form.Item>
-
-        <Form.Item
-          label="Pond Depth"
-          name="pondDepth"
-          rules={[{ required: true, message: "Please input the pond depth!" }]}
-        >
-          <Input placeholder="Enter pond depth" />
-        </Form.Item>
-
-        <Form.Item
-          label="Pond Volume"
-          name="pondVolume"
-          rules={[{ required: true, message: "Please input the pond volume!" }]}
-        >
-          <Input placeholder="Enter pond volume" />
-        </Form.Item>
-
-        <Form.Item
-          label="Pond Number"
-          name="pondNumber"
-          rules={[{ required: true, message: "Please input the pond number!" }]}
-        >
-          <InputNumber
-            min={1}
-            placeholder="Enter pond number"
-            style={{ width: "100%" }}
+          <Input
+            name="pondName"
+            value={pondData.pondName}
+            onChange={handleInputChange}
+            placeholder="Enter pond name"
           />
         </Form.Item>
 
         <Form.Item
-          label="Pond Capacity"
-          name="pondCapacity"
+          label="Pond Image URL"
           rules={[
-            { required: true, message: "Please input the pond capacity!" },
+            { required: true, message: "Please input the pond image URL!" },
           ]}
         >
-          <Input placeholder="Enter pond capacity" />
+          <Input
+            name="pondImage"
+            value={pondData.pondImage}
+            onChange={handleInputChange}
+            placeholder="Enter pond image URL"
+          />
+        </Form.Item>
+
+        <Form.Item
+          label="Pond Size"
+          rules={[{ required: true, message: "Please input the pond size!" }]}
+        >
+          <Input
+            min={0}
+            type="number"
+            name="pondSize"
+            value={pondData.pondSize}
+            onChange={handleInputChange}
+            placeholder="Enter pond size"
+          />
+        </Form.Item>
+
+        <Form.Item
+          label="Pond Depth"
+          rules={[{ required: true, message: "Please input the pond depth!" }]}
+        >
+          <Input
+            min={0}
+            type="number"
+            name="pondDepth"
+            value={pondData.pondDepth}
+            onChange={handleInputChange}
+            placeholder="Enter pond depth"
+          />
+        </Form.Item>
+
+        <Form.Item
+          label="Pond Volume"
+          rules={[{ required: true, message: "Please input the pond volume!" }]}
+        >
+          <Input
+            min={0}
+            type="number"
+            name="pondVolume"
+            value={pondData.pondVolume}
+            onChange={handleInputChange}
+            placeholder="Enter pond volume"
+          />
+        </Form.Item>
+
+        <Form.Item
+          label="Pond Drains"
+          rules={[{ required: true, message: "Please input the pond drains!" }]}
+        >
+          <Input
+            min={0}
+            type="number"
+            name="pondDrains"
+            value={pondData.pondDrains}
+            onChange={handleInputChange}
+            placeholder="Enter pond drains"
+          />
+        </Form.Item>
+
+        <Form.Item
+          label="Pond Aeration Capacity"
+          rules={[
+            {
+              required: true,
+              message: "Please input the pond aeration capacity!",
+            },
+          ]}
+        >
+          <Input
+            type="number"
+            name="pondAeroCapacity"
+            value={pondData.pondAeroCapacity}
+            onChange={handleInputChange}
+            placeholder="Enter pond aeration capacity"
+          />
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" danger htmlType="submit">
+          <Button type="primary" danger htmlType="submit" loading={loading}>
             Submit
           </Button>
           <Button danger onClick={handleCancel} style={{ marginLeft: "8px" }}>

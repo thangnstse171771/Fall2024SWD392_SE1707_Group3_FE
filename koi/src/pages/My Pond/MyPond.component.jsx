@@ -4,10 +4,25 @@ import "./MyPond.scss";
 import { Button } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import AddPondPopup from "./AddPondPopup.component";
+import api from "../../config/axios";
 
 function MyPond() {
-  const [pondData, setPondData] = useState([]);
+  const [pond1Data, setPond1Data] = useState([]);
   const [open, setOpen] = useState(false);
+
+  const [pondData, setPondData] = useState({
+    pondName: "",
+    pondImage: "",
+    pondSize: "",
+    pondDepth: "",
+    pondVolume: "",
+    pondDrains: "",
+    pondAeroCapacity: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
   const showPopup = () => {
     setOpen(true);
@@ -17,46 +32,86 @@ function MyPond() {
     setOpen(false);
   };
 
-  const handleSubmit = async (newPond) => {
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setPondData({
+      ...pondData,
+      [name]: value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+
     try {
-      // POST request to add a new pond to the API
-      const response = await fetch(
-        "https://66fa93b3afc569e13a9c472e.mockapi.io/api/KoiLake/Lake",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(newPond),
-        }
-      );
+      const response = await api.post("/api/pond/createPond", {
+        pondName: pondData.pondName,
+        pondImage: pondData.pondImage,
+        pondSize: parseFloat(pondData.pondSize), // Assuming pondSize is a number
+        pondDepth: parseFloat(pondData.pondDepth),
+        pondVolume: parseFloat(pondData.pondVolume),
+        pondDrains: parseInt(pondData.pondDrains),
+        pondAeroCapacity: parseInt(pondData.pondAeroCapacity),
+      });
 
-      if (!response.ok) {
-        throw new Error("Error adding pond");
-      }
-
-      const data = await response.json();
-      setPondData([...pondData, data]); // Update local state with the newly added pond
-      setOpen(false);
+      setSuccess("Pond Created Successfully");
+      setPondData({
+        pondName: "",
+        pondImage: "",
+        pondSize: "",
+        pondDepth: "",
+        pondVolume: "",
+        pondDrains: "",
+        pondAeroCapacity: "",
+      });
     } catch (error) {
-      console.error("Error adding pond:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
+  // const handleSubmit = async (newPond) => {
+  //   try {
+  //     // POST request to add a new pond to the API
+  //     const response = await fetch(
+  //       "https://66fa93b3afc569e13a9c472e.mockapi.io/api/KoiLake/Lake",
+  //       {
+  //         method: "POST",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         body: JSON.stringify(newPond),
+  //       }
+  //     );
+
+  //     if (!response.ok) {
+  //       throw new Error("Error adding pond");
+  //     }
+
+  //     const data = await response.json();
+  //     setPondData([...pondData, data]); // Update local state with the newly added pond
+  //     setOpen(false);
+  //   } catch (error) {
+  //     console.error("Error adding pond:", error);
+  //   }
+  // };
+
   useEffect(() => {
-    const fetchPondData = async () => {
+    const fetchPond1Data = async () => {
       try {
         const response = await fetch(
           "https://66fa93b3afc569e13a9c472e.mockapi.io/api/KoiLake/Lake"
         );
         const data = await response.json();
-        setPondData(data);
+        setPond1Data(data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
-    fetchPondData();
+    fetchPond1Data();
   }, []);
 
   return (
@@ -73,6 +128,9 @@ function MyPond() {
             open={open}
             onSubmit={handleSubmit}
             handleCancel={handleCancel}
+            pondData={pondData} // Pass pondData object
+            handleInputChange={handleInputChange} // Pass handleInputChange
+            loading={loading}
           />
         </div>
       </div>
@@ -85,7 +143,7 @@ function MyPond() {
             </tr>
           </thead>
           <tbody className="pond-table-body">
-            {pondData.map((pond) => (
+            {pond1Data.map((pond) => (
               <tr key={pond.id}>
                 <td>{pond.pondName}</td>
                 <td className="lake-action-buttons">
