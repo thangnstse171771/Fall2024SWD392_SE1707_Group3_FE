@@ -9,7 +9,6 @@ import api from "../../config/axios";
 function MyPond() {
   const [pond1Data, setPond1Data] = useState([]);
   const [open, setOpen] = useState(false);
-
   const [pondData, setPondData] = useState({
     pondName: "",
     pondImage: "",
@@ -30,6 +29,17 @@ function MyPond() {
 
   const handleCancel = () => {
     setOpen(false);
+    setPondData({
+      pondName: "",
+      pondImage: "",
+      pondSize: "",
+      pondDepth: "",
+      pondVolume: "",
+      pondDrains: "",
+      pondAeroCapacity: "",
+    });
+    setError(null);
+    setSuccess(null);
   };
 
   const handleInputChange = (e) => {
@@ -40,63 +50,52 @@ function MyPond() {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (values) => {
     setLoading(true);
     setError(null);
     setSuccess(null);
 
-    try {
-      const response = await api.post("/api/pond/createPond", {
-        pondName: pondData.pondName,
-        pondImage: pondData.pondImage,
-        pondSize: parseFloat(pondData.pondSize), // Assuming pondSize is a number
-        pondDepth: parseFloat(pondData.pondDepth),
-        pondVolume: parseFloat(pondData.pondVolume),
-        pondDrains: parseInt(pondData.pondDrains),
-        pondAeroCapacity: parseInt(pondData.pondAeroCapacity),
-      });
+    const token = sessionStorage.getItem("token"); // Retrieve token from sessionStorage
 
-      setSuccess("Pond Created Successfully");
-      setPondData({
-        pondName: "",
-        pondImage: "",
-        pondSize: "",
-        pondDepth: "",
-        pondVolume: "",
-        pondDrains: "",
-        pondAeroCapacity: "",
-      });
+    try {
+      const response = await api.post(
+        "/api/pond/createPond",
+        {
+          pondName: values.pondName,
+          pondImage: values.pondImage,
+          pondSize: parseFloat(values.pondSize),
+          pondDepth: parseFloat(values.pondDepth),
+          pondVolume: parseFloat(values.pondVolume),
+          pondDrains: parseInt(values.pondDrains),
+          pondAeroCapacity: parseInt(values.pondAeroCapacity),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // Add token to headers
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 201) {
+        setSuccess("Pond Created Successfully");
+        // Optionally, fetch updated pond data or add the new pond to state
+      } else {
+        throw new Error("Failed to create pond.");
+      }
+
+      // Reset pond data after successful submission
+      handleCancel();
     } catch (error) {
+      setError(
+        error.response?.data?.message ||
+          "Failed to create pond. Please try again."
+      );
+      console.error("Error creating pond:", error);
     } finally {
       setLoading(false);
     }
   };
-
-  // const handleSubmit = async (newPond) => {
-  //   try {
-  //     // POST request to add a new pond to the API
-  //     const response = await fetch(
-  //       "https://66fa93b3afc569e13a9c472e.mockapi.io/api/KoiLake/Lake",
-  //       {
-  //         method: "POST",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //         body: JSON.stringify(newPond),
-  //       }
-  //     );
-
-  //     if (!response.ok) {
-  //       throw new Error("Error adding pond");
-  //     }
-
-  //     const data = await response.json();
-  //     setPondData([...pondData, data]); // Update local state with the newly added pond
-  //     setOpen(false);
-  //   } catch (error) {
-  //     console.error("Error adding pond:", error);
-  //   }
-  // };
 
   useEffect(() => {
     const fetchPond1Data = async () => {
@@ -128,8 +127,8 @@ function MyPond() {
             open={open}
             onSubmit={handleSubmit}
             handleCancel={handleCancel}
-            pondData={pondData} // Pass pondData object
-            handleInputChange={handleInputChange} // Pass handleInputChange
+            pondData={pondData}
+            handleInputChange={handleInputChange}
             loading={loading}
           />
         </div>
