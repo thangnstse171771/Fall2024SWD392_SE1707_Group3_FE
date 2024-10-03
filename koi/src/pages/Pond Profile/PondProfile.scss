@@ -2,8 +2,8 @@
   height: 100vh; /* Full viewport height */
   display: flex;
   flex-direction: column;
-  height: 100vh;
   margin-bottom: 50px;
+  height: auto;
 
   .pond-profile-header {
     width: 100%; /* Full width for the header */
@@ -19,24 +19,37 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 50px;
 
     .pond-profile-info {
-      width: 90%;
-      align-items: center;
       display: flex;
-      flex-direction: column;
-      padding: 20px;
-      background-color: rgba(255, 255, 255, 0.95);
-      border-radius: 8px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-      margin-left: 20px;
+      align-items: center; /* Vertically center the content */
+      justify-content: space-between; /* Space them evenly */
+      gap: 20px;
+
+      .pond-form-container {
+        width: 90%;
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 8px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+      }
+
+      .koi-profile-img {
+        max-width: 50%; /* Set the width of the image */
+        height: auto; /* Maintain aspect ratio */
+        border-radius: 8px; /* Optional: rounded corners */
+      }
+
+      .pond-profile-info > div {
+        flex-grow: 1; /* Allows PondProfileInfo to take the remaining space */
+      }
 
       .pond-form-container .form-group {
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 20px;
+        padding-bottom: 10px;
       }
 
       .pond-form-container label {
