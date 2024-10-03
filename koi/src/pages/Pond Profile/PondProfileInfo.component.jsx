@@ -5,7 +5,7 @@ const PondProfileInfo = () => {
   const [profile, setProfile] = useState({
     pondName: "Pond 1",
     pondSize: "10m",
-    pondImage: "wadawsdwad",
+    pondImage: "https://cdn11.bigcommerce.com/s-c81ee/product_images/uploaded_images/ridersuperone-1-.jpg",
     pondDepth: "4m",
     pondVolume: "10k Litters",
     pondNumber: "3",
