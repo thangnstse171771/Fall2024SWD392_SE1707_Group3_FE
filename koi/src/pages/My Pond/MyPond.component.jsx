@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import "./MyPond.scss";
 
 import { Button } from "antd";
@@ -146,11 +147,13 @@ function MyPond() {
               <tr key={pond.id}>
                 <td>{pond.pondName}</td>
                 <td className="lake-action-buttons">
-                  <Button
-                    size="large"
-                    className="edit-lake-button"
-                    icon={<EditOutlined />}
-                  />
+                  <Link to='/pond-profile'>
+                    <Button
+                      size="large"
+                      className="edit-lake-button"
+                      icon={<EditOutlined />}
+                    />
+                  </Link>
                   <Button
                     size="large"
                     className="delete-lake-button"
