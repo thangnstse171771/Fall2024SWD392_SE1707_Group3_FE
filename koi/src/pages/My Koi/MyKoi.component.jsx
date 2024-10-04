@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { Avatar, Card, Pagination } from "antd";
+import { Avatar, Card, Pagination, Input } from "antd";
 import AddKoiFishPopup from "./AddKoiFishPopup.component";
+import api from "../../config/axios"; // Ensure your axios setup is correct
 import "./MyKoi.scss";
 
 const { Meta } = Card;
@@ -11,73 +12,73 @@ const MyKoi = () => {
   const [koiData, setKoiData] = useState([
     {
       id: 1,
-      name: "Koi A",
-      image:
-        "https://visinhcakoi.com/wp-content/uploads/2021/07/ca-koi-showa-2-600x874-1.jpg",
-      details: "Cá koi màu đỏ và trắng, rất đẹp.",
+      koiName: "Golden Dragon",
+      koiImage:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzcBtmj3RHFskdPjhXC6Fn3E7Cvh4N1v9yBw&s",
+      koiGender: "Male",
+      koiBreed: 1,
+      koiOrigin: 12.5,
+      price: 100,
     },
     {
       id: 2,
-      name: "Koi B",
-      image:
-        "https://visinhcakoi.com/wp-content/uploads/2021/07/ca-koi-showa-2-600x874-1.jpg",
-      details: "Cá koi màu vàng, rất khỏe mạnh.",
+      koiName: "Silver Shimmer",
+      koiImage:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzcBtmj3RHFskdPjhXC6Fn3E7Cvh4N1v9yBw&s",
+      koiGender: "Female",
+      koiBreed: 2,
+      koiOrigin: 15.0,
+      price: 150,
     },
     {
       id: 3,
-      name: "Koi C",
-      image:
-        "https://visinhcakoi.com/wp-content/uploads/2021/07/ca-koi-showa-2-600x874-1.jpg",
-      details: "Cá koi màu đen, thích nghi tốt.",
+      koiName: "Emerald Jewel",
+      koiImage:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzcBtmj3RHFskdPjhXC6Fn3E7Cvh4N1v9yBw&s",
+      koiGender: "Male",
+      koiBreed: 1,
+      koiOrigin: 10.0,
+      price: 120,
     },
     {
       id: 4,
-      name: "Koi D",
-      image:
-        "https://visinhcakoi.com/wp-content/uploads/2021/07/ca-koi-showa-2-600x874-1.jpg",
-      details: "Cá koi màu cam, rất hiền hòa.",
+      koiName: "Mystic Blue",
+      koiImage:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzcBtmj3RHFskdPjhXC6Fn3E7Cvh4N1v9yBw&s",
+      koiGender: "Female",
+      koiBreed: 3,
+      koiOrigin: 8.5,
+      price: 80,
     },
     {
       id: 5,
-      name: "Koi E",
-      image:
-        "https://visinhcakoi.com/wp-content/uploads/2021/07/ca-koi-showa-2-600x874-1.jpg",
-      details: "Cá koi màu xanh, rất ấn tượng.",
+      koiName: "Crimson Beauty",
+      koiImage:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzcBtmj3RHFskdPjhXC6Fn3E7Cvh4N1v9yBw&s",
+      koiGender: "Male",
+      koiBreed: 2,
+      koiOrigin: 9.5,
+      price: 90,
     },
     {
       id: 6,
-      name: "Koi F",
-      image:
-        "https://visinhcakoi.com/wp-content/uploads/2021/07/ca-koi-showa-2-600x874-1.jpg",
-      details: "Cá koi bướm, có kích thước lớn.",
+      koiName: "Crimson Beauty",
+      koiImage:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzcBtmj3RHFskdPjhXC6Fn3E7Cvh4N1v9yBw&s",
+      koiGender: "Male",
+      koiBreed: 2,
+      koiOrigin: 9.5,
+      price: 90,
     },
     {
       id: 7,
-      name: "Koi G",
-      image:
-        "https://visinhcakoi.com/wp-content/uploads/2021/07/ca-koi-showa-2-600x874-1.jpg",
-      details: "Cá koi màu trắng, rất đẹp.",
-    },
-    {
-      id: 8,
-      name: "Koi H",
-      image:
-        "https://visinhcakoi.com/wp-content/uploads/2021/07/ca-koi-showa-2-600x874-1.jpg",
-      details: "Cá koi đuôi dài, sống khỏe.",
-    },
-    {
-      id: 9,
-      name: "Koi I",
-      image:
-        "https://visinhcakoi.com/wp-content/uploads/2021/07/ca-koi-showa-2-600x874-1.jpg",
-      details: "Cá koi màu tím, rất hiếm.",
-    },
-    {
-      id: 10,
-      name: "Koi J",
-      image:
-        "https://visinhcakoi.com/wp-content/uploads/2021/07/ca-koi-showa-2-600x874-1.jpg",
-      details: "Cá koi đa sắc, rất đẹp mắt.",
+      koiName: "Crimson Beauty",
+      koiImage:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzcBtmj3RHFskdPjhXC6Fn3E7Cvh4N1v9yBw&s",
+      koiGender: "Male",
+      koiBreed: 2,
+      koiOrigin: 9.5,
+      price: 90,
     },
   ]);
   const [open, setOpen] = useState(false);
@@ -92,10 +93,40 @@ const MyKoi = () => {
     setOpen(false);
   };
 
-  const handleSubmit = (newKoi) => {
-    const newKoiWithId = { id: koiData.length + 1, ...newKoi };
-    setKoiData([...koiData, newKoiWithId]);
-    setOpen(false);
+  const handleSubmit = async (newKoi) => {
+    const token = sessionStorage.getItem("token"); // Retrieve token from sessionStorage
+
+    try {
+      const response = await api.post(
+        "/api/koi/addKoi",
+        {
+          koiName: newKoi.koiName,
+          koiImage: newKoi.koiImage,
+          koiGender: newKoi.koiGender,
+          koiBreed: newKoi.koiBreed,
+          koiOrigin: newKoi.koiOrigin,
+          price: newKoi.price,
+          currentPondId: newKoi.currentPondId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 201) {
+        const addedKoi = { id: response.data.id, ...newKoi }; // Assume the API returns the new koi ID
+        setKoiData([...koiData, addedKoi]);
+        setOpen(false);
+      } else {
+        throw new Error("Failed to add Koi.");
+      }
+    } catch (error) {
+      console.error("Error adding Koi:", error);
+      // Handle error as needed (e.g., show a notification)
+    }
   };
 
   const handleSearch = (e) => {
@@ -104,7 +135,7 @@ const MyKoi = () => {
   };
 
   const filteredKoi = koiData.filter((koi) =>
-    koi.name.toLowerCase().includes(searchTerm.toLowerCase())
+    koi.koiName.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const indexOfLastKoi = currentPage * itemsPerPage;
@@ -114,14 +145,10 @@ const MyKoi = () => {
   return (
     <div className="koi-container">
       <div className="my-fish-page-header">
-        <div>
-          <h1>Koi Fish</h1>
-        </div>
-        <div>
-          <button onClick={showPopup} className="add-koi-button">
-            Add Koi Fish
-          </button>
-        </div>
+        <h1>Koi Fish</h1>
+        <button onClick={showPopup} className="add-koi-button">
+          Add Koi Fish
+        </button>
       </div>
       <AddKoiFishPopup
         open={open}
@@ -130,7 +157,7 @@ const MyKoi = () => {
       />
 
       <div className="koi-search">
-        <input
+        <Input
           type="text"
           placeholder="Tìm kiếm cá koi..."
           onChange={handleSearch}
@@ -142,7 +169,7 @@ const MyKoi = () => {
           <Card
             key={koi.id}
             className="koi-card"
-            cover={<img alt={koi.name} src={koi.image} />}
+            cover={<img alt={koi.koiName} src={koi.koiImage} />}
             actions={[
               <EditOutlined key="edit" />,
               <DeleteOutlined key="delete" />,
@@ -152,8 +179,8 @@ const MyKoi = () => {
               avatar={
                 <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=8" />
               }
-              title={koi.name}
-              description={koi.details}
+              title={koi.koiName}
+              description={`Gender: ${koi.koiGender}, Breed ID: ${koi.koiBreed}, Origin: ${koi.koiOrigin}, Price: $${koi.price}`}
             />
           </Card>
         ))}

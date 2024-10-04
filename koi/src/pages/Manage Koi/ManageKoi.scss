@@ -1,17 +1,12 @@
 .manage-koi-page {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 equal columns */
   gap: 40px; // Adds space between cards
-  padding: 25px; // Optional padding for the container
+  padding: 25px;
   height: 100vh;
   margin-bottom: 50px;
 
   .manage-koi-card {
-    max-width: calc(
-      33.33% - 20px
-    ); // Ensures that cards don't stretch wider than 1/3rd of the width
-    flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;

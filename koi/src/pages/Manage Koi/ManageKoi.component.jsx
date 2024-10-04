@@ -35,7 +35,18 @@ function ManageKoi() {
           />
           <h1 className="manage-koi-text">Water Parameters</h1>
         </div>
-      </Link>
+      </Link>   
+
+      {/* <Link to="/manage-koi/recommendations" className="customer-recommendations-card">
+        <div>
+          <img
+            src={WaterParametersIcon}
+            alt="Recommendations logo"
+            className="customer-recommendations-logo"
+          />
+          <h1 className="manage-koi-text">Recommendations</h1>
+        </div>
+      </Link>    */}
     </div>
   );
 }
