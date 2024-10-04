@@ -1,3 +1,77 @@
-.my-koi-page {
-    height: 100vh;
+.koi-container {
+  padding: 20px;
+  background-color: #f0f4f8;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  .my-fish-page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+
+    .add-koi-button {
+      background-color: rgb(180, 0, 0);
+      color: white;
+      height: 35px;
+      width: auto;
+      border-radius: 7px;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      font-size: 15px;
+
+      &:hover {
+        background-color: #b76363;
+      }
+    }
+  }
+}
+
+.koi-search {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+
+  input {
+    width: 30%;
+    padding: 10px;
+    border: 1px solid #d9d9d9;
+    border-radius: 4px;
+    font-size: 16px;
+
+    &:focus {
+      outline: none;
+      border-color: #40a9ff;
+    }
+  }
+
+  button {
+    margin-left: 20px;
+  }
+}
+
+.koi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.koi-card {
+  transition: transform 0.3s, box-shadow 0.3s;
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+}
+.add-koi-button {
+  background-color: rgb(180, 0, 0);
+  color: white;
+  height: 35px;
+  width: auto;
+  border-radius: 7px;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  font-size: 15px;
+
+  &:hover {
+    background-color: #eb8e8e;
+  }
 }

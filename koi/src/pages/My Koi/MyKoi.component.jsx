@@ -1,137 +1,198 @@
 import React, { useState } from "react";
-import { TextField, Grid, Button as MuiButton } from "@mui/material";
-import { Layout, Card, Button as AntButton } from "antd";
+import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { Avatar, Card, Pagination, Input } from "antd";
+import AddKoiFishPopup from "./AddKoiFishPopup.component";
+import api from "../../config/axios"; // Ensure your axios setup is correct
+import "./MyKoi.scss";
 
-const { Content } = Layout;
+const { Meta } = Card;
 
 const MyKoi = () => {
-  // Initial pond data
-  const [pond, setPond] = useState({
-    pondID: "P123456", // Non-editable
-    pondName: "Chuong 3 con soi",
-    pondSize: 0,
-    pondImage: "",
-    pondVolume: 0,
-    pondDepth: 0,
-    drainNumber: 0,
-    pumpCapacity: 0,
-  });
+  const [searchTerm, setSearchTerm] = useState("");
+  const [koiData, setKoiData] = useState([
+    {
+      id: 1,
+      koiName: "Golden Dragon",
+      koiImage:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzcBtmj3RHFskdPjhXC6Fn3E7Cvh4N1v9yBw&s",
+      koiGender: "Male",
+      koiBreed: 1,
+      koiOrigin: 12.5,
+      price: 100,
+    },
+    {
+      id: 2,
+      koiName: "Silver Shimmer",
+      koiImage:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzcBtmj3RHFskdPjhXC6Fn3E7Cvh4N1v9yBw&s",
+      koiGender: "Female",
+      koiBreed: 2,
+      koiOrigin: 15.0,
+      price: 150,
+    },
+    {
+      id: 3,
+      koiName: "Emerald Jewel",
+      koiImage:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzcBtmj3RHFskdPjhXC6Fn3E7Cvh4N1v9yBw&s",
+      koiGender: "Male",
+      koiBreed: 1,
+      koiOrigin: 10.0,
+      price: 120,
+    },
+    {
+      id: 4,
+      koiName: "Mystic Blue",
+      koiImage:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzcBtmj3RHFskdPjhXC6Fn3E7Cvh4N1v9yBw&s",
+      koiGender: "Female",
+      koiBreed: 3,
+      koiOrigin: 8.5,
+      price: 80,
+    },
+    {
+      id: 5,
+      koiName: "Crimson Beauty",
+      koiImage:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzcBtmj3RHFskdPjhXC6Fn3E7Cvh4N1v9yBw&s",
+      koiGender: "Male",
+      koiBreed: 2,
+      koiOrigin: 9.5,
+      price: 90,
+    },
+    {
+      id: 6,
+      koiName: "Crimson Beauty",
+      koiImage:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzcBtmj3RHFskdPjhXC6Fn3E7Cvh4N1v9yBw&s",
+      koiGender: "Male",
+      koiBreed: 2,
+      koiOrigin: 9.5,
+      price: 90,
+    },
+    {
+      id: 7,
+      koiName: "Crimson Beauty",
+      koiImage:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzcBtmj3RHFskdPjhXC6Fn3E7Cvh4N1v9yBw&s",
+      koiGender: "Male",
+      koiBreed: 2,
+      koiOrigin: 9.5,
+      price: 90,
+    },
+  ]);
+  const [open, setOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
 
-  // Handle form input change
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setPond((prevPond) => ({
-      ...prevPond,
-      [name]: value,
-    }));
+  const showPopup = () => {
+    setOpen(true);
   };
 
-  // Handle form submission
-  const handleSubmit = () => {
-    // Submit pond data to backend (e.g., API call)
-    console.log("Submitted Pond Data:", pond);
+  const handleCancel = () => {
+    setOpen(false);
   };
+
+  const handleSubmit = async (newKoi) => {
+    const token = sessionStorage.getItem("token"); // Retrieve token from sessionStorage
+
+    try {
+      const response = await api.post(
+        "/api/koi/addKoi",
+        {
+          koiName: newKoi.koiName,
+          koiImage: newKoi.koiImage,
+          koiGender: newKoi.koiGender,
+          koiBreed: newKoi.koiBreed,
+          koiOrigin: newKoi.koiOrigin,
+          price: newKoi.price,
+          currentPondId: newKoi.currentPondId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.status === 201) {
+        const addedKoi = { id: response.data.id, ...newKoi }; // Assume the API returns the new koi ID
+        setKoiData([...koiData, addedKoi]);
+        setOpen(false);
+      } else {
+        throw new Error("Failed to add Koi.");
+      }
+    } catch (error) {
+      console.error("Error adding Koi:", error);
+      // Handle error as needed (e.g., show a notification)
+    }
+  };
+
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
+
+  const filteredKoi = koiData.filter((koi) =>
+    koi.koiName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const indexOfLastKoi = currentPage * itemsPerPage;
+  const indexOfFirstKoi = indexOfLastKoi - itemsPerPage;
+  const currentKoi = filteredKoi.slice(indexOfFirstKoi, indexOfLastKoi);
 
   return (
-    <Layout style={{ minHeight: "90vh", padding: "24px" }}>
-      <Content>
-        <Card
-          title="Koi Pond Profile"
-          bordered={true}
-          style={{ width: "100%" }}
-        >
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
-              <TextField
-                label="Pond ID"
-                value={pond.pondID}
-                InputProps={{
-                  readOnly: true,
-                }}
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
-                label="Pond Name"
-                name="pondName"
-                value={pond.pondName}
-                onChange={handleChange}
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
-                label="Pond Size (sq.m.)"
-                name="pondSize"
-                type="number"
-                value={pond.pondSize}
-                onChange={handleChange}
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
-                label="Pond Image URL"
-                name="pondImage"
-                value={pond.pondImage}
-                onChange={handleChange}
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
-                label="Pond Volume (L)"
-                name="pondVolume"
-                type="number"
-                value={pond.pondVolume}
-                onChange={handleChange}
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
-                label="Pond Depth (m)"
-                name="pondDepth"
-                type="number"
-                value={pond.pondDepth}
-                onChange={handleChange}
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
-                label="Drain Number"
-                name="drainNumber"
-                type="number"
-                value={pond.drainNumber}
-                onChange={handleChange}
-                fullWidth
-              />
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <TextField
-                label="Pump Capacity (L/min)"
-                name="pumpCapacity"
-                type="number"
-                value={pond.pumpCapacity}
-                onChange={handleChange}
-                fullWidth
-              />
-            </Grid>
-          </Grid>
-          <div style={{ marginTop: "20px", textAlign: "right" }}>
-            <MuiButton
-              variant="contained"
-              color="primary"
-              onClick={handleSubmit}
-            >
-              Submit
-            </MuiButton>
-          </div>
-        </Card>
-      </Content>
-    </Layout>
+    <div className="koi-container">
+      <div className="my-fish-page-header">
+        <h1>Koi Fish</h1>
+        <button onClick={showPopup} className="add-koi-button">
+          Add Koi Fish
+        </button>
+      </div>
+      <AddKoiFishPopup
+        open={open}
+        onSubmit={handleSubmit}
+        handleCancel={handleCancel}
+      />
+
+      <div className="koi-search">
+        <Input
+          type="text"
+          placeholder="Tìm kiếm cá koi..."
+          onChange={handleSearch}
+        />
+      </div>
+
+      <div className="koi-grid">
+        {currentKoi.map((koi) => (
+          <Card
+            key={koi.id}
+            className="koi-card"
+            cover={<img alt={koi.koiName} src={koi.koiImage} />}
+            actions={[
+              <EditOutlined key="edit" />,
+              <DeleteOutlined key="delete" />,
+            ]}
+          >
+            <Meta
+              avatar={
+                <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=8" />
+              }
+              title={koi.koiName}
+              description={`Gender: ${koi.koiGender}, Breed ID: ${koi.koiBreed}, Origin: ${koi.koiOrigin}, Price: $${koi.price}`}
+            />
+          </Card>
+        ))}
+      </div>
+      <Pagination
+        current={currentPage}
+        pageSize={itemsPerPage}
+        total={filteredKoi.length}
+        onChange={(page) => setCurrentPage(page)}
+        style={{ marginTop: "20px", textAlign: "center" }}
+      />
+    </div>
   );
 };
 

@@ -7,7 +7,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 
 const Login = () => {
-  const [username, setUsername] = useState(""); // Changed from email to username
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
@@ -17,19 +17,25 @@ const Login = () => {
 
     try {
       const response = await api.post("/api/auth/login", {
-        username: username, // Send the username instead of email
-        password: password,
+        username,
+        password,
       });
 
-      const { data } = response.data;
+      console.log("Response từ backend:", response);
 
-      toast.success("Login successful!");
-      navigate("/");
-      // Save the token in sessionStorage or localStorage
-      sessionStorage.setItem("token", data.token);
+      const token = response.data.token;
+
+      if (token) {
+        sessionStorage.setItem("token", token);
+        toast.success("Login successful!");
+        navigate("/");
+      } else {
+        setErrorMessage("Token không có trong phản hồi.");
+      }
+      console.log("token nè", token);
     } catch (error) {
       setErrorMessage("Login failed. Please check your username or password.");
-      console.error("Error logging in:", error);
+      console.error("Error logging in:", error.response?.data || error.message);
     }
   };
 

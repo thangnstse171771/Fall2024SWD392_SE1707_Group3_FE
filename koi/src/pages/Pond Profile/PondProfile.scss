@@ -1,4 +1,97 @@
 .pond-profile-page {
+  height: 100vh; /* Full viewport height */
+  display: flex;
+  flex-direction: column;
   margin-bottom: 50px;
-  height: 100vh;
+  height: auto;
+
+  .pond-profile-header {
+    width: 100%; /* Full width for the header */
+    padding-left: 20px; /* Add padding to the left for spacing */
+    box-sizing: border-box; /* Ensure padding doesn't affect width */
+  }
+
+  .pond-profile-body {
+    width: 100%;
+    max-width: 1400px; /* Limit body width for readability */
+    margin: 0 auto; /* Center the body horizontally */
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .pond-profile-info {
+      display: flex;
+      align-items: center; /* Vertically center the content */
+      justify-content: space-between; /* Space them evenly */
+      gap: 20px;
+
+      .pond-form-container {
+        width: 90%;
+        background-color: rgba(255, 255, 255, 0.95);
+        border-radius: 8px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+      }
+
+      .koi-profile-img {
+        max-width: 50%; /* Set the width of the image */
+        height: auto; /* Maintain aspect ratio */
+        border-radius: 8px; /* Optional: rounded corners */
+      }
+
+      .pond-profile-info > div {
+        flex-grow: 1; /* Allows PondProfileInfo to take the remaining space */
+      }
+
+      .pond-form-container .form-group {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding-bottom: 10px;
+      }
+
+      .pond-form-container label {
+        font-weight: 600;
+        color: #333;
+        width: 40%; /* Adjust the width of the label */
+      }
+
+      .pond-form-container input {
+        width: 65%; /* Adjust the width of the input field to fit next to the label */
+        padding: 10px;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        font-size: 16px;
+        background-color: #fff;
+        transition: border-color 0.2s;
+
+        &:focus {
+          border-color: #7cb305;
+          outline: none;
+        }
+      }
+
+      .submit-pond-edit-button {
+        display: flex;
+        justify-content: flex-end; /* Aligns the button to the right */
+        margin-top: 20px;
+      }
+      .submit-pond-edit-button button {
+        justify-content: end;
+        background-color: rgb(180, 0, 0);
+        color: white;
+        height: 35px;
+        width: auto;
+        border-radius: 7px;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+        font-size: 15px;
+
+        &:hover {
+          background-color: #b76363;
+        }
+      }
+    }
+  }
 }

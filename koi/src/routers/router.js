@@ -10,6 +10,7 @@ import Profile from "../pages/Profile/Profile.component";
 import MyKoi from "../pages/My Koi/MyKoi.component";
 import MyPond from "../pages/My Pond/MyPond.component";
 import WaterParameters from "../pages/Water Parameters/WaterParameters.component";
+import PondProfile from "../pages/Pond Profile/PondProfile.component";
 import ManageHome from "../pages/ManageAccount/ManageHome";
 
 export const router = createBrowserRouter([
@@ -54,6 +55,10 @@ export const router = createBrowserRouter([
       {
         path: "/profile",
         element: <Profile />,
+      },
+      {
+        path: "/pond-profile",
+        element: <PondProfile />,
       },
       {
         path: "/customerList",
