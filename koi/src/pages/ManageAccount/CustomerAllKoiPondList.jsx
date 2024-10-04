@@ -12,26 +12,26 @@ import { Button } from "antd";
 import { useNavigate } from "react-router-dom";
 import api from "../../config/axios"; // Import your axios configuration
 
-export default function CustomerList() {
+export default function KoiPondList() {
   const [customers, setCustomers] = useState([]);
   const navigate = useNavigate();
 
   // Fetch API from backend using axios
-  const fetchCustomers = async () => {
-    try {
-      const response = await api.get("/api/user/getalluser"); // Use axios here
-      setCustomers(response.data); // Assuming the data is directly in response.data
-    } catch (error) {
-      console.error(error.response.data);
-      console.error(error.response.data);
-      console.error(error.response.data);
-    }
-  };
+  // const fetchCustomers = async () => {
+  //   try {
+  //     const response = await api.get("/api/user/getalluser"); // Use axios here
+  //     setCustomers(response.data); // Assuming the data is directly in response.data
+  //   } catch (error) {
+  //     console.error(error.response.data);
+  //     console.error(error.response.data);
+  //     console.error(error.response.data);
+  //   }
+  // };
 
   // Call the API when the component first renders
-  useEffect(() => {
-    fetchCustomers();
-  }, []);
+  // useEffect(() => {
+  //   fetchCustomers();
+  // }, []);
 
   return (
     <TableContainer component={Paper}>

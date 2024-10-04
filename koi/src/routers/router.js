@@ -10,7 +10,7 @@ import Profile from "../pages/Profile/Profile.component";
 import MyKoi from "../pages/My Koi/MyKoi.component";
 import MyPond from "../pages/My Pond/MyPond.component";
 import WaterParameters from "../pages/Water Parameters/WaterParameters.component";
-import ManageHome from "../pages/ManageCustomer/ManageHome";
+import ManageHome from "../pages/ManageAccount/ManageHome";
 
 export const router = createBrowserRouter([
   {
@@ -34,6 +34,10 @@ export const router = createBrowserRouter([
       {
         path: "/manage-koi",
         element: <ManageKoi />,
+      },
+      {
+        path: "/manage-koi/my-koi",
+        element: <MyKoi />,
       },
       {
         path: "/manage-koi/my-koi",
