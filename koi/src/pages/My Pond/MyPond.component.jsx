@@ -6,6 +6,7 @@ import { Button } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import AddPondPopup from "./AddPondPopup.component";
 import api from "../../config/axios";
+import { toast } from "react-toastify";
 
 function MyPond() {
   const token = sessionStorage.getItem("token");
@@ -78,6 +79,7 @@ function MyPond() {
       );
 
       if (response.status === 201) {
+        toast.success("Pond Created Successfully!");
         setSuccess("Pond Created Successfully");
         fetchPondList();
       } else {
@@ -119,6 +121,7 @@ function MyPond() {
         },
       });
       fetchPondList();
+      toast.success("Delete Success!");
     } catch (error) {
       console.error("Error deleting pond:", error);
     }
