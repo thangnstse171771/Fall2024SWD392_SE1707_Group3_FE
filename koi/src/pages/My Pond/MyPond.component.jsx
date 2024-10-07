@@ -6,9 +6,11 @@ import { Button } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import AddPondPopup from "./AddPondPopup.component";
 import api from "../../config/axios";
+import { toast } from "react-toastify";
 
 function MyPond() {
-  const [pond1Data, setPond1Data] = useState([]);
+  const token = sessionStorage.getItem("token");
+  const [pondList, setPondList] = useState([]);
   const [open, setOpen] = useState(false);
   const [pondData, setPondData] = useState({
     pondName: "",
@@ -56,8 +58,6 @@ function MyPond() {
     setError(null);
     setSuccess(null);
 
-    const token = sessionStorage.getItem("token"); // Retrieve token from sessionStorage
-
     try {
       const response = await api.post(
         "/api/pond/createPond",
@@ -72,20 +72,19 @@ function MyPond() {
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Add token to headers
+            Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
         }
       );
 
       if (response.status === 201) {
+        toast.success("Pond Created Successfully!");
         setSuccess("Pond Created Successfully");
-        // Optionally, fetch updated pond data or add the new pond to state
+        fetchPondList();
       } else {
         throw new Error("Failed to create pond.");
       }
-
-      // Reset pond data after successful submission
       handleCancel();
     } catch (error) {
       setError(
@@ -98,20 +97,38 @@ function MyPond() {
     }
   };
 
-  useEffect(() => {
-    const fetchPond1Data = async () => {
-      try {
-        const response = await fetch(
-          "https://66fa93b3afc569e13a9c472e.mockapi.io/api/KoiLake/Lake"
-        );
-        const data = await response.json();
-        setPond1Data(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+  const fetchPondList = async () => {
+    setError(null);
 
-    fetchPond1Data();
+    try {
+      const response = await api.get("/api/pond/getAllPonds", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setPondList(response.data.data);
+    } catch (error) {
+      setError("Failed to fetch ponds.");
+      console.error("Error fetching ponds:", error);
+    }
+  };
+
+  const handleDelete = async (pondId) => {
+    try {
+      await api.delete(`/api/pond/deletePond/${pondId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      fetchPondList();
+      toast.success("Delete Success!");
+    } catch (error) {
+      console.error("Error deleting pond:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPondList();
   }, []);
 
   return (
@@ -143,25 +160,32 @@ function MyPond() {
             </tr>
           </thead>
           <tbody className="pond-table-body">
-            {pond1Data.map((pond) => (
-              <tr key={pond.id}>
-                <td>{pond.pondName}</td>
-                <td className="lake-action-buttons">
-                  <Link to='/pond-profile'>
+            {pondList.length > 0 ? (
+              pondList.map((pond) => (
+                <tr key={pond.id}>
+                  <td>{pond.pondName}</td>
+                  <td className="lake-action-buttons">
+                    <Link to="/pond-profile">
+                      <Button
+                        size="large"
+                        className="edit-lake-button"
+                        icon={<EditOutlined />}
+                      />
+                    </Link>
                     <Button
                       size="large"
-                      className="edit-lake-button"
-                      icon={<EditOutlined />}
+                      className="delete-lake-button"
+                      icon={<DeleteOutlined />}
+                      onClick={() => handleDelete(pond.pondId)}
                     />
-                  </Link>
-                  <Button
-                    size="large"
-                    className="delete-lake-button"
-                    icon={<DeleteOutlined />}
-                  />
-                </td>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan="2">No ponds found</td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>

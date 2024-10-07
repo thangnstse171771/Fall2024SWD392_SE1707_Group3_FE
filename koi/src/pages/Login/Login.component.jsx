@@ -21,21 +21,21 @@ const Login = () => {
         password,
       });
 
-      console.log("Response từ backend:", response);
-
-      const token = response.data.token;
-
-      if (token) {
-        sessionStorage.setItem("token", token);
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
         toast.success("Login successful!");
         navigate("/");
       } else {
-        setErrorMessage("Token không có trong phản hồi.");
+        setErrorMessage("Login failed. Token not found.");
       }
-      console.log("token nè", token);
     } catch (error) {
       setErrorMessage("Login failed. Please check your username or password.");
-      console.error("Error logging in:", error.response?.data || error.message);
+      console.error(
+        "Error during login:",
+        error.response?.data || error.message
+      );
+    } finally {
+      setPassword("");
     }
   };
 
