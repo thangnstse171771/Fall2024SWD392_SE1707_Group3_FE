@@ -8,13 +8,16 @@ const config = {
 
 const api = axios.create(config);
 
+// Lấy token từ localStorage
 const getLocalToken = () => localStorage.getItem("token");
 const getLocalRefreshToken = () => localStorage.getItem("refreshToken");
 
+// Lưu token vào localStorage
 const setToken = (token) => {
   localStorage.setItem("token", token);
 };
 
+// Hàm refresh token
 const refreshToken = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/identity/refresh`, {
@@ -28,11 +31,12 @@ const refreshToken = async () => {
     console.error("Token refresh failed:", error);
     localStorage.removeItem("token");
     localStorage.removeItem("refreshToken");
-    window.location.assign("/sign-in");
+    window.location.assign("/sign-in"); // Đảm bảo địa chỉ này là hợp lệ
     return Promise.reject(error);
   }
 };
 
+// Interceptor cho yêu cầu
 const handleRequest = (config) => {
   const token = getLocalToken();
   if (token) {
@@ -41,14 +45,17 @@ const handleRequest = (config) => {
   return config;
 };
 
+// Xử lý lỗi yêu cầu
 const handleRequestError = (error) => {
   return Promise.reject(error);
 };
 
+// Xử lý phản hồi
 const handleResponse = (response) => {
   return response;
 };
 
+// Xử lý lỗi phản hồi
 const handleResponseError = async (error) => {
   const originalRequest = error.config;
 
@@ -74,6 +81,7 @@ const handleResponseError = async (error) => {
   return Promise.reject(error);
 };
 
+// Thêm interceptors
 api.interceptors.request.use(handleRequest, handleRequestError);
 api.interceptors.response.use(handleResponse, handleResponseError);
 
