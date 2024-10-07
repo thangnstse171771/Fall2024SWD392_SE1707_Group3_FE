@@ -1,89 +1,42 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { Avatar, Card, Pagination, Input } from "antd";
+import { Modal, Avatar, Card, Pagination, Input } from "antd";
 import AddKoiFishPopup from "./AddKoiFishPopup.component";
-import api from "../../config/axios"; // Ensure your axios setup is correct
+import api from "../../config/axios";
 import "./MyKoi.scss";
 
 const { Meta } = Card;
 
 const MyKoi = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [koiData, setKoiData] = useState([
-    {
-      id: 1,
-      koiName: "Golden Dragon",
-      koiImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzcBtmj3RHFskdPjhXC6Fn3E7Cvh4N1v9yBw&s",
-      koiGender: "Male",
-      koiBreed: 1,
-      koiOrigin: 12.5,
-      price: 100,
-    },
-    {
-      id: 2,
-      koiName: "Silver Shimmer",
-      koiImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzcBtmj3RHFskdPjhXC6Fn3E7Cvh4N1v9yBw&s",
-      koiGender: "Female",
-      koiBreed: 2,
-      koiOrigin: 15.0,
-      price: 150,
-    },
-    {
-      id: 3,
-      koiName: "Emerald Jewel",
-      koiImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzcBtmj3RHFskdPjhXC6Fn3E7Cvh4N1v9yBw&s",
-      koiGender: "Male",
-      koiBreed: 1,
-      koiOrigin: 10.0,
-      price: 120,
-    },
-    {
-      id: 4,
-      koiName: "Mystic Blue",
-      koiImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzcBtmj3RHFskdPjhXC6Fn3E7Cvh4N1v9yBw&s",
-      koiGender: "Female",
-      koiBreed: 3,
-      koiOrigin: 8.5,
-      price: 80,
-    },
-    {
-      id: 5,
-      koiName: "Crimson Beauty",
-      koiImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzcBtmj3RHFskdPjhXC6Fn3E7Cvh4N1v9yBw&s",
-      koiGender: "Male",
-      koiBreed: 2,
-      koiOrigin: 9.5,
-      price: 90,
-    },
-    {
-      id: 6,
-      koiName: "Crimson Beauty",
-      koiImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzcBtmj3RHFskdPjhXC6Fn3E7Cvh4N1v9yBw&s",
-      koiGender: "Male",
-      koiBreed: 2,
-      koiOrigin: 9.5,
-      price: 90,
-    },
-    {
-      id: 7,
-      koiName: "Crimson Beauty",
-      koiImage:
-        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRzcBtmj3RHFskdPjhXC6Fn3E7Cvh4N1v9yBw&s",
-      koiGender: "Male",
-      koiBreed: 2,
-      koiOrigin: 9.5,
-      price: 90,
-    },
-  ]);
+  const [koiData, setKoiData] = useState([]);
   const [open, setOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+
+  useEffect(() => {
+    const fetchKoiData = async () => {
+      const token = sessionStorage.getItem("token");
+
+      try {
+        const response = await api.get("/api/koi/getAllKoi", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.data.success) {
+          setKoiData(response.data.data);
+        } else {
+          console.error("Failed to fetch Koi data.");
+        }
+      } catch (error) {
+        console.error("Error fetching Koi data:", error);
+      }
+    };
+
+    fetchKoiData();
+  }, []);
 
   const showPopup = () => {
     setOpen(true);
@@ -93,8 +46,40 @@ const MyKoi = () => {
     setOpen(false);
   };
 
+  const handleDelete = async (fishId) => {
+    const token = sessionStorage.getItem("token");
+
+    try {
+      const response = await api.delete(`/api/koi/deleteKoi/${fishId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 200) {
+        const updatedKoiData = koiData.filter((koi) => koi.fishId !== fishId);
+        setKoiData(updatedKoiData);
+        console.log("Koi fish deleted successfully.");
+      } else {
+        console.error("Failed to delete Koi.");
+      }
+    } catch (error) {
+      console.error("Error deleting Koi:", error);
+    }
+  };
+  const handleDeleteConfirmation = (fishId) => {
+    Modal.confirm({
+      title: "Confirm Deletion",
+      content: "Are you sure you want to delete this Koi fish?",
+      okText: "Delete",
+      okType: "danger",
+      cancelText: "Cancel",
+      onOk: () => handleDelete(fishId),
+    });
+  };
+
   const handleSubmit = async (newKoi) => {
-    const token = sessionStorage.getItem("token"); // Retrieve token from sessionStorage
+    const token = sessionStorage.getItem("token");
 
     try {
       const response = await api.post(
@@ -117,7 +102,7 @@ const MyKoi = () => {
       );
 
       if (response.status === 201) {
-        const addedKoi = { id: response.data.id, ...newKoi }; // Assume the API returns the new koi ID
+        const addedKoi = { id: response.data.id, ...newKoi };
         setKoiData([...koiData, addedKoi]);
         setOpen(false);
       } else {
@@ -125,7 +110,6 @@ const MyKoi = () => {
       }
     } catch (error) {
       console.error("Error adding Koi:", error);
-      // Handle error as needed (e.g., show a notification)
     }
   };
 
@@ -167,12 +151,15 @@ const MyKoi = () => {
       <div className="koi-grid">
         {currentKoi.map((koi) => (
           <Card
-            key={koi.id}
+            key={koi.fishId}
             className="koi-card"
             cover={<img alt={koi.koiName} src={koi.koiImage} />}
             actions={[
               <EditOutlined key="edit" />,
-              <DeleteOutlined key="delete" />,
+              <DeleteOutlined
+                key="delete"
+                onClick={() => handleDeleteConfirmation(koi.fishId)}
+              />,
             ]}
           >
             <Meta
@@ -185,6 +172,7 @@ const MyKoi = () => {
           </Card>
         ))}
       </div>
+
       <Pagination
         current={currentPage}
         pageSize={itemsPerPage}
