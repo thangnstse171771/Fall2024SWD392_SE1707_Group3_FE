@@ -3,11 +3,10 @@ import { Modal, Input, Form, Button, Select } from "antd";
 
 const { Option } = Select;
 
-const AddKoiFishPopup = ({ open, onSubmit, handleCancel }) => {
+const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
   const [form] = Form.useForm();
 
   const handleFinish = (values) => {
-    // Modify the values object to match the API structure
     const formattedValues = {
       koiName: values.name,
       koiImage: values.image,
@@ -83,10 +82,16 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel }) => {
 
         <Form.Item
           name="pondId"
-          label="Current Pond ID"
-          rules={[{ required: true, message: "Please input the pond ID!" }]}
+          label="Current Pond"
+          rules={[{ required: true, message: "Please select a pond!" }]}
         >
-          <Input type="number" />
+          <Select placeholder="Select a pond">
+            {ponds.map((pond) => (
+              <Option key={pond.pondId} value={pond.pondId}>
+                {pond.pondName}
+              </Option>
+            ))}
+          </Select>
         </Form.Item>
 
         <Form.Item>
