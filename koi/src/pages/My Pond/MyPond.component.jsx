@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./MyPond.scss";
 
-import { Button } from "antd";
+import { Button, Modal } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import AddPondPopup from "./AddPondPopup.component";
 import api from "../../config/axios";
@@ -121,10 +121,21 @@ function MyPond() {
         },
       });
       fetchPondList();
-      toast.success("Delete Success!");
+      toast.success("Pond Deleted Successfully!");
     } catch (error) {
       console.error("Error deleting pond:", error);
     }
+  };
+
+  const handleDeleteConfirmation = (pondId) => {
+    Modal.confirm({
+      title: "Confirm Deletion",
+      content: "Are you sure you want to delete this pond?",
+      okText: "Delete",
+      okType: "danger",
+      cancelText: "Cancel",
+      onOk: () => handleDelete(pondId),
+    });
   };
 
   useEffect(() => {
@@ -176,7 +187,7 @@ function MyPond() {
                       size="large"
                       className="delete-lake-button"
                       icon={<DeleteOutlined />}
-                      onClick={() => handleDelete(pond.pondId)}
+                      onClick={() => handleDeleteConfirmation(pond.pondId)}
                     />
                   </td>
                 </tr>
