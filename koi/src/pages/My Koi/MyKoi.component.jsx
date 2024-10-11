@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import { Modal, Avatar, Card, Pagination, Input } from "antd";
 import AddKoiFishPopup from "./AddKoiFishPopup.component";
 import api from "../../config/axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./MyKoi.scss";
 
 const { Meta } = Card;
@@ -10,63 +13,61 @@ const { Meta } = Card;
 const MyKoi = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [koiData, setKoiData] = useState([]);
+  const [ponds, setPonds] = useState([]);
   const [open, setOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchKoiData = async () => {
       const token = sessionStorage.getItem("token");
-
       try {
-        const response = await api.get("/api/koi/getAllKoi", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+        const response = await api.get("/api/koi/getAllKoiByUser", {
+          headers: { Authorization: `Bearer ${token}` },
         });
-
-        if (response.data.success) {
-          setKoiData(response.data.data);
-        } else {
-          console.error("Failed to fetch Koi data.");
-        }
+        if (response.data.success) setKoiData(response.data.data);
       } catch (error) {
         console.error("Error fetching Koi data:", error);
       }
     };
 
+    const fetchPondData = async () => {
+      const token = sessionStorage.getItem("token");
+      try {
+        const response = await api.get("/api/pond/getAllPondsByUser", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (response.data.success) setPonds(response.data.data);
+      } catch (error) {
+        console.error("Error fetching pond data:", error);
+      }
+    };
+
     fetchKoiData();
+    fetchPondData();
   }, []);
 
-  const showPopup = () => {
-    setOpen(true);
-  };
-
-  const handleCancel = () => {
-    setOpen(false);
-  };
+  const showPopup = () => setOpen(true);
+  const handleCancel = () => setOpen(false);
 
   const handleDelete = async (fishId) => {
     const token = sessionStorage.getItem("token");
-
     try {
       const response = await api.delete(`/api/koi/deleteKoi/${fishId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-
       if (response.status === 200) {
-        const updatedKoiData = koiData.filter((koi) => koi.fishId !== fishId);
-        setKoiData(updatedKoiData);
-        console.log("Koi fish deleted successfully.");
-      } else {
-        console.error("Failed to delete Koi.");
+        setKoiData(koiData.filter((koi) => koi.fishId !== fishId));
+        toast.success("Koi fish deleted successfully.");
       }
     } catch (error) {
-      console.error("Error deleting Koi:", error);
+      const errorMessage =
+        error.response?.data?.message || "An unexpected error occurred.";
+      toast.error(errorMessage);
     }
   };
+
   const handleDeleteConfirmation = (fishId) => {
     Modal.confirm({
       title: "Confirm Deletion",
@@ -80,19 +81,10 @@ const MyKoi = () => {
 
   const handleSubmit = async (newKoi) => {
     const token = sessionStorage.getItem("token");
-
     try {
       const response = await api.post(
         "/api/koi/addKoi",
-        {
-          koiName: newKoi.koiName,
-          koiImage: newKoi.koiImage,
-          koiGender: newKoi.koiGender,
-          koiBreed: newKoi.koiBreed,
-          koiOrigin: newKoi.koiOrigin,
-          price: newKoi.price,
-          currentPondId: newKoi.currentPondId,
-        },
+        { ...newKoi },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -100,16 +92,15 @@ const MyKoi = () => {
           },
         }
       );
-
       if (response.status === 201) {
-        const addedKoi = { id: response.data.id, ...newKoi };
-        setKoiData([...koiData, addedKoi]);
+        setKoiData([...koiData, { id: response.data.id, ...newKoi }]);
         setOpen(false);
-      } else {
-        throw new Error("Failed to add Koi.");
+        toast.success("Koi fish added successfully.");
       }
     } catch (error) {
-      console.error("Error adding Koi:", error);
+      const errorMessage =
+        error.response?.data?.message || "An unexpected error occurred.";
+      toast.error(errorMessage);
     }
   };
 
@@ -123,13 +114,16 @@ const MyKoi = () => {
   );
 
   const indexOfLastKoi = currentPage * itemsPerPage;
-  const indexOfFirstKoi = indexOfLastKoi - itemsPerPage;
-  const currentKoi = filteredKoi.slice(indexOfFirstKoi, indexOfLastKoi);
+  const currentKoi = filteredKoi.slice(
+    indexOfLastKoi - itemsPerPage,
+    indexOfLastKoi
+  );
 
   return (
     <div className="koi-container">
+      <ToastContainer />
       <div className="my-fish-page-header">
-        <h1>Koi Fish</h1>
+        <h1>Koi Fish Collection</h1>
         <button onClick={showPopup} className="add-koi-button">
           Add Koi Fish
         </button>
@@ -138,24 +132,33 @@ const MyKoi = () => {
         open={open}
         onSubmit={handleSubmit}
         handleCancel={handleCancel}
+        ponds={ponds}
       />
-
       <div className="koi-search">
         <Input
           type="text"
-          placeholder="Tìm kiếm cá koi..."
+          placeholder="Search for Koi..."
           onChange={handleSearch}
+          className="search-input"
         />
       </div>
-
       <div className="koi-grid">
         {currentKoi.map((koi) => (
           <Card
             key={koi.fishId}
             className="koi-card"
-            cover={<img alt={koi.koiName} src={koi.koiImage} />}
+            cover={
+              <img
+                className="koi-card-image"
+                alt={koi.koiName}
+                src={koi.koiImage}
+              />
+            }
             actions={[
-              <EditOutlined key="edit" />,
+              <EditOutlined
+                key="edit"
+                onClick={() => navigate(`/manage-koi/my-koi/${koi.fishId}`)}
+              />,
               <DeleteOutlined
                 key="delete"
                 onClick={() => handleDeleteConfirmation(koi.fishId)}
@@ -172,14 +175,14 @@ const MyKoi = () => {
           </Card>
         ))}
       </div>
-
-      <Pagination
-        current={currentPage}
-        pageSize={itemsPerPage}
-        total={filteredKoi.length}
-        onChange={(page) => setCurrentPage(page)}
-        style={{ marginTop: "20px", textAlign: "center" }}
-      />
+      <div className="pagination-container">
+        <Pagination
+          current={currentPage}
+          pageSize={itemsPerPage}
+          total={filteredKoi.length}
+          onChange={(page) => setCurrentPage(page)}
+        />
+      </div>
     </div>
   );
 };

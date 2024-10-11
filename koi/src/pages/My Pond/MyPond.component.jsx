@@ -101,7 +101,7 @@ function MyPond() {
     setError(null);
 
     try {
-      const response = await api.get("/api/pond/getAllPonds", {
+      const response = await api.get("/api/pond/getAllPondsByUser", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -115,7 +115,7 @@ function MyPond() {
 
   const handleDelete = async (pondId) => {
     try {
-      await api.delete(`/api/pond/deletePond/${pondId}`, {
+      await api.delete(`/api/pond/deletePondByOwner/${pondId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
