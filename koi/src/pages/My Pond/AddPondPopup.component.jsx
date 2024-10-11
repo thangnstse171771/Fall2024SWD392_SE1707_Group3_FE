@@ -9,6 +9,8 @@ const AddPondPopup = ({
   handleInputChange,
   loading,
 }) => {
+  const [form] = Form.useForm();
+
   return (
     <Modal
       title="Add New Pond"
@@ -16,7 +18,14 @@ const AddPondPopup = ({
       onCancel={handleCancel}
       footer={null}
     >
-      <Form onFinish={onSubmit} layout="vertical">
+      <Form
+        form={form} // Bind the form instance
+        onFinish={(values) => {
+          onSubmit(values);
+          form.resetFields(); // Reset form after successful submit
+        }}
+        layout="vertical"
+      >
         <Form.Item
           label="Pond Name"
           name="pondName"
@@ -127,7 +136,10 @@ const AddPondPopup = ({
           <Button type="primary" danger htmlType="submit" loading={loading}>
             Submit
           </Button>
-          <Button onClick={handleCancel} style={{ marginLeft: "8px" }}>
+          <Button onClick={() => {
+              form.resetFields(); // Reset form on cancel button click
+              handleCancel();
+            }} style={{ marginLeft: "8px" }}>
             Cancel
           </Button>
         </Form.Item>
