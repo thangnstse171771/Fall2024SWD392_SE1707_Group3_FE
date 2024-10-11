@@ -106,7 +106,7 @@ function MyPond() {
           Authorization: `Bearer ${token}`,
         },
       });
-      setPondList(response.data.data);
+      setPondList(response.data);
     } catch (error) {
       setError("Failed to fetch ponds.");
       console.error("Error fetching ponds:", error);
