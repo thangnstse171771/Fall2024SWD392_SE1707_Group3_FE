@@ -12,54 +12,97 @@ import { Button } from "antd";
 import { useNavigate } from "react-router-dom";
 import api from "../../config/axios"; // Import your axios configuration
 
-export default function KoiPondList() {
-  const [customers, setCustomers] = useState([]);
+export default function CustomerAllKoiPondList() {
+  const [allPonds, setAllPonds] = useState([]);
+  const [PondDetails, setPondDetails] = useState([]);
   const navigate = useNavigate();
 
   // Fetch API from backend using axios
-  // const fetchCustomers = async () => {
-  //   try {
-  //     const response = await api.get("/api/user/getalluser"); // Use axios here
-  //     setCustomers(response.data); // Assuming the data is directly in response.data
-  //   } catch (error) {
-  //     console.error(error.response.data);
-  //     console.error(error.response.data);
-  //     console.error(error.response.data);
-  //   }
-  // };
+  const fetchAllPonds = async () => {
+    try {
+      const response = await api.get("/api/pond/getAllPonds", {
+        headers: {
+          accept: "application/json",
+        },
+      });
+      setAllPonds(response.data); // Assuming the data is directly in response.data
+      setPondDetails = allPonds.data;
+    } catch (error) {
+      console.error("Error fetching:", error);
+    }
+  };
 
   // Call the API when the component first renders
-  // useEffect(() => {
-  //   fetchCustomers();
-  // }, []);
+  useEffect(() => {
+    fetchAllPonds();
+  }, []);
 
   return (
     <TableContainer component={Paper}>
       <Table style={{ minWidth: 650 }} aria-label="simple table">
         <TableHead>
           <TableRow>
-            <TableCell align="center" style={{ width: "20%" }}>
-              ID
+            <TableCell
+              style={{
+                width: "20%",
+                fontWeight: "bold",
+                color: "rgb(180,0,0)",
+              }}
+              align="center"
+            >
+              POND ID
             </TableCell>
-            <TableCell align="center" style={{ width: "30%" }}>
-              Customer Name
+            <TableCell
+              style={{
+                width: "30%",
+                fontWeight: "bold",
+                color: "rgb(180,0,0)",
+              }}
+              align="left"
+            >
+              POND NAME
             </TableCell>
-            <TableCell align="center" style={{ width: "40%" }}>
-              Email
+            <TableCell
+              style={{
+                width: "30%",
+                fontWeight: "bold",
+                color: "rgb(180,0,0)",
+              }}
+              align="left"
+            >
+              OWNER
             </TableCell>
-            <TableCell align="center" style={{ width: "10%" }}>
+
+            <TableCell
+              style={{
+                width: "20%",
+                fontWeight: "bold",
+                color: "rgb(180,0,0)",
+              }}
+              align="center"
+            >
               Action
             </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {customers.map((customer) => (
-            <TableRow key={customer.id}>
-              <TableCell align="center">{customer.id}</TableCell>
-              <TableCell align="center">{customer.name}</TableCell>
-              <TableCell align="center">{customer.email}</TableCell>
-              <TableCell align="center">
-                <Button onClick={() => navigate(`/customer/${customer.id}`)}>
+          {allPonds.map((pond) => (
+            <TableRow key={pond.pondId}>
+              <TableCell style={{ width: "20%" }} align="center">
+                {pond.pondId}
+              </TableCell>
+              <TableCell style={{ width: "30%" }} align="left">
+                {pond.pondName}
+              </TableCell>
+              <TableCell style={{ width: "20%" }} align="left">
+                {/* {pond.User.username} */}
+              </TableCell>
+
+              <TableCell style={{ width: "20%" }} align="center">
+                <Button
+                  style={{ color: "rgb(180,0,0)" }}
+                  onClick={() => navigate(`/`)}
+                >
                   View
                 </Button>
               </TableCell>
