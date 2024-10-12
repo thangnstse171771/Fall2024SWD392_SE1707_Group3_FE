@@ -4,6 +4,7 @@ import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
 import StaffList from "./ManageStaffList";
 import KoiPondList from "./CustomerAllKoiPondList";
+import CustomerAllKoiPondList from "./CustomerAllKoiPondList";
 
 const { Header, Sider, Content } = Layout;
 
@@ -20,7 +21,7 @@ const ManageHome = () => {
       case "1":
         return <CustomerList />;
       case "2":
-        return <StaffList />;
+        return <CustomerAllKoiPondList />;
       case "3":
         return <KoiPondList />;
       default:
