@@ -16,9 +16,7 @@ const PondProfileInfo = () => {
     pondVolume: "",
     pondDrains: "",
     pondAeroCapacity: "",
-    maxCapacity: "",
-    remainingCapacity: "",
-    currentKoiCount: "",
+    pondCapacityOfKoiFish: "",
   });
 
   const [loading, setLoading] = useState(true); // For loading state
@@ -42,9 +40,7 @@ const PondProfileInfo = () => {
         pondVolume: pondData.pondVolume,
         pondDrains: pondData.pondDrains,
         pondAeroCapacity: pondData.pondAeroCapacity,
-        maxCapacity: pondData.maxCapacity,
-        remainingCapacity: pondData.remainingCapacity,
-        currentKoiCount: pondData.currentKoiCount,
+        pondCapacityOfKoiFish: pondData.pondCapacityOfKoiFish,
       });
     } catch (err) {
       setError(err.response?.data?.message || "Failed to load pond data.");
@@ -77,7 +73,7 @@ const PondProfileInfo = () => {
           pondVolume: parseFloat(profile.pondVolume),
           pondDrains: parseInt(profile.pondDrains),
           pondAeroCapacity: parseInt(profile.pondAeroCapacity),
-          maxCapacity: parseInt(profile.maxCapacity),
+          pondCapacityOfKoiFish: parseInt(profile.pondCapacityOfKoiFish),
         },
         {
           headers: {
@@ -189,6 +185,16 @@ const PondProfileInfo = () => {
                   value={profile.pondAeroCapacity}
                   onChange={handleInputChange}
                   placeholder="Pond Aero Capacity"
+                />
+              </div>
+              <div className="form-group pond-capacity-edit">
+                <label>Pond Koi Fish Capacity:</label>
+                <input
+                  type="number"
+                  name="pondCapacityOfKoiFish"
+                  value={profile.pondCapacityOfKoiFish}
+                  onChange={handleInputChange}
+                  placeholder="Pond Koi Fish Capacity"
                 />
               </div>
               <div className="submit-pond-edit-button">
