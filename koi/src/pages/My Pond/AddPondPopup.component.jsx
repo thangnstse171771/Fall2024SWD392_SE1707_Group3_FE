@@ -53,7 +53,7 @@ const AddPondPopup = ({
         </Form.Item>
 
         <Form.Item
-          label="Pond Size"
+          label="Pond Size (m²)"
           name="pondSize"
           rules={[{ required: true, message: "Please input the pond size!" }]}
         >
@@ -67,7 +67,7 @@ const AddPondPopup = ({
         </Form.Item>
 
         <Form.Item
-          label="Pond Depth"
+          label="Pond Depth (m)"
           name="pondDepth"
           rules={[{ required: true, message: "Please input the pond depth!" }]}
         >
@@ -81,7 +81,7 @@ const AddPondPopup = ({
         </Form.Item>
 
         <Form.Item
-          label="Pond Volume"
+          label="Pond Volume (m³)"
           name="pondVolume"
           rules={[{ required: true, message: "Please input the pond volume!" }]}
         >
@@ -114,7 +114,7 @@ const AddPondPopup = ({
         </Form.Item>
 
         <Form.Item
-          label="Pond Aeration Capacity"
+          label="Pond Aeration Capacity (m³/hour)"
           name="pondAeroCapacity"
           rules={[
             {
@@ -126,6 +126,25 @@ const AddPondPopup = ({
           <Input
             type="number"
             value={pondData.pondAeroCapacity}
+            onChange={handleInputChange}
+            placeholder="Enter pond aeration capacity"
+            min={0}
+          />
+        </Form.Item>
+
+        <Form.Item
+          label="Pond Capacity of Koi Fish"
+          name="pondCapacityOfKoiFish"
+          rules={[
+            {
+              required: true,
+              message: "Please input the pond capacity of koi fish!",
+            },
+          ]}
+        >
+          <Input
+            type="number"
+            value={pondData.pondCapacityOfKoiFish}
             onChange={handleInputChange}
             placeholder="Enter pond aeration capacity"
             min={0}
