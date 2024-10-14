@@ -20,6 +20,7 @@ function MyPond() {
     pondVolume: "",
     pondDrains: "",
     pondAeroCapacity: "",
+    pondCapacityOfKoiFish: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -40,6 +41,7 @@ function MyPond() {
       pondVolume: "",
       pondDrains: "",
       pondAeroCapacity: "",
+      pondCapacityOfKoiFish: "",
     });
     setError(null);
     setSuccess(null);
@@ -69,6 +71,7 @@ function MyPond() {
           pondVolume: parseFloat(values.pondVolume),
           pondDrains: parseInt(values.pondDrains),
           pondAeroCapacity: parseInt(values.pondAeroCapacity),
+          pondCapacityOfKoiFish: parseInt(values.pondCapacityOfKoiFish),
         },
         {
           headers: {
@@ -173,10 +176,10 @@ function MyPond() {
           <tbody className="pond-table-body">
             {pondList.length > 0 ? (
               pondList.map((pond) => (
-                <tr key={pond.id}>
+                <tr key={pond.pondId}>
                   <td>{pond.pondName}</td>
                   <td className="lake-action-buttons">
-                    <Link to="/pond-profile">
+                    <Link to={`/pond-profile/${pond.pondId}`}>
                       <Button
                         size="large"
                         className="edit-lake-button"

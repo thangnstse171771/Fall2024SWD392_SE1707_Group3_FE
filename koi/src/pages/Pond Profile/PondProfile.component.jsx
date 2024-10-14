@@ -10,8 +10,7 @@ function PondProfile() {
       </div>
       <div className="pond-profile-body">
         <Divider style={{ borderColor: "#7cb305" }}>Pond Info</Divider>
-        <div className="pond-profile-info">
-          <img className="koi-profile-img" src="https://cdn11.bigcommerce.com/s-c81ee/product_images/uploaded_images/ridersuperone-1-.jpg"/>
+        <div>
           <PondProfileInfo />
         </div>
         <Divider style={{ borderColor: "#7cb305" }}>Fish List</Divider>

@@ -58,7 +58,7 @@ export const router = createBrowserRouter([
         element: <Profile />,
       },
       {
-        path: "/pond-profile",
+        path: "/pond-profile/:id",
         element: <PondProfile />,
       },
       {
