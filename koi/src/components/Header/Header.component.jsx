@@ -48,6 +48,7 @@ function Header() {
       <div className="navbar-links">
         <Link to="/">HOME</Link>
         <Link to="/manage-koi">MANAGE KOI</Link>
+        <Link to="/CustomerList">MANAGE CUSTOMER</Link>
       </div>
       <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
         <Button type="primary" shape="round" icon={<UserOutlined />}>
