@@ -5,6 +5,7 @@ import { Button, Layout, Menu, theme } from "antd";
 import StaffList from "./ManageStaffList";
 // import KoiPondList from "./CustomerAllKoiPondList";
 import CustomerAllKoiPondList from "./CustomerAllKoiPondList";
+import ManageKoiAdmin from "./ManageKoiAdmin";
 
 const { Header, Sider, Content } = Layout;
 
@@ -22,8 +23,10 @@ const ManageHome = () => {
         return <CustomerList />;
       case "2":
         return <CustomerAllKoiPondList />;
-      // case "3":
-      //   return <KoiPondList />;
+      case "3":
+        return <StaffList />;
+      case "4":
+        return <ManageKoiAdmin />;
       default:
         return <CustomerList />;
     }
@@ -58,6 +61,10 @@ const ManageHome = () => {
             {
               key: "3",
               label: "Staff List",
+            },
+            {
+              key: "4",
+              label: "All Koi",
             },
           ]}
         />
