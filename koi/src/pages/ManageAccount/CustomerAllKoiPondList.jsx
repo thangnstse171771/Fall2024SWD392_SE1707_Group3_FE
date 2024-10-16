@@ -126,7 +126,7 @@ export default function CustomerAllKoiPondList() {
               <TableCell style={{ width: "20%" }} align="center">
                 <Button
                   style={{ color: "rgb(180,0,0)" }}
-                  onClick={() => navigate(`/pond/${pond.pondId}`)}
+                  onClick={() => navigate(`/pond-profile/${pond.pondId}`)}
                 >
                   View
                 </Button>
