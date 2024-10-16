@@ -147,7 +147,7 @@ const AddPondPopup = ({
             value={pondData.pondCapacityOfKoiFish}
             onChange={handleInputChange}
             placeholder="Enter pond aeration capacity"
-            min={0}
+            min={1}
           />
         </Form.Item>
 
