@@ -1,0 +1,30 @@
+.water-parameter-profile-table {
+  margin: 0 auto;
+  width: 100%;
+  border-spacing: 0;
+  background-color: #f8f7f7;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.229);
+}
+
+.water-parameter-profile-table-head {
+  background-color: #b71c1c;
+  color: white;
+  font-weight: bold;
+}
+
+.water-parameter-profile-table th,
+.water-parameter-profile-table td {
+  padding: 12px 30px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.water-parameter-profile-table-body {
+  background-color: #ffffff;
+}
+
+.water-parameter-profile-table-body th:hover {
+  background-color: #ddd; /* Change this to any color you want */
+  cursor: pointer;
+}
