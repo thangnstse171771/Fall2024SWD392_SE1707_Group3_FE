@@ -73,6 +73,14 @@
         }
       }
 
+      .fish-count-text {
+        display: flex;
+        align-items: center;
+        .fish-count {
+          color: black;
+        }
+      }
+
       .submit-pond-edit-button {
         display: flex;
         justify-content: flex-end; /* Aligns the button to the right */
