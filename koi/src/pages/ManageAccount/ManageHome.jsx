@@ -1,4 +1,4 @@
-import CustomerList from "./CustomerList";
+import CustomerList from "./AllAccount";
 import { useState } from "react";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
@@ -6,6 +6,8 @@ import StaffList from "./ManageStaffList";
 // import KoiPondList from "./CustomerAllKoiPondList";
 import CustomerAllKoiPondList from "./CustomerAllKoiPondList";
 import ManageKoiAdmin from "./ManageKoiAdmin";
+import AllAccountList from "./AllAccount";
+import AllCustomers from "./AllCustomer";
 
 const { Header, Sider, Content } = Layout;
 
@@ -20,13 +22,15 @@ const ManageHome = () => {
   const renderContent = () => {
     switch (selectedKey) {
       case "1":
-        return <CustomerList />;
+        return <AllAccountList />;
       case "2":
         return <CustomerAllKoiPondList />;
       case "3":
         return <StaffList />;
       case "4":
         return <ManageKoiAdmin />;
+      case "5":
+        return <AllCustomers />;
       default:
         return <CustomerList />;
     }
@@ -52,7 +56,7 @@ const ManageHome = () => {
           items={[
             {
               key: "1",
-              label: "Customer List",
+              label: "All Account",
             },
             {
               key: "2",
@@ -65,6 +69,10 @@ const ManageHome = () => {
             {
               key: "4",
               label: "All Koi",
+            },
+            {
+              key: "5",
+              label: "All Customer",
             },
           ]}
         />

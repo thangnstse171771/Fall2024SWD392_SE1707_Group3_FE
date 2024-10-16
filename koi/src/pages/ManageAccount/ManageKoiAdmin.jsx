@@ -12,11 +12,13 @@ import {
 import DeleteKoi from "./DeleteKoi"; // Assuming DeleteKoi component is in the same directory
 import api from "../../config/axios";
 import { Button } from "antd";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 export default function ManageKoiAdmin() {
   const [koiFish, setKoiFish] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate(); // Initialize navigate
 
   // Fetch danh sách Koi
   const fetchKoiFish = async () => {
@@ -143,8 +145,11 @@ export default function ManageKoiAdmin() {
               <TableCell align="center">{koi.price || "N/A"}</TableCell>
               <TableCell align="center">{koi.currentPondId}</TableCell>
               <TableCell align="center">
-                <Button>View</Button>
-
+                <Button
+                  onClick={() => navigate(`/manage-koi/my-koi/${koi.fishId}`)} // Navigate on click
+                >
+                  View
+                </Button>
                 <DeleteKoi koiId={koi.fishId} onDelete={deleteKoiFish} />
               </TableCell>
             </TableRow>

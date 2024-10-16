@@ -14,7 +14,7 @@ import api from "../../config/axios";
 import DeleteUser from "./DeleteUser";
 import ViewAccountModal from "./ViewAccountModal";
 
-export default function CustomerList() {
+export default function AllCustomers() {
   const [customers, setCustomers] = useState([]);
   const [selectedCustomerId, setSelectedCustomerId] = useState(null);
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
@@ -25,10 +25,11 @@ export default function CustomerList() {
 
   const fetchCustomers = async () => {
     try {
-      const response = await api.get("/api/user/getalluser", {
+      const response = await api.get("/api/user/getallcustomer", {
         headers: { accept: "application/json" },
       });
       setCustomers(response.data);
+      console.log(response.data);
     } catch (error) {
       console.error("Error fetching customers:", error);
       message.error("Failed to fetch customers. Please try again.");
@@ -67,26 +68,26 @@ export default function CustomerList() {
     }
   };
 
-  const showRequestAccountModal = () => {
-    setIsRequestAccountModalVisible(true);
-  };
+  //   const showRequestAccountModal = () => {
+  //     setIsRequestAccountModalVisible(true);
+  //   };
 
-  const handleRequestAccountSubmit = async (values) => {
-    try {
-      const response = await api.post("/api/user/create", values);
-      message.success("Account request submitted successfully!");
-      setIsRequestAccountModalVisible(false);
-      form.resetFields();
-      fetchCustomers(); // Refresh the customer list
-    } catch (error) {
-      console.error("Error submitting account request:", error);
-      message.error("Failed to submit account request. Please try again.");
-    }
-  };
+  //   const handleRequestAccountSubmit = async (values) => {
+  //     try {
+  //       const response = await api.post("/api/user/create", values);
+  //       message.success("Account request submitted successfully!");
+  //       setIsRequestAccountModalVisible(false);
+  //       form.resetFields();
+  //       fetchCustomers(); // Refresh the customer list
+  //     } catch (error) {
+  //       console.error("Error submitting account request:", error);
+  //       message.error("Failed to submit account request. Please try again.");
+  //     }
+  //   };
 
   return (
     <div>
-      <Button
+      {/* <Button
         onClick={showRequestAccountModal}
         type="primary"
         style={{
@@ -96,7 +97,7 @@ export default function CustomerList() {
         }}
       >
         Request Account
-      </Button>
+      </Button> */}
 
       <TableContainer component={Paper}>
         <Table style={{ minWidth: 650 }} aria-label="simple table">
@@ -104,7 +105,7 @@ export default function CustomerList() {
             <TableRow>
               <TableCell
                 style={{
-                  width: "10%",
+                  width: "5%",
                   fontWeight: "bold",
                   color: "rgb(180,0,0)",
                 }}
@@ -114,7 +115,7 @@ export default function CustomerList() {
               </TableCell>
               <TableCell
                 style={{
-                  width: "30%",
+                  width: "20%",
                   fontWeight: "bold",
                   color: "rgb(180,0,0)",
                 }}
@@ -134,13 +135,23 @@ export default function CustomerList() {
               </TableCell>
               <TableCell
                 style={{
-                  width: "30%",
+                  width: "25%",
                   fontWeight: "bold",
                   color: "rgb(180,0,0)",
                 }}
                 align="left"
               >
                 Email
+              </TableCell>
+              <TableCell
+                style={{
+                  width: "20%",
+                  fontWeight: "bold",
+                  color: "rgb(180,0,0)",
+                }}
+                align="left"
+              >
+                Role
               </TableCell>
               <TableCell
                 style={{
@@ -157,17 +168,20 @@ export default function CustomerList() {
           <TableBody>
             {customers.map((customer) => (
               <TableRow key={customer.userId}>
-                <TableCell style={{ width: "10%" }} align="center">
+                <TableCell style={{ width: "5%" }} align="center">
                   {customer.userId}
                 </TableCell>
-                <TableCell style={{ width: "30%" }} align="left">
+                <TableCell style={{ width: "20%" }} align="left">
                   {customer.username}
                 </TableCell>
                 <TableCell style={{ width: "20%" }} align="left">
                   {customer.userPhoneNumber}
                 </TableCell>
-                <TableCell style={{ width: "30%" }} align="left">
+                <TableCell style={{ width: "25%" }} align="left">
                   {customer.email}
+                </TableCell>
+                <TableCell style={{ width: "20%" }} align="left">
+                  {customer.usertype}
                 </TableCell>
                 <TableCell style={{ width: "10%" }} align="center">
                   <Button
@@ -195,7 +209,7 @@ export default function CustomerList() {
         />
       )}
 
-      <Modal
+      {/* <Modal
         title="Request Account"
         visible={isRequestAccountModalVisible}
         onCancel={() => setIsRequestAccountModalVisible(false)}
@@ -253,7 +267,7 @@ export default function CustomerList() {
             </Button>
           </Form.Item>
         </Form>
-      </Modal>
+      </Modal> */}
     </div>
   );
 }
