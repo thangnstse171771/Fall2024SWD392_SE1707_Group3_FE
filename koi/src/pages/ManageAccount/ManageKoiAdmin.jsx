@@ -146,10 +146,15 @@ export default function ManageKoiAdmin() {
               <TableCell align="center">{koi.currentPondId}</TableCell>
               <TableCell align="center">
                 <Button
-                  onClick={() => navigate(`/manage-koi/my-koi/${koi.fishId}`)} // Navigate on click
+                  onClick={() =>
+                    navigate(`/manage-koi/my-koi/${koi.fishId}`, {
+                      state: { viewOnly: true },
+                    })
+                  } // Pass viewOnly state
                 >
                   View
                 </Button>
+
                 <DeleteKoi koiId={koi.fishId} onDelete={deleteKoiFish} />
               </TableCell>
             </TableRow>
