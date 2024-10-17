@@ -20,18 +20,23 @@ const Login = () => {
         username,
         password,
       });
+      console.log(response.data);
 
       if (response.data.token) {
+        // Lưu token và usertype vào localStorage
         localStorage.setItem("token", response.data.token);
-        toast.success("Login successful!");
-        navigate("/");
+        localStorage.setItem("usertype", response.data.user.usertype); // Lưu usertype
+        toast.success("Đăng nhập thành công!");
+        navigate("/"); // Điều hướng tới trang chủ
       } else {
-        setErrorMessage("Login failed. Token not found.");
+        setErrorMessage("Đăng nhập thất bại. Không tìm thấy token.");
       }
     } catch (error) {
-      setErrorMessage("Login failed. Please check your username or password.");
+      setErrorMessage(
+        "Đăng nhập thất bại. Vui lòng kiểm tra lại tài khoản hoặc mật khẩu."
+      );
       console.error(
-        "Error during login:",
+        "Lỗi trong quá trình đăng nhập:",
         error.response?.data || error.message
       );
     } finally {

@@ -8,7 +8,7 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
-import { Button, message, Modal, Form, Input, Select } from "antd";
+import { Button, message, Modal, Form, Input } from "antd";
 import { useNavigate } from "react-router-dom";
 import api from "../../config/axios";
 import DeleteUser from "./DeleteUser";
@@ -20,10 +20,10 @@ export default function AllAccountList() {
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
   const [isRequestAccountModalVisible, setIsRequestAccountModalVisible] =
     useState(false);
-  const [userType, setUserType] = useState(""); // State for the selected or entered role
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
+  // Fetch customer data from API
   const fetchCustomers = async () => {
     try {
       const response = await api.get("/api/user/getalluser", {
@@ -41,6 +41,7 @@ export default function AllAccountList() {
     fetchCustomers();
   }, []);
 
+  // Handle viewing a customer account
   const handleViewClick = (id) => {
     setSelectedCustomerId(id);
     setIsViewModalVisible(true);
@@ -51,6 +52,7 @@ export default function AllAccountList() {
     setSelectedCustomerId(null);
   };
 
+  // Handle deleting a customer account
   const handleDeleteCustomer = async (id) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this customer?"
@@ -69,37 +71,28 @@ export default function AllAccountList() {
     }
   };
 
+  // Show request account modal
   const showRequestAccountModal = () => {
     setIsRequestAccountModalVisible(true);
   };
 
+  // Handle account request submission
   const handleRequestAccountSubmit = async (values) => {
-    const finalValues = {
-      ...values,
-      userType, // Use userType from the state (either predefined or custom)
-    };
     try {
-      const response = await api.post("/api/user/create", finalValues);
+      const response = await api.post("/api/auth/staff-register", values); // Post to /api/auth/staff-register
       message.success("Account request submitted successfully!");
       setIsRequestAccountModalVisible(false);
       form.resetFields();
-      fetchCustomers(); // Refresh the customer list
+      fetchCustomers(); // Refresh customer list after submission
     } catch (error) {
       console.error("Error submitting account request:", error);
       message.error("Failed to submit account request. Please try again.");
     }
   };
 
-  const handleUserTypeChange = (value) => {
-    if (value === "other") {
-      setUserType(""); // Clear if the user selects "Other"
-    } else {
-      setUserType(value); // Set to predefined value
-    }
-  };
-
   return (
     <div>
+      {/* Request Account Button */}
       <Button
         onClick={showRequestAccountModal}
         type="primary"
@@ -112,6 +105,7 @@ export default function AllAccountList() {
         Request Account
       </Button>
 
+      {/* Table to display all accounts */}
       <TableContainer component={Paper}>
         <Table style={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -214,6 +208,7 @@ export default function AllAccountList() {
         </Table>
       </TableContainer>
 
+      {/* View Account Modal */}
       {selectedCustomerId && (
         <ViewAccountModal
           userId={selectedCustomerId}
@@ -222,6 +217,7 @@ export default function AllAccountList() {
         />
       )}
 
+      {/* Request Account Modal */}
       <Modal
         title="Request Account"
         visible={isRequestAccountModalVisible}
@@ -246,20 +242,6 @@ export default function AllAccountList() {
             rules={[{ required: true, type: "email" }]}
           >
             <Input />
-          </Form.Item>
-          <Form.Item
-            name="userType"
-            label="User Type"
-            rules={[{ required: true }]}
-          >
-            <Select
-              placeholder="Select or enter custom role"
-              onChange={handleUserTypeChange}
-            >
-              <Select.Option value="customer">Customer</Select.Option>
-              <Select.Option value="staff">Staff</Select.Option>
-              <Select.Option value="manager">Manager</Select.Option>
-            </Select>
           </Form.Item>
           <Form.Item name="phone" label="Phone" rules={[{ required: true }]}>
             <Input />

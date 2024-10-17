@@ -8,15 +8,19 @@ import "./Header.scss";
 function Header() {
   const navigate = useNavigate();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userType, setUserType] = useState(""); // State để lưu vai trò người dùng
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const storedUserType = localStorage.getItem("usertype");
     setIsLoggedIn(!!token);
+    setUserType(storedUserType); // Lấy userType từ localStorage và lưu vào state
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("refreshToken");
+    localStorage.removeItem("usertype"); // Xóa userType khi đăng xuất
     setIsLoggedIn(false);
     navigate("/login");
   };
@@ -48,7 +52,10 @@ function Header() {
       <div className="navbar-links">
         <Link to="/">HOME</Link>
         <Link to="/manage-koi">MANAGE KOI</Link>
-        <Link to="/CustomerList">MANAGE CUSTOMER</Link>
+        {/* Kiểm tra nếu userType không phải là 'Customer', thì hiển thị Manage Customer */}
+        {(userType === "Admin" || userType === "Manager") && (
+          <Link to="/CustomerList">MANAGE CUSTOMER</Link>
+        )}
       </div>
       <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
         <Button type="primary" shape="round" icon={<UserOutlined />}>
