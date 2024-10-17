@@ -1,9 +1,8 @@
 import CustomerList from "./AllAccount";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
 import StaffList from "./ManageStaffList";
-// import KoiPondList from "./CustomerAllKoiPondList";
 import CustomerAllKoiPondList from "./CustomerAllKoiPondList";
 import ManageKoiAdmin from "./ManageKoiAdmin";
 import AllAccountList from "./AllAccount";
@@ -13,12 +12,63 @@ const { Header, Sider, Content } = Layout;
 
 const ManageHome = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [selectedKey, setSelectedKey] = useState("1"); // State to track selected menu item
+  const [selectedKey, setSelectedKey] = useState("1");
+  const [menuVisible, setMenuVisible] = useState(false); // Trạng thái để kiểm soát hiển thị menu
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
-  // Function to render the content based on the selected key
+  // Lấy vai trò người dùng từ localStorage
+  const userType = localStorage.getItem("usertype");
+
+  useEffect(() => {
+    // Kiểm tra phân quyền và quyết định xem có hiện menu hay không
+    if (
+      userType === "Admin" ||
+      userType === "Manager" ||
+      userType === "Customer"
+    ) {
+      setMenuVisible(true); // Chỉ hiện menu khi userType là hợp lệ
+    } else {
+      setMenuVisible(false); // Ẩn menu nếu không có quyền
+    }
+  }, [userType]);
+
+  // Định nghĩa menu items tùy thuộc vào vai trò người dùng
+  const menuItems = [
+    {
+      key: "1",
+      label: "All Account",
+      roles: ["Admin", "Manager"], // Chỉ Admin và Manager được thấy mục này
+    },
+    {
+      key: "2",
+      label: "Customer Koi Pond",
+      roles: ["Customer", "Admin", "Manager"], // Ai cũng có thể thấy mục này
+    },
+    {
+      key: "3",
+      label: "Staff List",
+      roles: ["Admin", "Manager"], // Chỉ Admin và Manager được thấy mục này
+    },
+    {
+      key: "4",
+      label: "All Koi",
+      roles: ["Admin", "Manager"], // Chỉ Admin và Manager được thấy mục này
+    },
+    {
+      key: "5",
+      label: "All Customer",
+      roles: ["Admin", "Manager"], // Chỉ Admin và Manager được thấy mục này
+    },
+  ];
+
+  // Lọc menu dựa trên vai trò người dùng
+  const filteredMenuItems = menuItems.filter((item) =>
+    item.roles.includes(userType)
+  );
+
+  // Render nội dung dựa trên menu đã chọn
   const renderContent = () => {
     switch (selectedKey) {
       case "1":
@@ -47,35 +97,16 @@ const ManageHome = () => {
         collapsed={collapsed}
       >
         <div className="demo-logo-vertical" />
-        <Menu
-          theme="light"
-          mode="inline"
-          defaultSelectedKeys={["1"]}
-          selectedKeys={[selectedKey]} // Bind selectedKeys to selected state
-          onClick={(e) => setSelectedKey(e.key)} // Update selectedKey when a menu item is clicked
-          items={[
-            {
-              key: "1",
-              label: "All Account",
-            },
-            {
-              key: "2",
-              label: "Customer Koi Pond",
-            },
-            {
-              key: "3",
-              label: "Staff List",
-            },
-            {
-              key: "4",
-              label: "All Koi",
-            },
-            {
-              key: "5",
-              label: "All Customer",
-            },
-          ]}
-        />
+        {menuVisible && ( // Chỉ hiện menu khi menuVisible là true
+          <Menu
+            theme="light"
+            mode="inline"
+            defaultSelectedKeys={["1"]}
+            selectedKeys={[selectedKey]}
+            onClick={(e) => setSelectedKey(e.key)}
+            items={filteredMenuItems} // Hiển thị menu đã lọc theo vai trò
+          />
+        )}
       </Sider>
       <Layout>
         <Header
@@ -106,7 +137,7 @@ const ManageHome = () => {
             borderRadius: borderRadiusLG,
           }}
         >
-          {renderContent()} {/* This will render the selected component */}
+          {renderContent()} {/* Render component tương ứng với mục đã chọn */}
         </Content>
       </Layout>
     </Layout>

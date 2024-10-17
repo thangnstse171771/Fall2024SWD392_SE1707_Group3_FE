@@ -13,6 +13,7 @@ import WaterParameters from "../pages/Water Parameters/WaterParameters.component
 import PondProfile from "../pages/Pond Profile/PondProfile.component";
 import ManageHome from "../pages/ManageAccount/ManageHome";
 import MyKoiProfile from "../pages/My Koi Profile/MyKoiProfile.component";
+import ProtectedRoute from "./ProtectedRoute"; // Import ProtectedRoute
 
 export const router = createBrowserRouter([
   {
@@ -35,35 +36,67 @@ export const router = createBrowserRouter([
       },
       {
         path: "/manage-koi",
-        element: <ManageKoi />,
+        element: (
+          <ProtectedRoute allowedRoles={["Customer", "Admin", "Manager"]}>
+            <ManageKoi />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/manage-koi/my-koi",
-        element: <MyKoi />,
+        element: (
+          <ProtectedRoute allowedRoles={["Customer", "Admin", "Manager"]}>
+            <MyKoi />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/manage-koi/my-koi/:id",
-        element: <MyKoiProfile />,
+        element: (
+          <ProtectedRoute allowedRoles={["Customer", "Admin", "Manager"]}>
+            <MyKoiProfile />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/manage-koi/my-pond",
-        element: <MyPond />,
+        element: (
+          <ProtectedRoute allowedRoles={["Customer", "Admin", "Manager"]}>
+            <MyPond />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/manage-koi/water-parameters",
-        element: <WaterParameters />,
+        element: (
+          <ProtectedRoute allowedRoles={["Customer", "Admin", "Manager"]}>
+            <WaterParameters />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/profile",
-        element: <Profile />,
+        element: (
+          <ProtectedRoute allowedRoles={["Customer", "Admin", "Manager"]}>
+            <Profile />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/pond-profile/:id",
-        element: <PondProfile />,
+        element: (
+          <ProtectedRoute allowedRoles={["Customer", "Admin", "Manager"]}>
+            <PondProfile />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/customerList",
-        element: <ManageHome />,
+        element: (
+          <ProtectedRoute allowedRoles={["Admin", "Manager", "staff"]}>
+            <ManageHome />
+          </ProtectedRoute>
+        ),
       },
     ],
   },
