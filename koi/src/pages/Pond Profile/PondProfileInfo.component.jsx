@@ -105,7 +105,7 @@ const PondProfileInfo = () => {
     <div className="pond-profile-info">
       {error ? (
         <div>
-          <h3>Error: {error}</h3>
+          <h3>{error}</h3>
         </div>
       ) : (
         <>
