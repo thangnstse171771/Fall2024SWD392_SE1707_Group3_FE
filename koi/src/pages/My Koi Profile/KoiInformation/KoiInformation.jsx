@@ -1,23 +1,29 @@
 import React, { useState } from "react";
 import { Card, Button, Modal, Form, Input, Select } from "antd";
+import { useLocation } from "react-router-dom"; // Import useLocation
 
 const { Option } = Select;
 
 const KoiInformation = ({ koi, onUpdate, ponds }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [form] = Form.useForm();
+  const location = useLocation();
+  const viewOnly = location.state?.viewOnly || false; // Check if viewOnly mode
 
   const handleEdit = () => {
-    form.setFieldsValue({
-      name: koi.koiName,
-      image: koi.koiImage,
-      gender: koi.koiGender,
-      breed: koi.koiBreed,
-      origin: koi.koiOrigin,
-      price: koi.price,
-      pondId: koi.currentPondId,
-    });
-    setIsEditing(true);
+    if (!viewOnly) {
+      // Only allow edit if not in viewOnly mode
+      form.setFieldsValue({
+        name: koi.koiName,
+        image: koi.koiImage,
+        gender: koi.koiGender,
+        breed: koi.koiBreed,
+        origin: koi.koiOrigin,
+        price: koi.price,
+        pondId: koi.currentPondId,
+      });
+      setIsEditing(true);
+    }
   };
 
   const handleUpdateKoi = async (values) => {
@@ -56,23 +62,18 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
         <p>
           <strong>Price:</strong> ${koi.price || "N/A"}
         </p>
-        <Button
-          type="primary"
-          onClick={handleEdit}
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            width: "100%",
-          }}
-        >
-          Edit
-        </Button>
+
+        {/* Disable the Edit button in viewOnly mode */}
+        {!viewOnly && (
+          <Button type="primary" onClick={handleEdit} style={{ width: "100%" }}>
+            Edit
+          </Button>
+        )}
       </Card>
 
       <Modal
         title="Edit Koi Information"
-        visible={isEditing}
+        visible={isEditing && !viewOnly} // Ensure modal doesn't open in viewOnly mode
         onCancel={() => setIsEditing(false)}
         footer={null}
       >
