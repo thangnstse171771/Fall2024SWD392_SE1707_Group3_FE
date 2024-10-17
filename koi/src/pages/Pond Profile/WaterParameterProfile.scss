@@ -28,3 +28,17 @@
   background-color: #ddd; /* Change this to any color you want */
   cursor: pointer;
 }
+
+.add-button-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px; /* Optional: Add some space above */
+
+  .plus-parameter-profile-button {
+    font-size: 18px; /* Increase text size */
+    padding: 12px 24px; /* Increase padding for width and height */
+    height: 70px; /* Adjust height based on padding */
+    width: 150px; /* Default background color */
+  }
+}

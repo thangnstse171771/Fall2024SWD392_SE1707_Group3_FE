@@ -5,6 +5,8 @@ import api from "../../config/axios";
 import "./WaterParameterProfile.scss";
 import AddWaterParameterProfile from "./AddWaterParameterProfile.component";
 import { toast } from "react-toastify";
+import { Button, Modal } from "antd";
+import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
 
 const WaterParameterProfile = () => {
   const { id } = useParams();
@@ -70,7 +72,7 @@ const WaterParameterProfile = () => {
 
   const handleSubmit = async (values) => {
     setLoading(true);
-    
+
     try {
       await api.post(
         "/api/waterPara/createWaterParameter",
@@ -102,6 +104,31 @@ const WaterParameterProfile = () => {
     }
   };
 
+  const handleDelete = async (waterParameterId) => {
+    try {
+      await api.delete(`/api/waterPara/deleteWaterPara/${waterParameterId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      fetchWaterParameterById();
+      toast.success("Parameter Deleted Successfully!");
+    } catch (error) {
+      console.error("Error deleting parameter:", error);
+    }
+  };
+
+  const handleDeleteConfirmation = (waterParameterId) => {
+    Modal.confirm({
+      title: "Confirm Deletion",
+      content: "Are you sure you want to delete this parameter?",
+      okText: "Delete",
+      okType: "danger",
+      cancelText: "Cancel",
+      onOk: () => handleDelete(waterParameterId),
+    });
+  };
+
   useEffect(() => {
     fetchWaterParameterById();
   }, []);
@@ -111,9 +138,13 @@ const WaterParameterProfile = () => {
       {error ? (
         <div>
           <h3>{error}</h3>
-          <button onClick={showPopup} className="add-pond-button">
-            Add
-          </button>
+          <div className="add-button-wrapper">
+            <Button
+              className="plus-parameter-profile-button"
+              icon={<PlusOutlined style={{ fontSize: "30px" }} />}
+              onClick={showPopup}
+            />
+          </div>
           <AddWaterParameterProfile
             open={open}
             onSubmit={handleSubmit}
@@ -135,6 +166,14 @@ const WaterParameterProfile = () => {
                 <th>Nitrite (mg/L)</th>
                 <th>Nitrate (mg/L)</th>
                 <th>Phosphate (mg/L)</th>
+                <Button
+                  size="large"
+                  className="delete-parameter-button"
+                  icon={<DeleteOutlined />}
+                  onClick={() =>
+                    handleDeleteConfirmation(parameterProfile.waterParameterId)
+                  }
+                />
               </tr>
             </thead>
             <tbody className="water-parameter-profile-table-body">
