@@ -1,6 +1,7 @@
 import "./PondProfile.scss";
 import PondProfileInfo from "./PondProfileInfo.component";
 import WaterParameterProfile from "./WaterParameterProfile.component";
+import PondFishList from "./PondFishList.component";
 import { Divider } from "antd";
 
 function PondProfile() {
@@ -19,7 +20,9 @@ function PondProfile() {
           <WaterParameterProfile />
         </div>
         <Divider style={{ borderColor: "#7cb305" }}>Fish List</Divider>
-        <div className="pond-profile-fish-list">Fish list</div>
+        <div className="pond-profile-fish-list">
+          <PondFishList />
+        </div>
       </div>
     </div>
   );
