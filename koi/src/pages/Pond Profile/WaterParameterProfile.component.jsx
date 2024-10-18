@@ -6,7 +6,11 @@ import "./WaterParameterProfile.scss";
 import AddWaterParameterProfile from "./AddWaterParameterProfile.component";
 import { toast } from "react-toastify";
 import { Button, Modal } from "antd";
-import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import {
+  PlusCircleOutlined,
+  EditOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 
 const WaterParameterProfile = () => {
   const { id } = useParams();
@@ -141,7 +145,7 @@ const WaterParameterProfile = () => {
           <div className="add-button-wrapper">
             <Button
               className="plus-parameter-profile-button"
-              icon={<PlusOutlined style={{ fontSize: "30px" }} />}
+              icon={<PlusCircleOutlined style={{ fontSize: "40px" }} />}
               onClick={showPopup}
             />
           </div>
@@ -156,6 +160,32 @@ const WaterParameterProfile = () => {
         </div>
       ) : (
         <>
+          <div className="parameter-actions-button-group">
+            <h3>Actions</h3>
+            <Button
+              size="large"
+              className="delete-parameter-button"
+              icon={<EditOutlined />}
+              onClick={showPopup}
+            />
+            <AddWaterParameterProfile
+              open={open}
+              onSubmit={handleSubmit}
+              handleCancel={handleCancel}
+              handleInputChange={handleInputChange}
+              addParameter={addParameter}
+              loading={loading}
+            />
+            <Button
+              size="large"
+              className="delete-parameter-button"
+              icon={<DeleteOutlined />}
+              onClick={() =>
+                handleDeleteConfirmation(parameterProfile.waterParameterId)
+              }
+            />
+          </div>
+
           <table className="water-parameter-profile-table">
             <thead className="water-parameter-profile-table-head">
               <tr>
@@ -166,14 +196,6 @@ const WaterParameterProfile = () => {
                 <th>Nitrite (mg/L)</th>
                 <th>Nitrate (mg/L)</th>
                 <th>Phosphate (mg/L)</th>
-                <Button
-                  size="large"
-                  className="delete-parameter-button"
-                  icon={<DeleteOutlined />}
-                  onClick={() =>
-                    handleDeleteConfirmation(parameterProfile.waterParameterId)
-                  }
-                />
               </tr>
             </thead>
             <tbody className="water-parameter-profile-table-body">

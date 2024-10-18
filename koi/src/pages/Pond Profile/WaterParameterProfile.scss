@@ -1,3 +1,9 @@
+.parameter-actions-button-group {
+  display: flex;
+  align-items: center; /* Align items vertically at the center */
+  gap: 10px; /* Add some spacing between elements */
+}
+
 .water-parameter-profile-table {
   margin: 0 auto;
   width: 100%;
@@ -39,6 +45,11 @@
     font-size: 18px; /* Increase text size */
     padding: 12px 24px; /* Increase padding for width and height */
     height: 70px; /* Adjust height based on padding */
-    width: 150px; /* Default background color */
+    width: 70px; /* Default background color */
+    border: none;
+
+    &:hover .anticon {
+      color: red; /* Change icon color to red on hover */
+    }
   }
 }
