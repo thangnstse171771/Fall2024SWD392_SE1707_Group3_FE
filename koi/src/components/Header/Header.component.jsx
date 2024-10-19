@@ -53,7 +53,9 @@ function Header() {
         <Link to="/">HOME</Link>
         <Link to="/manage-koi">MANAGE KOI</Link>
         {/* Kiểm tra nếu userType không phải là 'Customer', thì hiển thị Manage Customer */}
-        {(userType === "Admin" || userType === "Manager") && (
+        {(userType === "Admin" ||
+          userType === "Manager" ||
+          userType === "Staff") && (
           <Link to="/CustomerList">MANAGE CUSTOMER</Link>
         )}
       </div>
