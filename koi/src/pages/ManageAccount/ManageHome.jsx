@@ -1,4 +1,3 @@
-import CustomerList from "./AllAccount";
 import { useState, useEffect } from "react";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
@@ -7,13 +6,14 @@ import CustomerAllKoiPondList from "./CustomerAllKoiPondList";
 import ManageKoiAdmin from "./ManageKoiAdmin";
 import AllAccountList from "./AllAccount";
 import AllCustomers from "./AllCustomer";
+import PendingAccount from "./PendingAccount";
 
 const { Header, Sider, Content } = Layout;
 
 const ManageHome = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [selectedKey, setSelectedKey] = useState("1");
-  const [menuVisible, setMenuVisible] = useState(false); // Trạng thái để kiểm soát hiển thị menu
+  const [menuVisible, setMenuVisible] = useState(false);
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
@@ -22,89 +22,96 @@ const ManageHome = () => {
   const userType = localStorage.getItem("usertype");
 
   useEffect(() => {
-    // Kiểm tra phân quyền và quyết định xem có hiện menu hay không
+    if (userType === "Admin") {
+      setSelectedKey("1"); // Admin vào All Account
+    } else if (userType === "Manager") {
+      setSelectedKey("2"); // Manager vào Staff List
+    }
+
     if (
       userType === "Admin" ||
       userType === "Manager" ||
       userType === "Customer"
     ) {
-      setMenuVisible(true); // Chỉ hiện menu khi userType là hợp lệ
+      setMenuVisible(true);
     } else {
-      setMenuVisible(false); // Ẩn menu nếu không có quyền
+      setMenuVisible(false);
     }
   }, [userType]);
 
-  // Định nghĩa menu items tùy thuộc vào vai trò người dùng
   const menuItems = [
     {
       key: "1",
       label: "All Account",
-      roles: ["Admin", "Manager"], // Chỉ Admin và Manager được thấy mục này
+      roles: ["Admin"],
     },
     {
       key: "2",
-      label: "Customer Koi Pond",
-      roles: ["Customer", "Admin", "Manager"], // Ai cũng có thể thấy mục này
+      label: "Staff List",
+      roles: ["Admin", "Manager"],
     },
     {
       key: "3",
-      label: "Staff List",
-      roles: ["Admin", "Manager"], // Chỉ Admin và Manager được thấy mục này
+      label: "Customer Koi Pond",
+      roles: ["Staff", "Manager"],
     },
+
     {
       key: "4",
       label: "All Koi",
-      roles: ["Admin", "Manager"], // Chỉ Admin và Manager được thấy mục này
+      roles: ["Staff", "Manager"],
     },
     {
       key: "5",
       label: "All Customer",
-      roles: ["Admin", "Manager"], // Chỉ Admin và Manager được thấy mục này
+      roles: ["Admin", "Manager", "Staff"],
+    },
+    {
+      key: "6",
+      label: "Pending Account",
+      roles: ["Admin"],
     },
   ];
 
-  // Lọc menu dựa trên vai trò người dùng
   const filteredMenuItems = menuItems.filter((item) =>
     item.roles.includes(userType)
   );
 
-  // Render nội dung dựa trên menu đã chọn
   const renderContent = () => {
     switch (selectedKey) {
       case "1":
         return <AllAccountList />;
-      case "2":
-        return <CustomerAllKoiPondList />;
       case "3":
+        return <CustomerAllKoiPondList />;
+      case "2":
         return <StaffList />;
       case "4":
         return <ManageKoiAdmin />;
       case "5":
         return <AllCustomers />;
+      case "6":
+        return <PendingAccount />;
       default:
-        return <CustomerList />;
+        return <AllAccountList />;
     }
   };
 
   return (
     <Layout>
       <Sider
-        style={{
-          backgroundColor: "white",
-        }}
+        style={{ backgroundColor: "white" }}
         trigger={null}
         collapsible
         collapsed={collapsed}
       >
         <div className="demo-logo-vertical" />
-        {menuVisible && ( // Chỉ hiện menu khi menuVisible là true
+        {menuVisible && (
           <Menu
             theme="light"
             mode="inline"
-            defaultSelectedKeys={["1"]}
             selectedKeys={[selectedKey]}
             onClick={(e) => setSelectedKey(e.key)}
-            items={filteredMenuItems} // Hiển thị menu đã lọc theo vai trò
+            items={filteredMenuItems}
           />
         )}
       </Sider>
@@ -119,11 +126,7 @@ const ManageHome = () => {
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={() => setCollapsed(!collapsed)}
-            style={{
-              fontSize: "16px",
-              width: "5%",
-              height: 64,
-            }}
+            style={{ fontSize: "16px", width: "5%", height: 64 }}
           >
             Nav
           </Button>
@@ -137,7 +140,7 @@ const ManageHome = () => {
             borderRadius: borderRadiusLG,
           }}
         >
-          {renderContent()} {/* Render component tương ứng với mục đã chọn */}
+          {renderContent()}
         </Content>
       </Layout>
     </Layout>

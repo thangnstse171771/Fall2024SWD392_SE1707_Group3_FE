@@ -18,8 +18,8 @@ export default function AllAccountList() {
   const [customers, setCustomers] = useState([]);
   const [selectedCustomerId, setSelectedCustomerId] = useState(null);
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
-  const [isRequestAccountModalVisible, setIsRequestAccountModalVisible] =
-    useState(false);
+  // const [isRequestAccountModalVisible, setIsRequestAccountModalVisible] =
+  //   useState(false);
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
@@ -72,28 +72,28 @@ export default function AllAccountList() {
   };
 
   // Show request account modal
-  const showRequestAccountModal = () => {
-    setIsRequestAccountModalVisible(true);
-  };
+  // const showRequestAccountModal = () => {
+  //   setIsRequestAccountModalVisible(true);
+  // };
 
   // Handle account request submission
-  const handleRequestAccountSubmit = async (values) => {
-    try {
-      const response = await api.post("/api/auth/staff-register", values); // Post to /api/auth/staff-register
-      message.success("Account request submitted successfully!");
-      setIsRequestAccountModalVisible(false);
-      form.resetFields();
-      fetchCustomers(); // Refresh customer list after submission
-    } catch (error) {
-      console.error("Error submitting account request:", error);
-      message.error("Failed to submit account request. Please try again.");
-    }
-  };
+  // const handleRequestAccountSubmit = async (values) => {
+  //   try {
+  //     const response = await api.post("/api/auth/staff-register", values); // Post to /api/auth/staff-register
+  //     message.success("Account request submitted successfully!");
+  //     setIsRequestAccountModalVisible(false);
+  //     form.resetFields();
+  //     fetchCustomers(); // Refresh customer list after submission
+  //   } catch (error) {
+  //     console.error("Error submitting account request:", error);
+  //     message.error("Failed to submit account request. Please try again.");
+  //   }
+  // };
 
   return (
     <div>
       {/* Request Account Button */}
-      <Button
+      {/* <Button
         onClick={showRequestAccountModal}
         type="primary"
         style={{
@@ -103,7 +103,7 @@ export default function AllAccountList() {
         }}
       >
         Request Account
-      </Button>
+      </Button> */}
 
       {/* Table to display all accounts */}
       <TableContainer component={Paper}>
@@ -218,7 +218,7 @@ export default function AllAccountList() {
       )}
 
       {/* Request Account Modal */}
-      <Modal
+      {/* <Modal
         title="Request Account"
         visible={isRequestAccountModalVisible}
         onCancel={() => setIsRequestAccountModalVisible(false)}
@@ -266,7 +266,7 @@ export default function AllAccountList() {
             </Button>
           </Form.Item>
         </Form>
-      </Modal>
+      </Modal> */}
     </div>
   );
 }
