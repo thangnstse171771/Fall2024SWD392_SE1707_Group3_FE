@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from "react"; 
-import { useParams, useNavigate } from "react-router-dom"; 
-import { Card, Button, Col, Row, Spin } from "antd"; 
-import { toast } from "react-toastify"; 
-import api from "../../config/axios"; 
-import KoiInformation from "./KoiInformation/KoiInformation"; 
-import KoiHealth from "./KoiHealth/KoiHealth"; 
-import KoiRecord from "./KoiRecord/KoiRecord"; 
+import React, { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Card, Button, Col, Row, Spin, Divider } from "antd";
+import { toast } from "react-toastify";
+import api from "../../config/axios";
+import KoiInformation from "./KoiInformation/KoiInformation";
+import KoiHealth from "./KoiHealth/KoiHealth";
+import KoiRecord from "./KoiRecord/KoiRecord";
 import "./MyKoiProfile.scss";
 
-const MyKoiProfile = () => { 
-  const { id } = useParams(); 
-  const navigate = useNavigate(); 
-  const [koi, setKoi] = useState(null); 
+const MyKoiProfile = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [koi, setKoi] = useState(null);
   const [ponds, setPonds] = useState([]);
 
-  useEffect(() => { 
-    const fetchKoiData = async () => { 
+  useEffect(() => {
+    const fetchKoiData = async () => {
       const token = sessionStorage.getItem("token");
 
       try {
@@ -26,7 +26,7 @@ const MyKoiProfile = () => {
         });
 
         if (response.data.success) {
-          setKoi(response.data.data); // Assuming the API returns koi data in "data"
+          setKoi(response.data.data);
         } else {
           toast.error("Koi not found.");
         }
@@ -36,27 +36,27 @@ const MyKoiProfile = () => {
       }
     };
 
-    const fetchPondData = async () => { 
+    const fetchPondData = async () => {
       const token = sessionStorage.getItem("token");
 
-      try { 
-        const response = await api.get("/api/pond/getAllPonds", { 
-          headers: { 
-            Authorization: `Bearer ${token}`, 
-          }, 
+      try {
+        const response = await api.get("/api/pond/getAllPonds", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         });
 
-        if (response.data.success) { 
-          setPonds(response.data.data); 
-        } 
-      } catch (error) { 
-        toast.error("Error fetching pond data."); 
-        console.error("Error fetching pond data:", error); 
-      } 
+        if (response.data.success) {
+          setPonds(response.data.data);
+        }
+      } catch (error) {
+        toast.error("Error fetching pond data.");
+        console.error("Error fetching pond data:", error);
+      }
     };
 
-    fetchKoiData(); 
-    fetchPondData(); 
+    fetchKoiData();
+    fetchPondData();
   }, [id]);
 
   const handleUpdateKoi = async (values) => {
@@ -97,14 +97,17 @@ const MyKoiProfile = () => {
   }
 
   return (
-    <div className="koi-profile-container">
-      <div className="koi-image-container">
-        <img src={koi.koiImage} alt={koi.koiName} className="koi-image" />
-      </div>
+    <div className="koi-profile-page">
       <div className="koi-profile-header">
+        <img
+          src={koi.koiImage}
+          alt={koi.koiName}
+          className="koi-profile-image"
+        />
         <h1>{koi.koiName}</h1>
       </div>
-      <Row gutter={16} justify="center">
+      <Divider style={{ borderColor: "#7cb305" }}>Koi Info</Divider>
+      <Row gutter={[16, 16]} justify="center">
         <Col xs={24} sm={12} md={8}>
           <Card className="koi-profile-card">
             <KoiInformation
