@@ -170,7 +170,7 @@ const MyKoi = () => {
                 <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=8" />
               }
               title={koi.koiName}
-              description={`Gender: ${koi.koiGender}, Breed ID: ${koi.koiBreed}, Origin: ${koi.koiOrigin}, Price: $${koi.price}`}
+              description={`Gender: ${koi.koiGender}, Breed ID: ${koi.koiBreed} Price: $${koi.price}`}
             />
           </Card>
         ))}

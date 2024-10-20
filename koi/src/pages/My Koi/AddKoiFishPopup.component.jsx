@@ -1,7 +1,7 @@
 import React from "react";
 import { Modal, Input, Form, Button, Select } from "antd";
 
-const { Option } = Select;
+const { Option, OptGroup } = Select;
 
 const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
   const [form] = Form.useForm();
@@ -12,7 +12,7 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
       koiImage: values.image,
       koiGender: values.gender,
       koiBreed: values.breed,
-      koiOrigin: parseFloat(values.origin),
+      koiOrigin: values.origin,
       price: parseFloat(values.price),
       currentPondId: parseInt(values.pondId),
     };
@@ -20,6 +20,61 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
     onSubmit(formattedValues);
     form.resetFields();
   };
+
+  const koiBreeds = [
+    {
+      category: "Gosanke",
+      breeds: [
+        { name: "Kohaku", description: "white koi with red pattern" },
+        { name: "Taisho Sanke", description: "white koi with red and black" },
+        {
+          name: "Showa Sanshoku",
+          description: "black koi with red and white patterns",
+        },
+      ],
+    },
+    {
+      category: "Utsuri",
+      breeds: [
+        { name: "Hi Utsuri", description: "black and red" },
+        { name: "Shiro Utsuri", description: "white" },
+        { name: "Ki Utsuri", description: "yellow" },
+        { name: "Utsurimono", description: "white and black dot" },
+      ],
+    },
+    {
+      category: "Tancho",
+      breeds: [{ name: "Tancho", description: "1 red dot on head (rare)" }],
+    },
+    {
+      category: "Asagi",
+      breeds: [
+        {
+          name: "Asagi",
+          description: "muted blue-grey and bright red markings",
+        },
+      ],
+    },
+    {
+      category: "Butterfly Koi",
+      breeds: [
+        {
+          name: "Butterfly Koi",
+          description: "symmetric both sides like a butterfly",
+        },
+      ],
+    },
+    {
+      category: "Ogon",
+      breeds: [
+        { name: "Platinum Ogon", description: "solid shiny silver-white" },
+        {
+          name: "Yamabuki Ogon",
+          description: "gold, yellow, or bronze shades",
+        },
+      ],
+    },
+  ];
 
   return (
     <Modal
@@ -58,10 +113,20 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
 
         <Form.Item
           name="breed"
-          label="Breed ID"
-          rules={[{ required: true, message: "Please input the breed ID!" }]}
+          label="Breed"
+          rules={[{ required: true, message: "Please select the breed!" }]}
         >
-          <Input type="number" />
+          <Select placeholder="Select breed">
+            {koiBreeds.map((category) => (
+              <OptGroup label={category.category} key={category.category}>
+                {category.breeds.map((breed) => (
+                  <Option value={breed.name} key={breed.name}>
+                    {breed.name} - {breed.description}
+                  </Option>
+                ))}
+              </OptGroup>
+            ))}
+          </Select>
         </Form.Item>
 
         <Form.Item
@@ -69,7 +134,7 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
           label="Origin"
           rules={[{ required: true, message: "Please input the origin!" }]}
         >
-          <Input type="number" />
+          <Input />
         </Form.Item>
 
         <Form.Item
