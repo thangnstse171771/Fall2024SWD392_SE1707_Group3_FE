@@ -1,0 +1,31 @@
+.pond-fish-list-container {
+  padding: 20px;
+
+  .koi-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 16px;
+  }
+  .koi-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+    border-radius: 8px;
+    overflow: hidden;
+    height: 350px;
+
+    .koi-card-image {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+    }
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    }
+  }
+  .pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+}

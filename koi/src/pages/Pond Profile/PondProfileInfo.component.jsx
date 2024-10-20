@@ -17,6 +17,7 @@ const PondProfileInfo = () => {
     pondDrains: "",
     pondAeroCapacity: "",
     pondCapacityOfKoiFish: "",
+    pondCapacity: "",
   });
 
   const [loading, setLoading] = useState(true); // For loading state
@@ -41,6 +42,7 @@ const PondProfileInfo = () => {
         pondDrains: pondData.pondDrains,
         pondAeroCapacity: pondData.pondAeroCapacity,
         pondCapacityOfKoiFish: pondData.pondCapacityOfKoiFish,
+        pondCapacity: pondData.pondCapacity,
       });
     } catch (err) {
       setError(err.response?.data?.message || "Failed to load pond data.");
@@ -103,7 +105,7 @@ const PondProfileInfo = () => {
     <div className="pond-profile-info">
       {error ? (
         <div>
-          <h3>Error: {error}</h3>
+          <h3>{error}</h3>
         </div>
       ) : (
         <>
@@ -196,6 +198,10 @@ const PondProfileInfo = () => {
                   onChange={handleInputChange}
                   placeholder="Pond Koi Fish Capacity"
                 />
+              </div>
+              <div className="fish-count-text">
+                <label>Fish count in pond:</label>
+                <p className="fish-count">{profile.pondCapacity.currentCount}/{profile.pondCapacity.maxCapacity}</p>{" "}
               </div>
               <div className="submit-pond-edit-button">
                 <button type="submit">Save Changes</button>
