@@ -68,9 +68,30 @@ export default function StaffList() {
     }
   };
 
+  // Updated handleRequestAccountSubmit to use /api/auth/staff-register
+  // const handleRequestAccountSubmit = async (values) => {
+  //   try {
+  //     await api.post("/api/auth/staff-register", values); // Updated API endpoint
+  //     message.success("Account request submitted successfully!");
+  //     setIsRequestAccountModalVisible(false);
+  //     form.resetFields();
+  //     fetchStaffs(); // Refresh the staff list
+  //   } catch (error) {
+  //     console.error("Error submitting account request:", error);
+  //     message.error("Failed to submit account request. Please try again.");
+  //   }
+  // };
   const handleRequestAccountSubmit = async (values) => {
+    // Map form values to the correct field names expected by the API
+    const payload = {
+      username: values.username,
+      email: values.email,
+      userAddress: values.address, // The API expects "userAddress"
+      userPhoneNumber: values.phone, // The API expects "userPhoneNumber"
+    };
+
     try {
-      await api.post("/api/user/create", values);
+      await api.post("/api/auth/staff-register", payload); // Send mapped payload
       message.success("Account request submitted successfully!");
       setIsRequestAccountModalVisible(false);
       form.resetFields();
@@ -205,6 +226,7 @@ export default function StaffList() {
         />
       )}
 
+      {/* Modal for requesting account */}
       <Modal
         title="Request Account"
         visible={isRequestAccountModalVisible}
@@ -219,34 +241,34 @@ export default function StaffList() {
           <Form.Item
             name="username"
             label="Username"
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: "Please enter a username" }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="email"
             label="Email"
-            rules={[{ required: true, type: "email" }]}
+            rules={[
+              {
+                required: true,
+                type: "email",
+                message: "Please enter an email",
+              },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            name="userType"
-            label="User Type"
-            rules={[{ required: true }]}
+            name="phone"
+            label="Phone"
+            rules={[{ required: true, message: "Please enter a phone number" }]}
           >
-            <Select>
-              <Select.Option value="staff">Staff</Select.Option>
-              <Select.Option value="admin">Admin</Select.Option>
-            </Select>
-          </Form.Item>
-          <Form.Item name="phone" label="Phone" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
           <Form.Item
             name="address"
             label="Address"
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: "Please enter an address" }]}
           >
             <Input />
           </Form.Item>
