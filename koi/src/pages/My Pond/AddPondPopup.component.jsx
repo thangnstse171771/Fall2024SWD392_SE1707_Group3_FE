@@ -207,14 +207,20 @@ const AddPondPopup = ({
               message: "Please input the pond capacity of koi fish!",
             },
             {
-              validator: (_, value) => {
-                const pondVolume = form.getFieldValue('pondVolume');
-
-                if (value > pondVolume) {
+              validator: async (_, value) => {
+                const pondVolume = form.getFieldValue("pondVolume");
+        
+                // Ensure we parse the values to numbers for proper comparison
+                const parsedValue = parseFloat(value);
+                const parsedVolume = parseFloat(pondVolume);
+        
+                if (isNaN(parsedValue) || isNaN(parsedVolume)) {
+                  return Promise.reject(new Error("Invalid input values."));
+                }
+        
+                if (parsedValue > parsedVolume) {
                   return Promise.reject(
-                    new Error(
-                      "Fish capacity can't exceed pond volume!"
-                    )
+                    new Error("Fish capacity can't exceed pond volume!")
                   );
                 }
                 return Promise.resolve();

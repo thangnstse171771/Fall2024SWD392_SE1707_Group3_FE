@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Form, Input, Button, message } from "antd";
+import { Form, Input, Button } from "antd";
 import api from "../../config/axios";
 import "./PondProfile.scss";
 import { toast } from "react-toastify";
@@ -254,9 +254,18 @@ const PondProfileInfo = () => {
                     message: "Please input the pond capacity of koi fish!",
                   },
                   {
-                    validator: (_, value) => {
+                    validator: async (_, value) => {
                       const pondVolume = form.getFieldValue("pondVolume");
-                      if (value > pondVolume) {
+              
+                      // Ensure we parse the values to numbers for proper comparison
+                      const parsedValue = parseFloat(value);
+                      const parsedVolume = parseFloat(pondVolume);
+              
+                      if (isNaN(parsedValue) || isNaN(parsedVolume)) {
+                        return Promise.reject(new Error("Invalid input values."));
+                      }
+              
+                      if (parsedValue > parsedVolume) {
                         return Promise.reject(
                           new Error("Fish capacity can't exceed pond volume!")
                         );
