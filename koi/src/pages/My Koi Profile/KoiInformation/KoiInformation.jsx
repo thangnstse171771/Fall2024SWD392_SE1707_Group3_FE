@@ -1,18 +1,72 @@
 import React, { useState } from "react";
 import { Card, Button, Modal, Form, Input, Select } from "antd";
-import { useLocation } from "react-router-dom"; // Import useLocation
+import { useLocation } from "react-router-dom";
 
-const { Option } = Select;
+const { Option, OptGroup } = Select;
 
 const KoiInformation = ({ koi, onUpdate, ponds }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [form] = Form.useForm();
   const location = useLocation();
-  const viewOnly = location.state?.viewOnly || false; // Check if viewOnly mode
+  const viewOnly = location.state?.viewOnly || false;
+
+  const koiBreeds = [
+    {
+      category: "Gosanke",
+      breeds: [
+        { name: "Kohaku", description: "white koi with red pattern" },
+        { name: "Taisho Sanke", description: "white koi with red and black" },
+        {
+          name: "Showa Sanshoku",
+          description: "black koi with red and white patterns",
+        },
+      ],
+    },
+    {
+      category: "Utsuri",
+      breeds: [
+        { name: "Hi Utsuri", description: "black and red" },
+        { name: "Shiro Utsuri", description: "white" },
+        { name: "Ki Utsuri", description: "yellow" },
+        { name: "Utsurimono", description: "white and black dot" },
+      ],
+    },
+    {
+      category: "Tancho",
+      breeds: [{ name: "Tancho", description: "1 red dot on head (rare)" }],
+    },
+    {
+      category: "Asagi",
+      breeds: [
+        {
+          name: "Asagi",
+          description: "muted blue-grey and bright red markings",
+        },
+      ],
+    },
+    {
+      category: "Butterfly Koi",
+      breeds: [
+        {
+          name: "Butterfly Koi",
+          description: "symmetric both sides like a butterfly",
+        },
+      ],
+    },
+    {
+      category: "Ogon",
+      breeds: [
+        { name: "Platinum Ogon", description: "solid shiny silver-white" },
+        {
+          name: "Yamabuki Ogon",
+          description: "gold, yellow, or bronze shades",
+        },
+      ],
+    },
+  ];
 
   const handleEdit = () => {
     if (!viewOnly) {
-      // Only allow edit if not in viewOnly mode
       form.setFieldsValue({
         name: koi.koiName,
         image: koi.koiImage,
@@ -31,8 +85,8 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
       koiName: values.name,
       koiImage: values.image,
       koiGender: values.gender,
-      koiBreed: parseInt(values.breed),
-      koiOrigin: parseFloat(values.origin),
+      koiBreed: values.breed,
+      koiOrigin: values.origin,
       price: parseFloat(values.price),
       currentPondId: parseInt(values.pondId),
     };
@@ -51,7 +105,7 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
           <strong>Gender:</strong> {koi.koiGender}
         </p>
         <p>
-          <strong>Breed ID:</strong> {koi.koiBreed}
+          <strong>Breed:</strong> {koi.koiBreed}
         </p>
         <p>
           <strong>Origin:</strong> {koi.koiOrigin || "N/A"}
@@ -63,7 +117,6 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
           <strong>Price:</strong> ${koi.price || "N/A"}
         </p>
 
-        {/* Disable the Edit button in viewOnly mode */}
         {!viewOnly && (
           <Button type="primary" onClick={handleEdit} style={{ width: "100%" }}>
             Edit
@@ -73,7 +126,7 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
 
       <Modal
         title="Edit Koi Information"
-        visible={isEditing && !viewOnly} // Ensure modal doesn't open in viewOnly mode
+        visible={isEditing && !viewOnly}
         onCancel={() => setIsEditing(false)}
         footer={null}
       >
@@ -107,10 +160,20 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
 
           <Form.Item
             name="breed"
-            label="Breed ID"
-            rules={[{ required: true, message: "Please input the breed ID!" }]}
+            label="Breed"
+            rules={[{ required: true, message: "Please select the breed!" }]}
           >
-            <Input type="number" />
+            <Select placeholder="Select breed">
+              {koiBreeds.map((category) => (
+                <OptGroup label={category.category} key={category.category}>
+                  {category.breeds.map((breed) => (
+                    <Option value={breed.name} key={breed.name}>
+                      {breed.name} - {breed.description}
+                    </Option>
+                  ))}
+                </OptGroup>
+              ))}
+            </Select>
           </Form.Item>
 
           <Form.Item
@@ -118,7 +181,7 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
             label="Origin"
             rules={[{ required: true, message: "Please input the origin!" }]}
           >
-            <Input type="number" />
+            <Input />
           </Form.Item>
 
           <Form.Item
