@@ -118,7 +118,7 @@ function MyPond() {
 
   const handleDelete = async (pondId) => {
     try {
-      await api.delete(`/api/pond/deletePondByOwner/${pondId}`, {
+      await api.put(`/api/pond/deletePondByOwner/${pondId}`, {}, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -175,26 +175,28 @@ function MyPond() {
           </thead>
           <tbody className="pond-table-body">
             {pondList.length > 0 ? (
-              pondList.map((pond) => (
-                <tr key={pond.pondId}>
-                  <td>{pond.pondName}</td>
-                  <td className="lake-action-buttons">
-                    <Link to={`/pond-profile/${pond.pondId}`}>
+              pondList
+                .filter((pond) => pond.status === "active")
+                .map((pond) => (
+                  <tr key={pond.pondId}>
+                    <td>{pond.pondName}</td>
+                    <td className="lake-action-buttons">
+                      <Link to={`/pond-profile/${pond.pondId}`}>
+                        <Button
+                          size="large"
+                          className="edit-lake-button"
+                          icon={<EditOutlined />}
+                        />
+                      </Link>
                       <Button
                         size="large"
-                        className="edit-lake-button"
-                        icon={<EditOutlined />}
+                        className="delete-lake-button"
+                        icon={<DeleteOutlined />}
+                        onClick={() => handleDeleteConfirmation(pond.pondId)}
                       />
-                    </Link>
-                    <Button
-                      size="large"
-                      className="delete-lake-button"
-                      icon={<DeleteOutlined />}
-                      onClick={() => handleDeleteConfirmation(pond.pondId)}
-                    />
-                  </td>
-                </tr>
-              ))
+                    </td>
+                  </tr>
+                ))
             ) : (
               <tr>
                 <td colSpan="2">No ponds found</td>
