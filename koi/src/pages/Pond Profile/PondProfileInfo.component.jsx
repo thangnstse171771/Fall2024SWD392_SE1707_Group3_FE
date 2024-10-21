@@ -47,7 +47,7 @@ const PondProfileInfo = () => {
           pondDepth: parseFloat(values.pondDepth),
           pondVolume: parseFloat(values.pondVolume),
           pondDrains: parseInt(values.pondDrains),
-          pondAeroCapacity: parseInt(values.pondAeroCapacity),
+          pondAeroCapacity: parseFloat(values.pondAeroCapacity),
           pondCapacityOfKoiFish: parseInt(values.pondCapacityOfKoiFish),
         },
         {
