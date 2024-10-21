@@ -8,32 +8,34 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
-import { Button, message, Modal, Form, Input } from "antd";
-import { useNavigate } from "react-router-dom";
+import { Button, message, Modal, Spin } from "antd";
 import api from "../../config/axios";
-import DeleteUser from "./DeleteUser";
 import ViewAccountModal from "./ViewAccountModal";
 
 export default function PendingAccount() {
-  const [customers, setCustomers] = useState([]); // Ensure customers is an array by default
+  const [customers, setCustomers] = useState([]);
   const [selectedCustomerId, setSelectedCustomerId] = useState(null);
   const [isViewModalVisible, setIsViewModalVisible] = useState(false);
-  const [form] = Form.useForm();
-  const navigate = useNavigate();
+  const [isReviewModalVisible, setIsReviewModalVisible] = useState(false);
+  const [selectedCustomerDetails, setSelectedCustomerDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [loadingApprove, setLoadingApprove] = useState(false); // State for approve loading
+  const [loadingReject, setLoadingReject] = useState(false); // State for reject loading
+  const [error, setError] = useState(null);
 
-  // Fetch customer data from API
   const fetchCustomers = async () => {
     try {
+      setLoading(true);
       const response = await api.get("/api/auth/pending-staff", {
         headers: { accept: "application/json" },
       });
-      console.log("API Response:", response.data); // Log API response to inspect
-
-      // Access the correct 'data' array from the response
+      console.log("API Response:", response.data);
       setCustomers(Array.isArray(response.data.data) ? response.data.data : []);
     } catch (error) {
       console.error("Error fetching customers:", error);
       message.error("Failed to fetch customers. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -41,10 +43,31 @@ export default function PendingAccount() {
     fetchCustomers();
   }, []);
 
-  // Handle viewing a customer account
   const handleViewClick = (id) => {
     setSelectedCustomerId(id);
     setIsViewModalVisible(true);
+  };
+  const titleStyle = {
+    fontSize: "24px", // Tăng kích thước chữ
+    color: "rgb(0, 102, 204)", // Màu xanh nước biển
+    fontWeight: "bold",
+    textAlign: "center",
+  };
+
+  const infoRowStyle = {
+    display: "flex",
+    justifyContent: "space-between",
+    borderBottom: "1px solid #ddd",
+    padding: "8px 0",
+  };
+
+  const labelStyle = {
+    color: "rgb(180, 0, 0)",
+    fontWeight: "bold",
+  };
+
+  const valueStyle = {
+    color: "#333",
   };
 
   const handleViewModalClose = () => {
@@ -52,28 +75,77 @@ export default function PendingAccount() {
     setSelectedCustomerId(null);
   };
 
-  // Handle deleting a customer account
-  const handleDeleteCustomer = async (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this customer?"
-    );
-    if (!confirmDelete) return;
+  const handleReviewClick = (customer) => {
+    setSelectedCustomerDetails(customer);
+    setIsReviewModalVisible(true);
+  };
 
+  const handleReviewModalClose = () => {
+    setIsReviewModalVisible(false);
+    setSelectedCustomerDetails(null);
+  };
+
+  const viewButtonStyle = {
+    color: "rgb(180, 0, 0)",
+    marginRight: "8px",
+  };
+
+  const reviewButtonStyle = {
+    color: "rgb(0, 180, 0)",
+  };
+
+  const handleApprove = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to approve this account?"
+    );
+    if (!confirmed) return; // Nếu người dùng không xác nhận, thoát khỏi hàm
+
+    setLoadingApprove(true); // Start loading for approve
     try {
-      await api.delete(`/api/user/delete/${id}`, {
-        headers: { accept: "application/json" },
-      });
-      setCustomers(customers.filter((customer) => customer.userId !== id));
-      message.success("Customer deleted successfully!");
+      const response = await api.put(
+        `/api/auth/approve-staff/${selectedCustomerDetails.userId}`
+      );
+      message.success("Account has been approved successfully!"); // Hiển thị thông báo thành công
+      fetchCustomers(); // Cập nhật danh sách khách hàng
+      handleReviewModalClose(); // Đóng modal review
     } catch (error) {
-      console.error("Error deleting customer:", error);
-      message.error("Failed to delete customer. Please try again.");
+      console.error("Error approving account:", error);
+      message.error("Failed to approve account. Please try again.");
+    } finally {
+      setLoadingApprove(false); // Stop loading for approve
+    }
+  };
+
+  const handleReject = async () => {
+    const confirmed = window.confirm(
+      "Are you sure you want to reject this account?"
+    );
+    if (!confirmed) return; // Nếu người dùng không xác nhận, thoát khỏi hàm
+
+    setLoadingReject(true); // Start loading for reject
+    try {
+      const response = await api.put(
+        `/api/auth/reject-staff/${selectedCustomerDetails.userId}`
+      );
+      message.success("Account has been rejected successfully!"); // Hiển thị thông báo thành công
+      fetchCustomers(); // Cập nhật danh sách khách hàng
+      handleReviewModalClose(); // Đóng modal review
+    } catch (error) {
+      console.error("Error rejecting account:", error);
+      message.error("Failed to reject account. Please try again.");
+    } finally {
+      setLoadingReject(false); // Stop loading for reject
     }
   };
 
   return (
     <div>
-      {/* Table to display all accounts */}
+      {loading && (
+        <div style={{ textAlign: "center", padding: "20px" }}>
+          <Spin size="large" />
+        </div>
+      )}
+
       <TableContainer component={Paper}>
         <Table style={{ minWidth: 650 }} aria-label="simple table">
           <TableHead>
@@ -131,7 +203,7 @@ export default function PendingAccount() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {Array.isArray(customers) && customers.length > 0 ? (
+            {customers.length > 0 ? (
               customers.map((customer) => (
                 <TableRow key={customer.userId}>
                   <TableCell style={{ width: "5%" }} align="center">
@@ -140,26 +212,25 @@ export default function PendingAccount() {
                   <TableCell style={{ width: "20%" }} align="left">
                     {customer.username}
                   </TableCell>
-                  {/* <TableCell style={{ width: "20%" }} align="left">
-                    {customer.userPhoneNumber}
-                  </TableCell> */}
                   <TableCell style={{ width: "25%" }} align="left">
                     {customer.email}
                   </TableCell>
                   <TableCell style={{ width: "20%" }} align="left">
                     {customer.userStatus}
                   </TableCell>
-                  <TableCell style={{ width: "10%" }} align="center">
+                  <TableCell align="center" style={{ display: "flex" }}>
                     <Button
-                      style={{ color: "rgb(180,0,0)", marginRight: "8px" }}
+                      style={viewButtonStyle}
                       onClick={() => handleViewClick(customer.userId)}
                     >
                       View
                     </Button>
-                    {/* <DeleteUser
-                      customerId={customer.userId}
-                      onDelete={handleDeleteCustomer}
-                    /> */}
+                    <Button
+                      style={reviewButtonStyle}
+                      onClick={() => handleReviewClick(customer)}
+                    >
+                      Review
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))
@@ -174,13 +245,75 @@ export default function PendingAccount() {
         </Table>
       </TableContainer>
 
-      {/* View Account Modal */}
       {selectedCustomerId && (
         <ViewAccountModal
           userId={selectedCustomerId}
           visible={isViewModalVisible}
           onClose={handleViewModalClose}
         />
+      )}
+
+      {selectedCustomerDetails && (
+        <Modal
+          title={`Review Account - ${selectedCustomerDetails.username}`}
+          visible={isReviewModalVisible}
+          onCancel={handleReviewModalClose}
+          footer={[
+            <Button
+              style={{ backgroundColor: "red", color: "white" }}
+              key="reject"
+              type="danger"
+              loading={loadingReject}
+              onClick={handleReject}
+            >
+              Reject
+            </Button>,
+            <Button
+              style={{ backgroundColor: "green" }}
+              key="approve"
+              type="primary"
+              loading={loadingApprove}
+              onClick={handleApprove}
+            >
+              Approve
+            </Button>,
+          ]}
+        >
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+            }}
+          >
+            <div style={infoRowStyle}>
+              <span style={labelStyle}>
+                <strong>ID:</strong>
+              </span>
+              <span style={valueStyle}>{selectedCustomerDetails.userId}</span>
+            </div>
+            <div style={infoRowStyle}>
+              <span style={labelStyle}>
+                <strong>Name:</strong>
+              </span>
+              <span style={valueStyle}>{selectedCustomerDetails.username}</span>
+            </div>
+            <div style={infoRowStyle}>
+              <span style={labelStyle}>
+                <strong>Email:</strong>
+              </span>
+              <span style={valueStyle}>{selectedCustomerDetails.email}</span>
+            </div>
+            <div style={infoRowStyle}>
+              <span style={labelStyle}>
+                <strong>Status:</strong>
+              </span>
+              <span style={valueStyle}>
+                {selectedCustomerDetails.userStatus}
+              </span>
+            </div>
+          </div>
+        </Modal>
       )}
     </div>
   );
