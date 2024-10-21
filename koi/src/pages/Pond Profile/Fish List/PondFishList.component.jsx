@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import api from "../../config/axios";
+import api from "../../../config/axios";
 import { Modal, Avatar, Card, Pagination, Input, Button } from "antd";
 import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./PondFishList.scss";
+import AddFishInProfile from "./AddFishInProfile.component";
 
 const { Meta } = Card;
 
@@ -13,13 +14,13 @@ const PondFishList = () => {
   const { id: currentPondId } = useParams();
   const [searchTerm, setSearchTerm] = useState("");
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
   const [koiList, setKoiList] = useState([]);
   const navigate = useNavigate();
 
   const fetchKoiList = async () => {
-    const token = sessionStorage.getItem("token");
     try {
       const response = await api.get("/api/koi/getAllKoiByUser", {
         headers: { Authorization: `Bearer ${token}` },
@@ -27,6 +28,37 @@ const PondFishList = () => {
       setKoiList(response.data.data);
     } catch (error) {
       console.error("Error fetching Koi data:", error);
+    }
+  };
+
+  const showPopup = () => {
+    setOpen(true);
+  };
+
+  const handleSubmit = async (values) => {
+    setLoading(true);
+
+    try {
+      await api.post(
+        "/api/koi/addKoi",
+        {
+          ...values,
+          currentPondId: Number(currentPondId), // Include the current pond ID
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      fetchKoiList(); // Refresh the list after adding
+      toast.success("Koi fish added successfully!");
+      setOpen(false); // Close the modal
+    } catch (error) {
+      console.error("Error adding Koi fish:", error);
+      toast.error("Failed to add Koi fish.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -83,7 +115,13 @@ const PondFishList = () => {
           size="large"
           className="add-fish-button"
           icon={<PlusOutlined />}
-          // onClick={showPopup}
+          onClick={showPopup}
+        />
+         <AddFishInProfile
+          open={open}
+          onSubmit={handleSubmit}
+          onCancel={() => setOpen(false)} // Close the modal
+          loading={loading}
         />
       </div>
       <div className="pond-fish-list-container">
