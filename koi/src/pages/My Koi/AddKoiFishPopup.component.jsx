@@ -1,6 +1,6 @@
 import React from "react";
 import { Modal, Input, Form, Button, Select } from "antd";
-import CountrySelect from 'react-select-country-list';
+import CountrySelect from "react-select-country-list";
 
 const { Option, OptGroup } = Select;
 
@@ -157,11 +157,13 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
           rules={[{ required: true, message: "Please select a pond!" }]}
         >
           <Select placeholder="Select a pond">
-            {ponds.map((pond) => (
-              <Option key={pond.pondId} value={pond.pondId}>
-                {pond.pondName}
-              </Option>
-            ))}
+            {ponds
+              .filter((pond) => pond.status === "active")
+              .map((pond) => (
+                <Option key={pond.pondId} value={pond.pondId}>
+                  {pond.pondName}
+                </Option>
+              ))}
           </Select>
         </Form.Item>
 

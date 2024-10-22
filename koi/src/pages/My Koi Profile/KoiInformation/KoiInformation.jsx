@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Card, Button, Modal, Form, Input, Select } from "antd";
 import { useLocation } from "react-router-dom";
-import CountrySelect from 'react-select-country-list';
+import CountrySelect from "react-select-country-list";
 
 const { Option, OptGroup } = Select;
 
@@ -178,11 +178,13 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
             rules={[{ required: true, message: "Please input the origin!" }]}
           >
             <Select placeholder="Select country">
-              {CountrySelect().getData().map((country) => (
-                <Option key={country.value} value={country.value}>
-                  {country.label}
-                </Option>
-              ))}
+              {CountrySelect()
+                .getData()
+                .map((country) => (
+                  <Option key={country.value} value={country.value}>
+                    {country.label}
+                  </Option>
+                ))}
             </Select>
           </Form.Item>
 
@@ -192,11 +194,13 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
             rules={[{ required: true, message: "Please select a pond!" }]}
           >
             <Select placeholder="Select a pond">
-              {ponds.map((pond) => (
-                <Option key={pond.pondId} value={pond.pondId}>
-                  {pond.pondName}
-                </Option>
-              ))}
+              {ponds
+                .filter((pond) => pond.status === "active")
+                .map((pond) => (
+                  <Option key={pond.pondId} value={pond.pondId}>
+                    {pond.pondName}
+                  </Option>
+                ))}
             </Select>
           </Form.Item>
 
