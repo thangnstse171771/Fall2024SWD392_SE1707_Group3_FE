@@ -69,7 +69,7 @@ const ManageHome = () => {
     {
       key: "6",
       label: "Pending Account",
-      roles: ["Admin"],
+      roles: ["Admin", "Manager"],
     },
   ];
 
