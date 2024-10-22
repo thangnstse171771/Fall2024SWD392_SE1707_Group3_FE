@@ -97,10 +97,11 @@ const WaterParameterProfile = () => {
           },
         }
       );
-      setOpen(false); // Close modal after successful submission
+      setOpen(false);
       toast.success("Parameter Created Successfully!");
-      fetchWaterParameterById(); // Refresh water parameters
+      fetchWaterParameterById();
     } catch (error) {
+      toast.error("Failed to add parameter!");
       console.error("Error creating water parameter:", error);
       setError("Failed to create water parameter.");
     } finally {
@@ -118,6 +119,7 @@ const WaterParameterProfile = () => {
       fetchWaterParameterById();
       toast.success("Parameter Deleted Successfully!");
     } catch (error) {
+      toast.error("Failed to delete parameter!")
       console.error("Error deleting parameter:", error);
     }
   };

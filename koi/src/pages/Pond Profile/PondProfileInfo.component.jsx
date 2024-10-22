@@ -5,7 +5,7 @@ import api from "../../config/axios";
 import "./PondProfile.scss";
 import { toast } from "react-toastify";
 
-const PondProfileInfo = () => {
+const PondProfileInfo = ({ refresh }) => {
   const { id } = useParams();
 
   const [form] = Form.useForm(); // Create form instance
@@ -75,7 +75,7 @@ const PondProfileInfo = () => {
   // Fetch pond details when the component mounts
   useEffect(() => {
     fetchPondDetails();
-  }, []);
+  }, [refresh]);
 
   return (
     <div className="pond-profile-info">
