@@ -1,0 +1,42 @@
+.recommend-list-page {
+  min-height: 100vh;
+  height: auto;
+
+  .recommend-list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 25px;
+  }
+
+  .recommend-list-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .recommend-list-body ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .recommend-list-body li {
+    background-color: #fff;
+    padding: 20px;
+    margin: 10px 0;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .recommend-list-body li h2 {
+    margin: 0 0 10px;
+    font-size: 1.5rem;
+  }
+
+  .recommend-list-body li p {
+    margin: 5px 0;
+    font-size: 1rem;
+  }
+}

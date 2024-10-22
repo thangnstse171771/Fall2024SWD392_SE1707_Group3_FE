@@ -14,6 +14,7 @@ import PondProfile from "../pages/Pond Profile/PondProfile.component";
 import ManageHome from "../pages/ManageAccount/ManageHome";
 import MyKoiProfile from "../pages/My Koi Profile/MyKoiProfile.component";
 import ProtectedRoute from "./ProtectedRoute"; // Import ProtectedRoute
+import RecommendationsList from "../pages/Recommendations/RecommendationsList.component";
 
 export const router = createBrowserRouter([
   {
@@ -95,6 +96,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={["Admin", "Manager", "staff"]}>
             <ManageHome />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/manage-koi/recommendations",
+        element: (
+          <ProtectedRoute allowedRoles={["Customer", "Manager", "staff"]}>
+            <RecommendationsList />
           </ProtectedRoute>
         ),
       },
