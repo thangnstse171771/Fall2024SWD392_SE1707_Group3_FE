@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Card, Button, Modal, Form, Input, Select } from "antd";
 import { useLocation } from "react-router-dom";
+import CountrySelect from "react-select-country-list";
 
 const { Option, OptGroup } = Select;
 
@@ -73,7 +74,6 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
         gender: koi.koiGender,
         breed: koi.koiBreed,
         origin: koi.koiOrigin,
-        price: koi.price,
         pondId: koi.currentPondId,
       });
       setIsEditing(true);
@@ -87,7 +87,6 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
       koiGender: values.gender,
       koiBreed: values.breed,
       koiOrigin: values.origin,
-      price: parseFloat(values.price),
       currentPondId: parseInt(values.pondId),
     };
 
@@ -112,9 +111,6 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
         </p>
         <p>
           <strong>Current Pond ID:</strong> {koi.currentPondId}
-        </p>
-        <p>
-          <strong>Price:</strong> ${koi.price || "N/A"}
         </p>
 
         {!viewOnly && (
@@ -181,15 +177,15 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
             label="Origin"
             rules={[{ required: true, message: "Please input the origin!" }]}
           >
-            <Input />
-          </Form.Item>
-
-          <Form.Item
-            name="price"
-            label="Price"
-            rules={[{ required: true, message: "Please input the price!" }]}
-          >
-            <Input type="number" />
+            <Select placeholder="Select country">
+              {CountrySelect()
+                .getData()
+                .map((country) => (
+                  <Option key={country.value} value={country.value}>
+                    {country.label}
+                  </Option>
+                ))}
+            </Select>
           </Form.Item>
 
           <Form.Item
@@ -198,11 +194,13 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
             rules={[{ required: true, message: "Please select a pond!" }]}
           >
             <Select placeholder="Select a pond">
-              {ponds.map((pond) => (
-                <Option key={pond.pondId} value={pond.pondId}>
-                  {pond.pondName}
-                </Option>
-              ))}
+              {ponds
+                .filter((pond) => pond.status === "active")
+                .map((pond) => (
+                  <Option key={pond.pondId} value={pond.pondId}>
+                    {pond.pondName}
+                  </Option>
+                ))}
             </Select>
           </Form.Item>
 

@@ -1,25 +1,9 @@
-import React from "react";
-import { Modal, Input, Form, Button, Select } from "antd";
+import { Modal, Input, Button, Form, Select } from "antd";
 import CountrySelect from "react-select-country-list";
-
 const { Option, OptGroup } = Select;
 
-const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
+const AddFishInProfile = ({ open, onCancel, onSubmit, loading }) => {
   const [form] = Form.useForm();
-
-  const handleFinish = (values) => {
-    const formattedValues = {
-      koiName: values.name,
-      koiImage: values.image,
-      koiGender: values.gender,
-      koiBreed: values.breed,
-      koiOrigin: values.origin,
-      currentPondId: parseInt(values.pondId),
-    };
-
-    onSubmit(formattedValues);
-    form.resetFields();
-  };
 
   const koiBreeds = [
     {
@@ -79,38 +63,35 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
   const countries = CountrySelect().getData();
 
   return (
-    <Modal
-      title="Add Koi Fish"
-      visible={open}
-      onCancel={handleCancel}
-      footer={null}
-    >
-      <Form form={form} onFinish={handleFinish}>
+    <Modal title="Add New Fish" open={open} onCancel={onCancel} footer={null}>
+      <Form
+        form={form} // Bind the form instance
+        onFinish={(values) => {
+          onSubmit(values);
+          form.resetFields(); // Reset form after successful submit
+        }}
+        layout="vertical"
+        noValidate
+      >
         <Form.Item
-          name="name"
           label="Koi Name"
-          rules={[{ required: true, message: "Please input the koi name!" }]}
+          name="koiName"
+          rules={[{ required: true, message: "Please enter the Koi name!" }]}
         >
-          <Input />
+          <Input placeholder="Enter Koi name" />
         </Form.Item>
 
         <Form.Item
-          name="image"
-          label="Image URL"
-          rules={[
-            { required: true, message: "Please input the image URL!" },
-            {
-              type: "url",
-              message: "Please enter a valid URL!",
-            },
-          ]}
+          label="Koi Image URL"
+          name="koiImage"
+          rules={[{ required: true, message: "Please provide an image URL!" }]}
         >
-          <Input />
+          <Input placeholder="Enter Koi image URL" />
         </Form.Item>
 
         <Form.Item
-          name="gender"
           label="Gender"
+          name="koiGender"
           rules={[{ required: true, message: "Please select the gender!" }]}
         >
           <Select placeholder="Select gender">
@@ -120,7 +101,7 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
         </Form.Item>
 
         <Form.Item
-          name="breed"
+          name="koiBreed"
           label="Breed"
           rules={[{ required: true, message: "Please select the breed!" }]}
         >
@@ -138,38 +119,42 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
         </Form.Item>
 
         <Form.Item
-          name="origin"
-          label="Origin"
-          rules={[{ required: true, message: "Please select the origin!" }]}
+          label="Koi Origin (Country)"
+          name="koiOrigin"
+          rules={[
+            { required: true, message: "Please select the country of origin!" },
+          ]}
         >
-          <Select placeholder="Select country">
-            {countries.map((country) => (
-              <Option key={country.value} value={country.value}>
-                {country.label}
-              </Option>
-            ))}
-          </Select>
+          <Select
+            showSearch
+            placeholder="Select country"
+            options={countries.map((country) => ({
+              value: country.label,
+              label: country.label,
+            }))}
+          />
         </Form.Item>
 
         <Form.Item
-          name="pondId"
-          label="Current Pond"
-          rules={[{ required: true, message: "Please select a pond!" }]}
+          label="Price"
+          name="price"
+          rules={[{ required: true, message: "Please enter the price!" }]}
         >
-          <Select placeholder="Select a pond">
-            {ponds
-              .filter((pond) => pond.status === "active")
-              .map((pond) => (
-                <Option key={pond.pondId} value={pond.pondId}>
-                  {pond.pondName}
-                </Option>
-              ))}
-          </Select>
+          <Input type="number" placeholder="Enter price in USD" />
         </Form.Item>
 
         <Form.Item>
-          <Button type="primary" htmlType="submit">
-            Add Koi Fish
+          <Button type="primary" danger htmlType="submit" loading={loading}>
+            Submit
+          </Button>
+          <Button
+            onClick={() => {
+              form.resetFields(); // Reset form on cancel button click
+              onCancel();
+            }}
+            style={{ marginLeft: "8px" }}
+          >
+            Cancel
           </Button>
         </Form.Item>
       </Form>
@@ -177,4 +162,4 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
   );
 };
 
-export default AddKoiFishPopup;
+export default AddFishInProfile;

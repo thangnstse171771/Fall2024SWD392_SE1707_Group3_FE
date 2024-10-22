@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Profile.scss";
 import profileAvatar from "../../assets/profile_avatar.png";
 import KoiBackground from "../../assets/Koi_Profile_Background.jpg";
 
 const Profile = () => {
   const [userInfo, setUserInfo] = useState({
-    firstName: "Son Tung",
-    surname: "MTP",
-    email: "email@example.com",
-    phone: "+84 912345678",
+    firstName: "",
+    surname: "",
+    email: "",
+    phone: "",
     nationalCode: "",
     dateOfBirth: "",
     city: "",
@@ -17,6 +17,13 @@ const Profile = () => {
 
   const [isEditing, setIsEditing] = useState(false);
   const [activeSection, setActiveSection] = useState("editProfile");
+
+  useEffect(() => {
+    const storedUserInfo = localStorage.getItem("userInfo");
+    if (storedUserInfo) {
+      setUserInfo(JSON.parse(storedUserInfo));
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -58,12 +65,6 @@ const Profile = () => {
             </div>
           </div>
         );
-      case "notifications":
-        return <h3>Notifications Section</h3>;
-      case "choosePlan":
-        return <h3>Choose Plan Section</h3>;
-      case "passwordSecurity":
-        return <h3>Password & Security Section</h3>;
       default:
         return null;
     }
@@ -80,13 +81,6 @@ const Profile = () => {
           <ul>
             <li onClick={() => setActiveSection("editProfile")}>
               Edit Profile
-            </li>
-            <li onClick={() => setActiveSection("notifications")}>
-              Notifications
-            </li>
-            <li onClick={() => setActiveSection("choosePlan")}>Choose Plan</li>
-            <li onClick={() => setActiveSection("passwordSecurity")}>
-              Password & Security
             </li>
           </ul>
         </div>

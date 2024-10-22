@@ -14,36 +14,37 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
       const response = await api.post("/api/auth/login", {
         username,
         password,
       });
       console.log(response.data);
-
+  
       if (response.data.token) {
-        // Lưu token và usertype vào localStorage
         localStorage.setItem("token", response.data.token);
-        localStorage.setItem("usertype", response.data.user.usertype); // Lưu usertype
-        toast.success("Đăng nhập thành công!");
-        navigate("/"); // Điều hướng tới trang chủ
+        localStorage.setItem("usertype", response.data.user.usertype);
+        localStorage.setItem("userInfo", JSON.stringify(response.data.user));
+  
+        toast.success("Login successful!");
+        navigate("/");
       } else {
-        setErrorMessage("Đăng nhập thất bại. Không tìm thấy token.");
+        setErrorMessage("Login failed. Token not found.");
       }
     } catch (error) {
       setErrorMessage(
-        "Đăng nhập thất bại. Vui lòng kiểm tra lại tài khoản hoặc mật khẩu."
+        "Login failed. Please check your username or password."
       );
       console.error(
-        "Lỗi trong quá trình đăng nhập:",
+        "Error during login:",
         error.response?.data || error.message
       );
     } finally {
       setPassword("");
     }
   };
-
+  
   return (
     <div
       className="login-container"

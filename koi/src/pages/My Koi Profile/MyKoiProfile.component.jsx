@@ -40,7 +40,7 @@ const MyKoiProfile = () => {
       const token = sessionStorage.getItem("token");
 
       try {
-        const response = await api.get("/api/pond/getAllPonds", {
+        const response = await api.get("/api/pond/getAllPondsByUser", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -48,6 +48,8 @@ const MyKoiProfile = () => {
 
         if (response.data.success) {
           setPonds(response.data.data);
+        } else {
+          toast.error("Error fetching pond data.");
         }
       } catch (error) {
         toast.error("Error fetching pond data.");

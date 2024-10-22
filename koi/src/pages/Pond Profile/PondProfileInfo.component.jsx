@@ -47,7 +47,7 @@ const PondProfileInfo = () => {
           pondDepth: parseFloat(values.pondDepth),
           pondVolume: parseFloat(values.pondVolume),
           pondDrains: parseInt(values.pondDrains),
-          pondAeroCapacity: parseInt(values.pondAeroCapacity),
+          pondAeroCapacity: parseFloat(values.pondAeroCapacity),
           pondCapacityOfKoiFish: parseInt(values.pondCapacityOfKoiFish),
         },
         {
@@ -256,15 +256,17 @@ const PondProfileInfo = () => {
                   {
                     validator: async (_, value) => {
                       const pondVolume = form.getFieldValue("pondVolume");
-              
+
                       // Ensure we parse the values to numbers for proper comparison
                       const parsedValue = parseFloat(value);
                       const parsedVolume = parseFloat(pondVolume);
-              
+
                       if (isNaN(parsedValue) || isNaN(parsedVolume)) {
-                        return Promise.reject(new Error("Invalid input values."));
+                        return Promise.reject(
+                          new Error("Invalid input values.")
+                        );
                       }
-              
+
                       if (parsedValue > parsedVolume) {
                         return Promise.reject(
                           new Error("Fish capacity can't exceed pond volume!")
@@ -279,6 +281,15 @@ const PondProfileInfo = () => {
                   type="number"
                   placeholder="Enter pond capacity of koi fish"
                 />
+              </Form.Item>
+
+              <Form.Item>
+                <div>
+                  Pond Slots:{" "}
+                  {profile.pondCapacity
+                    ? profile.pondCapacity.currentCount
+                    : "N/A"}/{profile.pondCapacityOfKoiFish}
+                </div>
               </Form.Item>
 
               <Form.Item>

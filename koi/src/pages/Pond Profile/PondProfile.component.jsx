@@ -1,7 +1,7 @@
 import "./PondProfile.scss";
 import PondProfileInfo from "./PondProfileInfo.component";
-import WaterParameterProfile from "./WaterParameterProfile.component";
-import PondFishList from "./PondFishList.component";
+import WaterParameterProfile from "./Water Parameter Profile/WaterParameterProfile.component";
+import PondFishList from "./Fish List/PondFishList.component";
 import { Divider } from "antd";
 
 function PondProfile() {
