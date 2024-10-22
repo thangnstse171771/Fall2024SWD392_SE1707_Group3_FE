@@ -13,7 +13,8 @@ import WaterParameters from "../pages/Water Parameters/WaterParameters.component
 import PondProfile from "../pages/Pond Profile/PondProfile.component";
 import ManageHome from "../pages/ManageAccount/ManageHome";
 import MyKoiProfile from "../pages/My Koi Profile/MyKoiProfile.component";
-import ProtectedRoute from "./ProtectedRoute"; // Import ProtectedRoute
+import ProtectedRoute from "./ProtectedRoute";
+import BlogManagement from "../pages/Blog/BlogManagement.component";
 
 export const router = createBrowserRouter([
   {
@@ -95,6 +96,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={["Admin", "Manager", "staff"]}>
             <ManageHome />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/BlogManagement",
+        element: (
+          <ProtectedRoute allowedRoles={["staff"]}>
+            <BlogManagement />
           </ProtectedRoute>
         ),
       },
