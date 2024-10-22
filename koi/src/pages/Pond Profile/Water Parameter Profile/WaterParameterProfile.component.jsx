@@ -1,7 +1,7 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import api from "../../config/axios";
+import api from "../../../config/axios";
 import "./WaterParameterProfile.scss";
 import AddWaterParameterProfile from "./AddWaterParameterProfile.component";
 import { toast } from "react-toastify";
