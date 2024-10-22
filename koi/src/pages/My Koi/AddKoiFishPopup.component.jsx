@@ -76,6 +76,9 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
     },
   ];
 
+  // Predefined countries (example)
+  const countries = ["Vietnam", "Japan", "China", "USA", "Thailand"];
+
   return (
     <Modal
       title="Add Koi Fish"
@@ -87,7 +90,9 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
         <Form.Item
           name="name"
           label="Koi Name"
-          rules={[{ required: true, message: "Please input the koi name!" }]}
+          rules={[
+            { required: true, message: "Please input the koi name!" },
+          ]}
         >
           <Input />
         </Form.Item>
@@ -95,7 +100,13 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
         <Form.Item
           name="image"
           label="Image URL"
-          rules={[{ required: true, message: "Please input the image URL!" }]}
+          rules={[
+            { required: true, message: "Please input the image URL!" },
+            {
+              type: "url",
+              message: "Please enter a valid URL!",
+            },
+          ]}
         >
           <Input />
         </Form.Item>
@@ -132,7 +143,15 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
         <Form.Item
           name="origin"
           label="Origin"
-          rules={[{ required: true, message: "Please input the origin!" }]}
+          rules={[
+            { required: true, message: "Please input the origin!" },
+            {
+              validator: (_, value) =>
+                countries.includes(value)
+                  ? Promise.resolve()
+                  : Promise.reject(new Error("Origin must be one of the predefined countries!")),
+            },
+          ]}
         >
           <Input />
         </Form.Item>
@@ -140,7 +159,9 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
         <Form.Item
           name="price"
           label="Price"
-          rules={[{ required: true, message: "Please input the price!" }]}
+          rules={[
+            { required: true, message: "Please input the price!" },
+          ]}
         >
           <Input type="number" />
         </Form.Item>
