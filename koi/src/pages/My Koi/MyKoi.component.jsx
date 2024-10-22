@@ -27,7 +27,9 @@ const MyKoi = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (response.data.success) {
-          const activeKoi = response.data.data.filter(koi => koi.status === "active");
+          const activeKoi = response.data.data.filter(
+            (koi) => koi.status === "active"
+          );
           setKoiData(activeKoi);
         }
       } catch (error) {
@@ -57,9 +59,13 @@ const MyKoi = () => {
   const handleDelete = async (fishId) => {
     const token = sessionStorage.getItem("token");
     try {
-      const response = await api.put(`/api/koi/deleteKoiByUser/${fishId}`, null, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await api.put(
+        `/api/koi/deleteKoiByUser/${fishId}`,
+        null,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       if (response.status === 200) {
         setKoiData(koiData.filter((koi) => koi.fishId !== fishId));
         toast.success("Koi fish deleted successfully.");
@@ -173,7 +179,7 @@ const MyKoi = () => {
                 <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=8" />
               }
               title={koi.koiName}
-              description={`Gender: ${koi.koiGender}, Breed ID: ${koi.koiBreed}`}
+              description={`Gender: ${koi.koiGender}, Breed: ${koi.koiBreed}`}
             />
           </Card>
         ))}
