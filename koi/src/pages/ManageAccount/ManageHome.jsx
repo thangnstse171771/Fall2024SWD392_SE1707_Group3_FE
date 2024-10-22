@@ -1,65 +1,119 @@
-import CustomerList from "./CustomerList";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MenuFoldOutlined, MenuUnfoldOutlined } from "@ant-design/icons";
 import { Button, Layout, Menu, theme } from "antd";
 import StaffList from "./ManageStaffList";
-import KoiPondList from "./CustomerAllKoiPondList";
+import CustomerAllKoiPondList from "./CustomerAllKoiPondList";
+import ManageKoiAdmin from "./ManageKoiAdmin";
+import AllAccountList from "./AllAccount";
+import AllCustomers from "./AllCustomer";
+import PendingAccount from "./PendingAccount";
 
 const { Header, Sider, Content } = Layout;
 
 const ManageHome = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [selectedKey, setSelectedKey] = useState("1"); // State to track selected menu item
+  const [selectedKey, setSelectedKey] = useState("1");
+  const [menuVisible, setMenuVisible] = useState(false);
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
-  // Function to render the content based on the selected key
+  // Lấy vai trò người dùng từ localStorage
+  const userType = localStorage.getItem("usertype");
+
+  useEffect(() => {
+    if (userType === "Admin") {
+      setSelectedKey("1"); // Admin vào All Account
+    } else if (userType === "Manager") {
+      setSelectedKey("2"); // Manager vào Staff List
+    }
+
+    if (
+      userType === "Admin" ||
+      userType === "Manager" ||
+      userType === "Customer"
+    ) {
+      setMenuVisible(true);
+    } else {
+      setMenuVisible(false);
+    }
+  }, [userType]);
+
+  const menuItems = [
+    {
+      key: "1",
+      label: "All Account",
+      roles: ["Admin"],
+    },
+    {
+      key: "2",
+      label: "Staff List",
+      roles: ["Admin", "Manager"],
+    },
+    {
+      key: "3",
+      label: "Customer Koi Pond",
+      roles: ["Staff", "Manager"],
+    },
+
+    {
+      key: "4",
+      label: "All Koi",
+      roles: ["Staff", "Manager"],
+    },
+    {
+      key: "5",
+      label: "All Customer",
+      roles: ["Admin", "Manager", "Staff"],
+    },
+    {
+      key: "6",
+      label: "Pending Account",
+      roles: ["Admin"],
+    },
+  ];
+
+  const filteredMenuItems = menuItems.filter((item) =>
+    item.roles.includes(userType)
+  );
+
   const renderContent = () => {
     switch (selectedKey) {
       case "1":
-        return <CustomerList />;
+        return <AllAccountList />;
+      case "3":
+        return <CustomerAllKoiPondList />;
       case "2":
         return <StaffList />;
-      case "3":
-        return <KoiPondList />;
+      case "4":
+        return <ManageKoiAdmin />;
+      case "5":
+        return <AllCustomers />;
+      case "6":
+        return <PendingAccount />;
       default:
-        return <CustomerList />;
+        return <AllAccountList />;
     }
   };
 
   return (
     <Layout>
       <Sider
-        style={{
-          backgroundColor: "white",
-        }}
+        style={{ backgroundColor: "white" }}
         trigger={null}
         collapsible
         collapsed={collapsed}
       >
         <div className="demo-logo-vertical" />
-        <Menu
-          theme="light"
-          mode="inline"
-          defaultSelectedKeys={["1"]}
-          selectedKeys={[selectedKey]} // Bind selectedKeys to selected state
-          onClick={(e) => setSelectedKey(e.key)} // Update selectedKey when a menu item is clicked
-          items={[
-            {
-              key: "1",
-              label: "Customer List",
-            },
-            {
-              key: "2",
-              label: "Customer Koi Pond",
-            },
-            {
-              key: "3",
-              label: "Staff List",
-            },
-          ]}
-        />
+        {menuVisible && (
+          <Menu
+            theme="light"
+            mode="inline"
+            selectedKeys={[selectedKey]}
+            onClick={(e) => setSelectedKey(e.key)}
+            items={filteredMenuItems}
+          />
+        )}
       </Sider>
       <Layout>
         <Header
@@ -72,11 +126,7 @@ const ManageHome = () => {
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={() => setCollapsed(!collapsed)}
-            style={{
-              fontSize: "16px",
-              width: "5%",
-              height: 64,
-            }}
+            style={{ fontSize: "16px", width: "5%", height: 64 }}
           >
             Nav
           </Button>
@@ -90,7 +140,7 @@ const ManageHome = () => {
             borderRadius: borderRadiusLG,
           }}
         >
-          {renderContent()} {/* This will render the selected component */}
+          {renderContent()}
         </Content>
       </Layout>
     </Layout>

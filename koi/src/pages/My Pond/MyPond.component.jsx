@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./MyPond.scss";
 
-import { Button } from "antd";
+import { Button, Modal } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import AddPondPopup from "./AddPondPopup.component";
 import api from "../../config/axios";
@@ -20,6 +20,7 @@ function MyPond() {
     pondVolume: "",
     pondDrains: "",
     pondAeroCapacity: "",
+    pondCapacityOfKoiFish: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -40,6 +41,7 @@ function MyPond() {
       pondVolume: "",
       pondDrains: "",
       pondAeroCapacity: "",
+      pondCapacityOfKoiFish: "",
     });
     setError(null);
     setSuccess(null);
@@ -69,6 +71,7 @@ function MyPond() {
           pondVolume: parseFloat(values.pondVolume),
           pondDrains: parseInt(values.pondDrains),
           pondAeroCapacity: parseInt(values.pondAeroCapacity),
+          pondCapacityOfKoiFish: parseInt(values.pondCapacityOfKoiFish),
         },
         {
           headers: {
@@ -115,16 +118,27 @@ function MyPond() {
 
   const handleDelete = async (pondId) => {
     try {
-      await api.delete(`/api/pond/deletePondByOwner/${pondId}`, {
+      await api.put(`/api/pond/deletePondByOwner/${pondId}`, {}, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       fetchPondList();
-      toast.success("Delete Success!");
+      toast.success("Pond Deleted Successfully!");
     } catch (error) {
       console.error("Error deleting pond:", error);
     }
+  };
+
+  const handleDeleteConfirmation = (pondId) => {
+    Modal.confirm({
+      title: "Confirm Deletion",
+      content: "Are you sure you want to delete this pond?",
+      okText: "Delete",
+      okType: "danger",
+      cancelText: "Cancel",
+      onOk: () => handleDelete(pondId),
+    });
   };
 
   useEffect(() => {
@@ -161,26 +175,28 @@ function MyPond() {
           </thead>
           <tbody className="pond-table-body">
             {pondList.length > 0 ? (
-              pondList.map((pond) => (
-                <tr key={pond.id}>
-                  <td>{pond.pondName}</td>
-                  <td className="lake-action-buttons">
-                    <Link to="/pond-profile">
+              pondList
+                .filter((pond) => pond.status === "active")
+                .map((pond) => (
+                  <tr key={pond.pondId}>
+                    <td>{pond.pondName}</td>
+                    <td className="lake-action-buttons">
+                      <Link to={`/pond-profile/${pond.pondId}`}>
+                        <Button
+                          size="large"
+                          className="edit-lake-button"
+                          icon={<EditOutlined />}
+                        />
+                      </Link>
                       <Button
                         size="large"
-                        className="edit-lake-button"
-                        icon={<EditOutlined />}
+                        className="delete-lake-button"
+                        icon={<DeleteOutlined />}
+                        onClick={() => handleDeleteConfirmation(pond.pondId)}
                       />
-                    </Link>
-                    <Button
-                      size="large"
-                      className="delete-lake-button"
-                      icon={<DeleteOutlined />}
-                      onClick={() => handleDelete(pond.pondId)}
-                    />
-                  </td>
-                </tr>
-              ))
+                    </td>
+                  </tr>
+                ))
             ) : (
               <tr>
                 <td colSpan="2">No ponds found</td>

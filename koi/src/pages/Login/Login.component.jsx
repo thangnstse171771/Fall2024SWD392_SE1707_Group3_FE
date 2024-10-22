@@ -14,22 +14,28 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
       const response = await api.post("/api/auth/login", {
         username,
         password,
       });
-
+      console.log(response.data);
+  
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
+        localStorage.setItem("usertype", response.data.user.usertype);
+        localStorage.setItem("userInfo", JSON.stringify(response.data.user));
+  
         toast.success("Login successful!");
         navigate("/");
       } else {
         setErrorMessage("Login failed. Token not found.");
       }
     } catch (error) {
-      setErrorMessage("Login failed. Please check your username or password.");
+      setErrorMessage(
+        "Login failed. Please check your username or password."
+      );
       console.error(
         "Error during login:",
         error.response?.data || error.message
@@ -38,7 +44,7 @@ const Login = () => {
       setPassword("");
     }
   };
-
+  
   return (
     <div
       className="login-container"

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, Button, Col, Row, Spin } from "antd";
+import { Card, Button, Col, Row, Spin, Divider } from "antd";
 import { toast } from "react-toastify";
 import api from "../../config/axios";
 import KoiInformation from "./KoiInformation/KoiInformation";
@@ -19,17 +19,16 @@ const MyKoiProfile = () => {
       const token = sessionStorage.getItem("token");
 
       try {
-        const response = await api.get("/api/koi/getAllKoiByUser", {
+        const response = await api.get(`/api/koi/getKoiFishById/${id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
         if (response.data.success) {
-          const selectedKoi = response.data.data.find(
-            (k) => k.fishId === parseInt(id)
-          );
-          setKoi(selectedKoi);
+          setKoi(response.data.data);
+        } else {
+          toast.error("Koi not found.");
         }
       } catch (error) {
         toast.error("Error fetching Koi data.");
@@ -41,7 +40,7 @@ const MyKoiProfile = () => {
       const token = sessionStorage.getItem("token");
 
       try {
-        const response = await api.get("/api/pond/getAllPonds", {
+        const response = await api.get("/api/pond/getAllPondsByUser", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -49,6 +48,8 @@ const MyKoiProfile = () => {
 
         if (response.data.success) {
           setPonds(response.data.data);
+        } else {
+          toast.error("Error fetching pond data.");
         }
       } catch (error) {
         toast.error("Error fetching pond data.");
@@ -98,14 +99,17 @@ const MyKoiProfile = () => {
   }
 
   return (
-    <div className="koi-profile-container">
-      <div className="koi-image-container">
-        <img src={koi.koiImage} alt={koi.koiName} className="koi-image" />
-      </div>
+    <div className="koi-profile-page">
       <div className="koi-profile-header">
+        <img
+          src={koi.koiImage}
+          alt={koi.koiName}
+          className="koi-profile-image"
+        />
         <h1>{koi.koiName}</h1>
       </div>
-      <Row gutter={16} justify="center">
+      <Divider style={{ borderColor: "#7cb305" }}>Koi Info</Divider>
+      <Row gutter={[16, 16]} justify="center">
         <Col xs={24} sm={12} md={8}>
           <Card className="koi-profile-card">
             <KoiInformation

@@ -1,0 +1,55 @@
+.parameter-actions-button-group {
+  display: flex;
+  align-items: center; /* Align items vertically at the center */
+  gap: 10px; /* Add some spacing between elements */
+}
+
+.water-parameter-profile-table {
+  margin: 0 auto;
+  width: 100%;
+  border-spacing: 0;
+  background-color: #f8f7f7;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.229);
+}
+
+.water-parameter-profile-table-head {
+  background-color: #b71c1c;
+  color: white;
+  font-weight: bold;
+}
+
+.water-parameter-profile-table th,
+.water-parameter-profile-table td {
+  padding: 12px 30px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.water-parameter-profile-table-body {
+  background-color: #ffffff;
+}
+
+.water-parameter-profile-table-body th:hover {
+  background-color: #ddd; /* Change this to any color you want */
+  cursor: pointer;
+}
+
+.add-button-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px; /* Optional: Add some space above */
+
+  .plus-parameter-profile-button {
+    font-size: 18px; /* Increase text size */
+    padding: 12px 24px; /* Increase padding for width and height */
+    height: 70px; /* Adjust height based on padding */
+    width: 70px; /* Default background color */
+    border: none;
+
+    &:hover .anticon {
+      color: red; /* Change icon color to red on hover */
+    }
+  }
+}
