@@ -12,7 +12,7 @@ const AddWaterParameterProfile = ({
 
   return (
     <Modal
-      title="Add New Pond"
+      title="Water Parameter"
       open={open}
       onCancel={handleCancel}
       footer={null}
