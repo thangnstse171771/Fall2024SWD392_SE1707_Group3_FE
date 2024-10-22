@@ -1,5 +1,6 @@
 import React from "react";
 import { Modal, Input, Form, Button, Select } from "antd";
+import CountrySelect from 'react-select-country-list';
 
 const { Option, OptGroup } = Select;
 
@@ -13,7 +14,6 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
       koiGender: values.gender,
       koiBreed: values.breed,
       koiOrigin: values.origin,
-      price: parseFloat(values.price),
       currentPondId: parseInt(values.pondId),
     };
 
@@ -76,8 +76,7 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
     },
   ];
 
-  // Predefined countries (example)
-  const countries = ["Vietnam", "Japan", "China", "USA", "Thailand"];
+  const countries = CountrySelect().getData();
 
   return (
     <Modal
@@ -90,9 +89,7 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
         <Form.Item
           name="name"
           label="Koi Name"
-          rules={[
-            { required: true, message: "Please input the koi name!" },
-          ]}
+          rules={[{ required: true, message: "Please input the koi name!" }]}
         >
           <Input />
         </Form.Item>
@@ -143,27 +140,15 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
         <Form.Item
           name="origin"
           label="Origin"
-          rules={[
-            { required: true, message: "Please input the origin!" },
-            {
-              validator: (_, value) =>
-                countries.includes(value)
-                  ? Promise.resolve()
-                  : Promise.reject(new Error("Origin must be one of the predefined countries!")),
-            },
-          ]}
+          rules={[{ required: true, message: "Please select the origin!" }]}
         >
-          <Input />
-        </Form.Item>
-
-        <Form.Item
-          name="price"
-          label="Price"
-          rules={[
-            { required: true, message: "Please input the price!" },
-          ]}
-        >
-          <Input type="number" />
+          <Select placeholder="Select country">
+            {countries.map((country) => (
+              <Option key={country.value} value={country.value}>
+                {country.label}
+              </Option>
+            ))}
+          </Select>
         </Form.Item>
 
         <Form.Item

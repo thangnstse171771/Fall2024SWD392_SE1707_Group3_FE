@@ -27,7 +27,6 @@ const MyKoi = () => {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (response.data.success) {
-          // Filter only active Koi
           const activeKoi = response.data.data.filter(koi => koi.status === "active");
           setKoiData(activeKoi);
         }
@@ -71,7 +70,6 @@ const MyKoi = () => {
       toast.error(errorMessage);
     }
   };
-  
 
   const handleDeleteConfirmation = (fishId) => {
     Modal.confirm({
@@ -175,7 +173,7 @@ const MyKoi = () => {
                 <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=8" />
               }
               title={koi.koiName}
-              description={`Gender: ${koi.koiGender}, Breed ID: ${koi.koiBreed}, Price: $${koi.price}`}
+              description={`Gender: ${koi.koiGender}, Breed ID: ${koi.koiBreed}`}
             />
           </Card>
         ))}
