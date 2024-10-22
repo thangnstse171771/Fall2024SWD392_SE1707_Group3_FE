@@ -9,7 +9,7 @@ import AddFishInProfile from "./AddFishInProfile.component";
 
 const { Meta } = Card;
 
-const PondFishList = () => {
+const PondFishList = ({ onFishAdded }) => {
   const token = sessionStorage.getItem("token");
   const { id: currentPondId } = useParams();
   const [searchTerm, setSearchTerm] = useState("");
@@ -54,9 +54,9 @@ const PondFishList = () => {
       fetchKoiList(); // Refresh the list after adding
       toast.success("Koi fish added successfully!");
       setOpen(false); // Close the modal
+      onFishAdded();
     } catch (error) {
-      console.error("Error adding Koi fish:", error);
-      toast.error("Failed to add Koi fish.");
+      toast.error(error.response?.data?.message || "Failed to add koi fish!");
     } finally {
       setLoading(false);
     }
@@ -75,6 +75,7 @@ const PondFishList = () => {
       );
       fetchKoiList();
       toast.success("Koi fish deleted successfully!");
+      onFishAdded();
     } catch (error) {
       console.error("Error deleting Koi fish:", error);
       toast.error("Failed to delete Koi fish.");
@@ -117,7 +118,7 @@ const PondFishList = () => {
           icon={<PlusOutlined />}
           onClick={showPopup}
         />
-         <AddFishInProfile
+        <AddFishInProfile
           open={open}
           onSubmit={handleSubmit}
           onCancel={() => setOpen(false)} // Close the modal

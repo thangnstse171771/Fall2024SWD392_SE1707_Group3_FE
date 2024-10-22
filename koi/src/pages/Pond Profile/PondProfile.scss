@@ -32,6 +32,25 @@
         border-radius: 8px;
         box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
         padding: 20px;
+
+        form {
+          display: flex;
+          flex-wrap: wrap; // Allow wrapping of form items to create a two-column layout
+          width: 100%;
+          max-width: 900px; // Limit the width of the form container
+          gap: 20px; // Add space between form items
+      
+          .ant-form-item {
+            flex: 1 1 calc(50% - 20px); // Two items per row (50% width minus gap)
+            min-width: 250px; // Minimum width for smaller screens
+          }
+      
+          .ant-form-item:last-child {
+            flex-basis: 100%; // Make the last form item (Submit button) take full width
+            display: flex;
+            justify-content: flex-end; // Align the button to the right
+          }
+        }
       }
 
       .koi-profile-img {
