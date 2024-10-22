@@ -14,6 +14,7 @@ import PondProfile from "../pages/Pond Profile/PondProfile.component";
 import ManageHome from "../pages/ManageAccount/ManageHome";
 import MyKoiProfile from "../pages/My Koi Profile/MyKoiProfile.component";
 import ProtectedRoute from "./ProtectedRoute"; // Import ProtectedRoute
+import Shop from "../pages/Shop/Shop";
 
 export const router = createBrowserRouter([
   {
@@ -81,6 +82,10 @@ export const router = createBrowserRouter([
             <Profile />
           </ProtectedRoute>
         ),
+      },
+      {
+        path: "/ShopCenter",
+        element: <Shop />,
       },
       {
         path: "/pond-profile/:id",
