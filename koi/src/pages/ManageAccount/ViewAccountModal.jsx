@@ -105,7 +105,7 @@ export default function ViewAccountModal({ userId, visible, onClose }) {
               {account?.status ? (
                 <span style={{ color: "green" }}>Active</span>
               ) : (
-                <span style={{ color: "red" }}>Inactive</span>
+                <span style={{ color: "red" }}>Pending</span>
               )}
             </span>
           </div>
