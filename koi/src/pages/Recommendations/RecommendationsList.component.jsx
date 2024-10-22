@@ -1,24 +1,29 @@
 import React, { useState, useEffect } from "react";
-import "./RecommendationsList.scss";
+import { useNavigate } from "react-router-dom";
+import { Card } from "antd";
 import api from "../../config/axios";
 import { toast } from "react-toastify";
+import "./RecommendationsList.scss";
+
+const { Meta } = Card;
 
 const RecommendationsList = () => {
-  const [products, setProducts] = useState([]);
+  const [ponds, setPonds] = useState([]);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
-  const fetchProducts = async () => {
+  const fetchAllPondsByUser = async () => {
     try {
-      const response = await api.get("/api/products/getAllProducts");
-      setProducts(response.data);
+      const response = await api.get("/api/pond/getAllPondsByUser");
+      setPonds(response.data.data);
     } catch (error) {
-      setError("Failed to fetch products");
-      toast.error(error);
+      setError("Failed to fetch ponds");
+      console.log("Failed to fetch ponds:", error);
     }
   };
 
   useEffect(() => {
-    fetchProducts();
+    fetchAllPondsByUser();
   }, []);
 
   return (
@@ -27,20 +32,29 @@ const RecommendationsList = () => {
         <h1>Recommendations</h1>
       </div>
       <div className="recommend-list-body">
-        {products.length === 0 ? (
-          <p>No products available.</p>
-        ) : (
-          <ul>
-            {products.map((product) => (
-              <li key={product.productId}>
-                <h2>{product.productName}</h2>
-                <p>{product.productDescription}</p>
-                <p>Price: ${product.productPrice}</p>
-                <p>Seller: {product.User.username}</p>
-              </li>
+        <div className="pond-grid">
+          {ponds
+            .filter((pond) => pond.status === "active")
+            .map((pond) => (
+              <Card
+                hoverable
+                // onClick={() => navigate(`/manage-koi/my-koi/${pond.pondId}`)}
+                key={pond.pondId}
+                className="pond-card"
+                cover={
+                  <img
+                    className="pond-card-image"
+                    alt={pond.pondName}
+                    src={pond.pondImage}
+                  />
+                }
+              >
+                <Meta
+                  title= {pond.pondName}
+                />
+              </Card>
             ))}
-          </ul>
-        )}
+        </div>
       </div>
     </div>
   );
