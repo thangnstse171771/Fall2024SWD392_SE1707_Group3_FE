@@ -59,6 +59,9 @@ function Header() {
           userType === "Staff") && (
           <Link to="/CustomerList">MANAGE CUSTOMER</Link>
         )}
+        {userType === "Staff" && (
+          <Link to="/blogmanagement">BLOG MANAGEMENT</Link>
+        )}
       </div>
       <Dropdown overlay={menu} placement="bottomRight" trigger={["click"]}>
         <Button type="primary" shape="round" icon={<UserOutlined />}>
