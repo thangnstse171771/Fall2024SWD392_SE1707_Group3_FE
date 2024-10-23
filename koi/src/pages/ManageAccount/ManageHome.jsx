@@ -7,6 +7,7 @@ import ManageKoiAdmin from "./ManageKoiAdmin";
 import AllAccountList from "./AllAccount";
 import AllCustomers from "./AllCustomer";
 import PendingAccount from "./PendingAccount";
+import ManagerList from "./ManagerList";
 
 const { Header, Sider, Content } = Layout;
 
@@ -29,6 +30,7 @@ const ManageHome = () => {
     }
 
     if (
+      userType === "Staff" ||
       userType === "Admin" ||
       userType === "Manager" ||
       userType === "Customer"
@@ -71,6 +73,11 @@ const ManageHome = () => {
       label: "Pending Account",
       roles: ["Admin", "Manager"],
     },
+    {
+      key: "7",
+      label: "Manager List",
+      roles: ["Admin"],
+    },
   ];
 
   const filteredMenuItems = menuItems.filter((item) =>
@@ -91,6 +98,8 @@ const ManageHome = () => {
         return <AllCustomers />;
       case "6":
         return <PendingAccount />;
+      case "7":
+        return <ManagerList />;
       default:
         return <AllAccountList />;
     }
