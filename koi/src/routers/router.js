@@ -15,8 +15,12 @@ import ManageHome from "../pages/ManageAccount/ManageHome";
 import MyKoiProfile from "../pages/My Koi Profile/MyKoiProfile.component";
 import Shop from "../pages/Shop/Shop";
 import RecommendationsList from "../pages/Recommendations/RecommendationsList.component";
+import RecommendationsProducts from "../pages/Recommendations/RecommendationsProducts.component";
 import ProtectedRoute from "./ProtectedRoute";
 import BlogManagement from "../pages/Blog/BlogManagement.component";
+import ProductDetails from "../pages/Product/ProductDetails";
+import ForgotPassword from "../pages/ForgotPassword/ForgotPassword.component";
+import ResetPassword from "../pages/ResetPassword/ResetPassword.component";
 
 export const router = createBrowserRouter([
   {
@@ -100,7 +104,7 @@ export const router = createBrowserRouter([
       {
         path: "/customerList",
         element: (
-          <ProtectedRoute allowedRoles={["Admin", "Manager", "staff"]}>
+          <ProtectedRoute allowedRoles={["Admin", "Manager", "Staff"]}>
             <ManageHome />
           </ProtectedRoute>
         ),
@@ -108,16 +112,33 @@ export const router = createBrowserRouter([
       {
         path: "/manage-koi/recommendations",
         element: (
-          <ProtectedRoute allowedRoles={["Customer", "Manager", "staff"]}>
+          <ProtectedRoute allowedRoles={["Customer", "Manager", "Staff"]}>
             <RecommendationsList />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/manage-koi/recommendations/:id",
+        element: (
+          <ProtectedRoute allowedRoles={["Customer", "Manager", "Staff"]}>
+            <RecommendationsProducts />
           </ProtectedRoute>
         ),
       },
       {
         path: "/BlogManagement",
         element: (
-          <ProtectedRoute allowedRoles={["staff"]}>
+          <ProtectedRoute allowedRoles={["Staff"]}>
             <BlogManagement />
+          </ProtectedRoute>
+        ),
+      },
+
+      {
+        path: "/productDetails",
+        element: (
+          <ProtectedRoute allowedRoles={["Manager", "Staff"]}>
+            <ProductDetails />
           </ProtectedRoute>
         ),
       },
@@ -127,6 +148,15 @@ export const router = createBrowserRouter([
     path: "/login",
     element: <Login />,
   },
+  {
+    path: "/forgot-password",
+    element: <ForgotPassword />,
+  },
+  {
+    path: "/reset-password/:token",
+    element: <ResetPassword />,
+  },
+
   {
     path: "/Sign-in",
     element: <Signup />,

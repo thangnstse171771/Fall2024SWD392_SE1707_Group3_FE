@@ -21,7 +21,12 @@ const Profile = () => {
   useEffect(() => {
     const storedUserInfo = localStorage.getItem("userInfo");
     if (storedUserInfo) {
-      setUserInfo(JSON.parse(storedUserInfo));
+      const parsedUserInfo = JSON.parse(storedUserInfo);
+
+      // Exclude UserId and UserStatus from being displayed
+      const { userId, userStatus, ...filteredUserInfo } = parsedUserInfo;
+
+      setUserInfo(filteredUserInfo);
     }
   }, []);
 
