@@ -18,6 +18,7 @@ import RecommendationsList from "../pages/Recommendations/RecommendationsList.co
 import RecommendationsProducts from "../pages/Recommendations/RecommendationsProducts.component";
 import ProtectedRoute from "./ProtectedRoute";
 import BlogManagement from "../pages/Blog/BlogManagement.component";
+import BlogList from "../pages/Blog/Blog List/BlogList.component";
 
 export const router = createBrowserRouter([
   {
@@ -101,7 +102,7 @@ export const router = createBrowserRouter([
       {
         path: "/customerList",
         element: (
-          <ProtectedRoute allowedRoles={["Admin", "Manager", "staff"]}>
+          <ProtectedRoute allowedRoles={["Admin", "Manager", "Staff"]}>
             <ManageHome />
           </ProtectedRoute>
         ),
@@ -109,7 +110,7 @@ export const router = createBrowserRouter([
       {
         path: "/manage-koi/recommendations",
         element: (
-          <ProtectedRoute allowedRoles={["Customer", "Manager", "staff"]}>
+          <ProtectedRoute allowedRoles={["Customer", "Manager", "Staff"]}>
             <RecommendationsList />
           </ProtectedRoute>
         ),
@@ -117,12 +118,24 @@ export const router = createBrowserRouter([
       {
         path: "/manage-koi/recommendations/:id",
         element: (
-          <ProtectedRoute allowedRoles={["Customer", "Manager", "staff"]}>
+          <ProtectedRoute allowedRoles={["Customer", "Manager", "Staff"]}>
             <RecommendationsProducts />
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: "/BlogManagement",
         element: (
-          <ProtectedRoute allowedRoles={["staff"]}>
+          <ProtectedRoute allowedRoles={["Admin", "Manager", "Staff"]}>
             <BlogManagement />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/blog",
+        element: (
+          <ProtectedRoute allowedRoles={["Customer", "Manager", "Staff"]}>
+            <BlogList />
           </ProtectedRoute>
         ),
       },
