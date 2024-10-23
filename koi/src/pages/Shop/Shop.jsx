@@ -6,6 +6,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import anhbia from "../../assets/anhbia.jpg";
 import "./Shop.css";
+import FooterContact from "./FooterContact";
 
 // Dữ liệu sản phẩm mẫu
 const products = [
@@ -123,6 +124,8 @@ const Shop = () => {
           <div
             key={product.id}
             style={{
+              display: "flex",
+              justifyContent: "center",
               flex: "0 1 calc(25% - 20px)", // Each card takes up 25% width with a gap
               marginBottom: "20px", // Adds margin at the bottom for spacing
             }}
@@ -131,6 +134,7 @@ const Shop = () => {
           </div>
         ))}
       </div>
+      <FooterContact />
     </div>
   );
 };
