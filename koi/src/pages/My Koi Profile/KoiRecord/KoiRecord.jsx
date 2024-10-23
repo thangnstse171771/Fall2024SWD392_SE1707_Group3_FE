@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Spin, Form, Input, Button, Modal, Typography, Table, Select } from "antd";
+import {
+  Spin,
+  Form,
+  Input,
+  Button,
+  Modal,
+  Typography,
+  Table,
+  Select,
+} from "antd";
 import { toast } from "react-toastify";
 import api from "../../../config/axios";
 
@@ -25,7 +34,11 @@ const KoiRecord = ({ koi }) => {
         });
 
         if (response.data.success) {
-          setKoiRecords(response.data.data || []);
+          // Filter records by the current koi's fishId
+          const filteredRecords = response.data.data.filter(
+            (record) => record.fishId === koi.fishId
+          );
+          setKoiRecords(filteredRecords || []);
         } else {
           toast.error("Failed to fetch koi records.");
         }
@@ -38,47 +51,45 @@ const KoiRecord = ({ koi }) => {
     };
 
     fetchAllKoiRecords();
-  }, []);
+  }, [koi.fishId]); // Ensure this effect runs whenever koi.fishId changes
 
   const handleSubmit = async (values) => {
     const token = sessionStorage.getItem("token");
     try {
-        const response = await api.post(
-            "/api/koi/koi-record",
-            {
-                fishId: koi.fishId,
-                recordDate: values.recordDate,
-                length: values.length,
-                weight: values.weight,
-                bodyShape: values.bodyShape,
-                age: values.age,
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json",
-                },
-            }
-        );
-
-        console.log("API Response:", response.data);
-
-        
-        if (response.data.message === 'KoiRecord added successfully') {
-            toast.success("Koi record added successfully!");
-            setKoiRecords((prevRecords) => [...prevRecords, response.data.koiRecord]);
-            form.resetFields();
-            setIsModalVisible(false);
-        } else {
-            toast.error("Failed to add koi record.");
+      const response = await api.post(
+        "/api/koi/koi-record",
+        {
+          fishId: koi.fishId,
+          recordDate: values.recordDate,
+          length: values.length,
+          weight: values.weight,
+          bodyShape: values.bodyShape,
+          age: values.age,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
         }
+      );
+
+      if (response.data.message === "KoiRecord added successfully") {
+        toast.success("Koi record added successfully!");
+        setKoiRecords((prevRecords) => [
+          ...prevRecords,
+          response.data.koiRecord,
+        ]);
+        form.resetFields();
+        setIsModalVisible(false);
+      } else {
+        toast.error("Failed to add koi record.");
+      }
     } catch (error) {
-        toast.error("Error adding koi record.");
-        console.error("Error adding koi record:", error);
+      toast.error("Error adding koi record.");
+      console.error("Error adding koi record:", error);
     }
-};
-
-
+  };
 
   const showModal = () => {
     const currentDate = new Date().toISOString().split("T")[0];
@@ -160,7 +171,9 @@ const KoiRecord = ({ koi }) => {
               {
                 validator: (_, value) => {
                   if (value < 25 || value > 126) {
-                    return Promise.reject("Length must be between 25 and 126 cm!");
+                    return Promise.reject(
+                      "Length must be between 25 and 126 cm!"
+                    );
                   }
                   return Promise.resolve();
                 },
@@ -178,7 +191,9 @@ const KoiRecord = ({ koi }) => {
               {
                 validator: (_, value) => {
                   if (value < 0.2 || value > 15) {
-                    return Promise.reject("Weight must be between 0.2 and 15 kg!");
+                    return Promise.reject(
+                      "Weight must be between 0.2 and 15 kg!"
+                    );
                   }
                   return Promise.resolve();
                 },
@@ -210,7 +225,9 @@ const KoiRecord = ({ koi }) => {
               {
                 validator: (_, value) => {
                   if (value < 1 || value > 24) {
-                    return Promise.reject("Age must be between 1 and 24 months!");
+                    return Promise.reject(
+                      "Age must be between 1 and 24 months!"
+                    );
                   }
                   return Promise.resolve();
                 },

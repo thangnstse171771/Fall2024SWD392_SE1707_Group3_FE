@@ -33,7 +33,7 @@ export default function PendingAccount() {
       setCustomers(Array.isArray(response.data.data) ? response.data.data : []);
     } catch (error) {
       console.error("Error fetching customers:", error);
-      message.error("Failed to fetch customers. Please try again.");
+      // message.error("Please try again.");
     } finally {
       setLoading(false);
     }
@@ -54,6 +54,7 @@ export default function PendingAccount() {
     textAlign: "center",
   };
 
+  const userType = localStorage.getItem("usertype");
   const infoRowStyle = {
     display: "flex",
     justifyContent: "space-between",
@@ -215,7 +216,10 @@ export default function PendingAccount() {
                   <TableCell style={{ width: "25%" }} align="left">
                     {customer.email}
                   </TableCell>
-                  <TableCell style={{ width: "20%" }} align="left">
+                  <TableCell
+                    style={{ width: "20%", color: "red" }}
+                    align="left"
+                  >
                     {customer.userStatus}
                   </TableCell>
                   <TableCell align="center" style={{ display: "flex" }}>
@@ -225,12 +229,14 @@ export default function PendingAccount() {
                     >
                       View
                     </Button>
-                    <Button
-                      style={reviewButtonStyle}
-                      onClick={() => handleReviewClick(customer)}
-                    >
-                      Review
-                    </Button>
+                    {userType === "Admin" && (
+                      <Button
+                        style={{ color: "green" }}
+                        onClick={() => handleReviewClick(customer)}
+                      >
+                        Review
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               ))
@@ -308,7 +314,7 @@ export default function PendingAccount() {
               <span style={labelStyle}>
                 <strong>Status:</strong>
               </span>
-              <span style={valueStyle}>
+              <span style={{ color: "orange", fontWeight: "bold" }}>
                 {selectedCustomerDetails.userStatus}
               </span>
             </div>
