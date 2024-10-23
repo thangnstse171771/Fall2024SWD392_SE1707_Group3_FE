@@ -17,6 +17,8 @@ import Shop from "../pages/Shop/Shop";
 import RecommendationsList from "../pages/Recommendations/RecommendationsList.component";
 import ProtectedRoute from "./ProtectedRoute";
 import BlogManagement from "../pages/Blog/BlogManagement.component";
+import ForgotPassword from "../pages/ForgotPassword/ForgotPassword.component";
+import ResetPassword from "../pages/ResetPassword/ResetPassword.component";
 
 export const router = createBrowserRouter([
   {
@@ -127,6 +129,15 @@ export const router = createBrowserRouter([
     path: "/login",
     element: <Login />,
   },
+  {
+    path: "/forgot-password",
+    element: <ForgotPassword />,
+  },
+  {
+    path: "/reset-password/:token",
+    element: <ResetPassword />,
+  },
+
   {
     path: "/Sign-in",
     element: <Signup />,
