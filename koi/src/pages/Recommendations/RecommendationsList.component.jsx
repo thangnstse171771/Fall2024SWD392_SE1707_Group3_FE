@@ -17,6 +17,7 @@ const RecommendationsList = () => {
       const response = await api.get("/api/pond/getAllPondsByUser");
       setPonds(response.data.data);
     } catch (error) {
+      toast.error(error.response?.data?.message);
       setError("Failed to fetch ponds");
       console.log("Failed to fetch ponds:", error);
     }
@@ -38,7 +39,7 @@ const RecommendationsList = () => {
             .map((pond) => (
               <Card
                 hoverable
-                // onClick={() => navigate(`/manage-koi/my-koi/${pond.pondId}`)}
+                onClick={() => navigate(`/manage-koi/recommendations/${pond.pondId}`)}
                 key={pond.pondId}
                 className="pond-card"
                 cover={
