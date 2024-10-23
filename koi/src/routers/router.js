@@ -118,15 +118,20 @@ export const router = createBrowserRouter([
       {
         path: "/manage-koi/recommendations/:id",
         element: (
-          <ProtectedRoute allowedRoles={["Customer", "Manager", "staff"]}>
+          <ProtectedRoute allowedRoles={["Customer", "Manager", "Staff"]}>
             <RecommendationsProducts />
+          </ProtectedRoute>
+        ),
+      },
+      {
         path: "/BlogManagement",
         element: (
-          <ProtectedRoute allowedRoles={["staff"]}>
+          <ProtectedRoute allowedRoles={["Staff"]}>
             <BlogManagement />
           </ProtectedRoute>
         ),
       },
+
       {
         path: "/productDetails",
         element: (
