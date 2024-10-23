@@ -90,10 +90,7 @@ function MyPond() {
       }
       handleCancel();
     } catch (error) {
-      setError(
-        error.response?.data?.message ||
-          "Failed to create pond. Please try again."
-      );
+      toast.error(error.response?.data?.message || "Failed to create pond. Please try again.");
       console.error("Error creating pond:", error);
     } finally {
       setLoading(false);
@@ -126,6 +123,7 @@ function MyPond() {
       fetchPondList();
       toast.success("Pond Deleted Successfully!");
     } catch (error) {
+      toast.error(error.response?.data?.message || "Error deleting pond!");
       console.error("Error deleting pond:", error);
     }
   };
