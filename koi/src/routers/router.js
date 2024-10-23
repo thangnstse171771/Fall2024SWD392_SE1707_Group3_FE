@@ -13,10 +13,11 @@ import WaterParameters from "../pages/Water Parameters/WaterParameters.component
 import PondProfile from "../pages/Pond Profile/PondProfile.component";
 import ManageHome from "../pages/ManageAccount/ManageHome";
 import MyKoiProfile from "../pages/My Koi Profile/MyKoiProfile.component";
-import ProtectedRoute from "./ProtectedRoute"; // Import ProtectedRoute
 import Shop from "../pages/Shop/Shop";
 import RecommendationsList from "../pages/Recommendations/RecommendationsList.component";
 import RecommendationsProducts from "../pages/Recommendations/RecommendationsProducts.component";
+import ProtectedRoute from "./ProtectedRoute";
+import BlogManagement from "../pages/Blog/BlogManagement.component";
 
 export const router = createBrowserRouter([
   {
@@ -118,6 +119,10 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute allowedRoles={["Customer", "Manager", "staff"]}>
             <RecommendationsProducts />
+        path: "/BlogManagement",
+        element: (
+          <ProtectedRoute allowedRoles={["staff"]}>
+            <BlogManagement />
           </ProtectedRoute>
         ),
       },

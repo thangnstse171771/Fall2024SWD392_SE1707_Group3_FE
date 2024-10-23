@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Line, Bar } from "react-chartjs-2";
+import api from "../../config/axios"; // Import the axios instance
 import {
   Chart,
   CategoryScale,
@@ -26,92 +27,122 @@ Chart.register(
   Filler
 );
 
-const generateLast7DaysData = (pond) => {
-  const labels = [];
-  const temperatureData = [];
-  const saltData = [];
-  const pHData = [];
-  const o2Data = [];
-  const no2Data = [];
-  const no3Data = [];
-
-  for (let i = 6; i >= 0; i--) {
-    const date = new Date();
-    date.setDate(date.getDate() - i);
-    labels.push(date.toLocaleDateString());
-
-    temperatureData.push(Math.random() * 10 + 20);
-    saltData.push(Math.random() * 3 + 5);
-    pHData.push((Math.random() * 1 + 6.5).toFixed(1));
-    o2Data.push((Math.random() * 2 + 5).toFixed(1));
-    no2Data.push((Math.random() * 0.3).toFixed(2));
-    no3Data.push((Math.random() * 0.5 + 1).toFixed(2));
-  }
-
-  return {
-    labels,
-    datasets: [
-      {
-        label: "Temperature (°C)",
-        data: temperatureData,
-        borderColor: "rgba(255, 99, 132, 1)",
-        fill: false,
-      },
-      {
-        label: "Salt (g/L)",
-        data: saltData,
-        borderColor: "rgba(54, 162, 235, 1)",
-        fill: false,
-      },
-      {
-        label: "pH",
-        data: pHData,
-        borderColor: "rgba(75, 192, 192, 1)",
-        fill: false,
-      },
-      {
-        label: "O2 (mg/L)",
-        data: o2Data,
-        borderColor: "rgba(153, 102, 255, 1)",
-        fill: false,
-      },
-    ],
-    no2Data,
-    no3Data,
-  };
-};
-
 const WaterParameters = () => {
-  const [selectedPond, setSelectedPond] = useState("Pond A");
-  const { labels, datasets, no2Data, no3Data } =
-    generateLast7DaysData(selectedPond);
+  const [ponds, setPonds] = useState([]);
+  const [selectedPond, setSelectedPond] = useState(null);
+  const [waterData, setWaterData] = useState(null);
 
-  const barData = {
-    labels,
-    datasets: [
-      {
-        label: "NO2 (mg/L)",
-        data: no2Data,
-        backgroundColor: "rgba(255, 159, 64, 0.5)",
-      },
-      {
-        label: "NO3 (mg/L)",
-        data: no3Data,
-        backgroundColor: "rgba(255, 205, 86, 0.5)",
-      },
-    ],
+  useEffect(() => {
+    // Fetch all ponds for the user
+    const fetchPonds = async () => {
+      const token = sessionStorage.getItem("token");
+
+      try {
+        const response = await api.get("/api/pond/getAllPondsByUser", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/json",
+          },
+        });
+
+        if (response.data.success) {
+          const activePonds = response.data.data.filter(
+            (pond) => pond.status === "active"
+          );
+          setPonds(activePonds);
+          if (activePonds.length > 0) {
+            setSelectedPond(activePonds[0].pondId); // Set default to the first active pond
+          }
+        } else {
+          console.error("Failed to fetch ponds.");
+        }
+      } catch (error) {
+        console.error("Error fetching ponds:", error);
+      }
+    };
+
+    fetchPonds();
+  }, []);
+
+  useEffect(() => {
+    if (selectedPond) {
+      // Fetch water parameters for the selected pond
+      const fetchWaterParameters = async () => {
+        const token = sessionStorage.getItem("token");
+
+        try {
+          const response = await api.get(
+            `/api/waterPara/pond/${selectedPond}/all`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+                Accept: "application/json",
+              },
+            }
+          );
+
+          if (response.data) {
+            // Sort the water data by recordDate in ascending order
+            const sortedData = response.data.sort(
+              (a, b) => new Date(a.recordDate) - new Date(b.recordDate)
+            );
+            setWaterData(sortedData); // Set sorted data to state
+          } else {
+            console.error("Failed to fetch water parameters.");
+          }
+        } catch (error) {
+          console.error("Error fetching water parameters:", error);
+        }
+      };
+
+      fetchWaterParameters();
+    }
+  }, [selectedPond]);
+
+  const handlePondSelect = (event) => {
+    setSelectedPond(event.target.value);
+  };
+
+  const formatLabels = (data) => {
+    const dateCount = {};
+
+    // Count occurrences of each date
+    data.forEach((entry) => {
+      const date = new Date(entry.recordDate).toLocaleDateString();
+      dateCount[date] = (dateCount[date] || 0) + 1;
+    });
+
+    // Format the labels with date and time where necessary
+    return data.map((entry) => {
+      const date = new Date(entry.recordDate);
+      const formattedDate = date.toLocaleDateString();
+
+      if (dateCount[formattedDate] > 1) {
+        // If the date occurs more than once, append the time (hh:mm)
+        const time = date.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        return `${formattedDate} ${time}`;
+      } else {
+        return formattedDate;
+      }
+    });
   };
 
   const checkWaterQuality = () => {
     const warnings = [];
-    if (datasets[0].data[datasets[0].data.length - 1] > 24) {
-      warnings.push("Temperature is too high (> 24°C)");
-    }
-    if (datasets[1].data[datasets[1].data.length - 1] > 7) {
-      warnings.push("Salt level is too high (> 7g/L)");
-    }
-    if (datasets[2].data[datasets[2].data.length - 1] < 6.5) {
-      warnings.push("pH level is too low (< 6.5)");
+    if (waterData) {
+      const latestData = waterData[waterData.length - 1];
+      if (latestData.temperature > 24) {
+        warnings.push("Temperature is too high (> 24°C)");
+      }
+      if (latestData.pondSaltLevel > 7) {
+        warnings.push("Salt level is too high (> 7g/L)");
+      }
+      if (latestData.pondPHLevel < 6.5) {
+        warnings.push("pH level is too low (< 6.5)");
+      }
     }
     return warnings.length > 0
       ? warnings
@@ -126,21 +157,73 @@ const WaterParameters = () => {
         <select
           id="pond-select"
           value={selectedPond}
-          onChange={(e) => setSelectedPond(e.target.value)}
+          onChange={handlePondSelect}
         >
-          <option value="Pond A">Pond A</option>
-          <option value="Pond B">Pond B</option>
-          <option value="Pond C">Pond C</option>
+          {ponds.map((pond) => (
+            <option key={pond.pondId} value={pond.pondId}>
+              {pond.pondName}
+            </option>
+          ))}
         </select>
       </div>
       <div className="charts">
         <div className="chart-container">
           <h2>Line Chart</h2>
-          <Line data={{ labels, datasets }} />
+          {waterData && (
+            <Line
+              data={{
+                labels: formatLabels(waterData),
+                datasets: [
+                  {
+                    label: "Temperature (°C)",
+                    data: waterData.map((entry) => entry.temperature),
+                    borderColor: "rgba(255, 99, 132, 1)",
+                    fill: false,
+                  },
+                  {
+                    label: "Salt (g/L)",
+                    data: waterData.map((entry) => entry.pondSaltLevel),
+                    borderColor: "rgba(54, 162, 235, 1)",
+                    fill: false,
+                  },
+                  {
+                    label: "pH",
+                    data: waterData.map((entry) => entry.pondPHLevel),
+                    borderColor: "rgba(75, 192, 192, 1)",
+                    fill: false,
+                  },
+                  {
+                    label: "O2 (mg/L)",
+                    data: waterData.map((entry) => entry.pondOxygenLevel),
+                    borderColor: "rgba(153, 102, 255, 1)",
+                    fill: false,
+                  },
+                ],
+              }}
+            />
+          )}
         </div>
         <div className="chart-container">
           <h2>Bar Chart</h2>
-          <Bar data={barData} />
+          {waterData && (
+            <Bar
+              data={{
+                labels: formatLabels(waterData),
+                datasets: [
+                  {
+                    label: "NO2 (mg/L)",
+                    data: waterData.map((entry) => entry.pondNitrite),
+                    backgroundColor: "rgba(255, 159, 64, 0.5)",
+                  },
+                  {
+                    label: "NO3 (mg/L)",
+                    data: waterData.map((entry) => entry.pondNitrate),
+                    backgroundColor: "rgba(255, 205, 86, 0.5)",
+                  },
+                ],
+              }}
+            />
+          )}
         </div>
       </div>
       <h2>Warnings:</h2>
