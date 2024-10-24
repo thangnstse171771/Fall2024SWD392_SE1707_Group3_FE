@@ -53,7 +53,7 @@
       .featured-title {
         padding: 3px;
         font-size: 20px;
-        font-family: 'Times New Roman', Times, serif;
+        font-family: "Times New Roman", Times, serif;
       }
       .featured-desc {
         margin: 0;
@@ -69,34 +69,33 @@
       gap: 20px; /* Space between blog cards */
       padding-top: 20px; /* Optional padding around the list */
     }
-    
+
     .small-blog-card {
       display: flex; /* Use flexbox for horizontal layout within each card */
       align-items: flex-start; /* Align items to the top */
-      background-color: #f0f0f0; 
-      border-radius: 12px; 
+      background-color: #f0f0f0;
+      border-radius: 12px;
       overflow: hidden; /* Ensure content stays within card */
-      height: 100px;
-    
+      height: fit-content;
     }
-    
+
     .small-blog-image {
       width: 50%; /* Set a fixed width for the image */
       height: 100px; /* Maintain aspect ratio */
       object-fit: cover; /* Cover to maintain aspect ratio */
       border-radius: 12px; /* Rounded corners for the image */
     }
-    
+
     .small-blog-content {
       flex: 1; /* Allow content to take up remaining space */
       padding-left: 10px;
     }
-    
+
     .small-blog-title {
       font-size: 16px; /* Font size for the title */
       margin: 0; /* Remove margin for better alignment */
     }
-    
+
     .small-blog-description {
       font-size: 12px; /* Font size for the description */
       color: #666; /* Color for the description text */
@@ -119,6 +118,7 @@
       display: flex; /* Use flexbox for horizontal layout within each card */
       align-items: flex-start; /* Align items at the start (top) */
       background-color: #fff; /* Background color of the card */
+      height: fit-content;
     }
 
     .main-blog-image {
