@@ -51,49 +51,56 @@
       padding: 10px;
 
       .featured-title {
-        margin: -15px;
+        padding: 3px;
         font-size: 20px;
+        font-family: 'Times New Roman', Times, serif;
       }
       .featured-desc {
         margin: 0;
         font-size: 14px;
         font-weight: lighter;
+        padding: 3px;
       }
     }
 
     .small-blog-list {
-      padding-top: 20px;
-      display: flex; /* Use flexbox for horizontal alignment */
+      display: flex; /* Use flexbox for layout */
       flex-direction: column; /* Stack the cards vertically */
-      gap: 16px; /* Space between blog cards */
+      gap: 20px; /* Space between blog cards */
+      padding-top: 20px; /* Optional padding around the list */
     }
-
+    
     .small-blog-card {
       display: flex; /* Use flexbox for horizontal layout within each card */
-      align-items: center; /* Center items vertically */
-      background-color: #f0f0f0; /* Background color of the card */
+      align-items: flex-start; /* Align items to the top */
+      background-color: #f0f0f0; 
+      border-radius: 12px; 
+      overflow: hidden; /* Ensure content stays within card */
+      height: 100px;
+    
     }
-
+    
     .small-blog-image {
       width: 50%; /* Set a fixed width for the image */
-      object-fit: cover;
       height: 100px; /* Maintain aspect ratio */
-      border-radius: 12px; /* Optional: rounded corners for the image */
-      margin-right: 16px; /* Space between image and content */
+      object-fit: cover; /* Cover to maintain aspect ratio */
+      border-radius: 12px; /* Rounded corners for the image */
     }
-
+    
     .small-blog-content {
       flex: 1; /* Allow content to take up remaining space */
+      padding-left: 10px;
     }
-
+    
     .small-blog-title {
-      font-size: 18px; /* Font size for the title */
-      margin: 0 0 8px; /* Margin below the title */
+      font-size: 16px; /* Font size for the title */
+      margin: 0; /* Remove margin for better alignment */
     }
-
+    
     .small-blog-description {
-      font-size: 16px; /* Font size for the description */
+      font-size: 12px; /* Font size for the description */
       color: #666; /* Color for the description text */
+      margin-top: 4px; /* Optional: add margin for space between title and description */
     }
   }
 

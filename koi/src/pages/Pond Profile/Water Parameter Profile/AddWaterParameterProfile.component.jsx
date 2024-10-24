@@ -148,7 +148,7 @@ const AddWaterParameterProfile = ({
 
         <Form.Item
           name="pondNitrite"
-          label="Nitrite (mg/L)"
+          label="Nitrite (NO₂⁻) (mg/L)"
           rules={[
             { required: true, message: "Please input the nitrite level!" },
             {
@@ -178,7 +178,7 @@ const AddWaterParameterProfile = ({
 
         <Form.Item
           name="pondNitrate"
-          label="Nitrate (mg/L)"
+          label="Nitrate (NO₃⁻) (mg/L)"
           rules={[
             { required: true, message: "Please input the nitrate level!" },
             {
@@ -218,9 +218,9 @@ const AddWaterParameterProfile = ({
                     new Error("Phosphate Level cannot go below 0 mg/L!")
                   );
                 }
-                if (value > 1) {
+                if (value > 0.15) {
                   return Promise.reject(
-                    new Error("Phosphate Level cannot exceed 1 mg/L!")
+                    new Error("Phosphate Level cannot exceed 0.15 mg/L!")
                   );
                 }
                 return Promise.resolve();
