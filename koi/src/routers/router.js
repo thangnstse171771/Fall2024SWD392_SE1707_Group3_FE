@@ -22,6 +22,7 @@ import BlogList from "../pages/Blog/Blog List/BlogList.component";
 import ProductDetails from "../pages/Product/ProductDetails";
 import ForgotPassword from "../pages/ForgotPassword/ForgotPassword.component";
 import ResetPassword from "../pages/ResetPassword/ResetPassword.component";
+import BlogDetail from "../pages/Blog/Blog List/BlogDetail.component";
 
 export const router = createBrowserRouter([
   {
@@ -136,11 +137,11 @@ export const router = createBrowserRouter([
       },
       {
         path: "/blog",
-        element: (
-          <ProtectedRoute allowedRoles={["Customer", "Manager", "Staff"]}>
-            <BlogList />
-            </ProtectedRoute>
-        ),
+        element: <BlogList />,
+      },
+      {
+        path: "/blog/:id",
+        element: <BlogDetail />,
       },
       {
         path: "/productDetails",
