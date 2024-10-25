@@ -8,6 +8,9 @@ import AllAccountList from "./AllAccount";
 import AllCustomers from "./AllCustomer";
 import PendingAccount from "./PendingAccount";
 import ManagerList from "./ManagerList";
+import PendingProductList from "../Product/PendingProductList";
+import ProductList from "../Product/ProductList";
+import ProductListForManger from "../Product/ProductListForManager";
 
 const { Header, Sider, Content } = Layout;
 
@@ -78,6 +81,21 @@ const ManageHome = () => {
       label: "Manager List",
       roles: ["Admin"],
     },
+    {
+      key: "8",
+      label: "Pending Product",
+      roles: ["Staff", "Manager"],
+    },
+    {
+      key: "9",
+      label: "Onboard Product List",
+      roles: ["Staff", "Manager"],
+    },
+    {
+      key: "10",
+      label: "All Product List",
+      roles: ["Manager"],
+    },
   ];
 
   const filteredMenuItems = menuItems.filter((item) =>
@@ -100,6 +118,13 @@ const ManageHome = () => {
         return <PendingAccount />;
       case "7":
         return <ManagerList />;
+      case "8":
+        return <PendingProductList />;
+      case "9":
+        return <ProductList />;
+      case "10":
+        return <ProductListForManger />;
+
       default:
         return <AllAccountList />;
     }
