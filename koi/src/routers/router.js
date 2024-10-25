@@ -18,7 +18,11 @@ import RecommendationsList from "../pages/Recommendations/RecommendationsList.co
 import RecommendationsProducts from "../pages/Recommendations/RecommendationsProducts.component";
 import ProtectedRoute from "./ProtectedRoute";
 import BlogManagement from "../pages/Blog/BlogManagement.component";
+import BlogList from "../pages/Blog/Blog List/BlogList.component";
 import ProductDetails from "../pages/Product/ProductDetails";
+import ForgotPassword from "../pages/ForgotPassword/ForgotPassword.component";
+import ResetPassword from "../pages/ResetPassword/ResetPassword.component";
+import BlogDetail from "../pages/Blog/Blog List/BlogDetail.component";
 
 export const router = createBrowserRouter([
   {
@@ -118,7 +122,7 @@ export const router = createBrowserRouter([
       {
         path: "/manage-koi/recommendations/:id",
         element: (
-          <ProtectedRoute allowedRoles={["Customer", "Manager", "Staff"]}>
+          <ProtectedRoute allowedRoles={["Customer", "Manager", "staff"]}>
             <RecommendationsProducts />
           </ProtectedRoute>
         ),
@@ -126,12 +130,19 @@ export const router = createBrowserRouter([
       {
         path: "/BlogManagement",
         element: (
-          <ProtectedRoute allowedRoles={["Staff"]}>
+          <ProtectedRoute allowedRoles={["Admin", "Manager", "Staff"]}>
             <BlogManagement />
           </ProtectedRoute>
         ),
       },
-
+      {
+        path: "/blog",
+        element: <BlogList />,
+      },
+      {
+        path: "/blog/:id",
+        element: <BlogDetail />,
+      },
       {
         path: "/productDetails/:id",
         element: (
@@ -146,6 +157,15 @@ export const router = createBrowserRouter([
     path: "/login",
     element: <Login />,
   },
+  {
+    path: "/forgot-password",
+    element: <ForgotPassword />,
+  },
+  {
+    path: "/reset-password/:token",
+    element: <ResetPassword />,
+  },
+
   {
     path: "/Sign-in",
     element: <Signup />,

@@ -1,0 +1,148 @@
+.blog-list-page {
+  min-height: 100vh;
+  height: auto;
+  display: flex;
+  justify-content: center;
+
+  .blog-list-container {
+    display: flex;
+    width: 100%;
+  }
+
+  .blog-list-container-left {
+    width: 20%;
+    background-color: #f0f0f0; /* Example background color */
+    padding: 20px;
+
+    .featured-card {
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      background-color: #fff;
+    }
+
+    .featured-title {
+      padding: 15px;
+      font-size: 18px;
+      font-weight: bold;
+      margin: 0;
+    }
+
+    .featured-image {
+      position: relative; /* Enables the text overlay to position inside this container */
+      img {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+    }
+
+    .featured-overlay {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: linear-gradient(
+        to top,
+        rgba(0, 0, 0, 0.7),
+        transparent
+      ); /* Fade effect */
+      color: white;
+      padding: 10px;
+
+      .featured-title {
+        padding: 3px;
+        font-size: 20px;
+        font-family: "Times New Roman", Times, serif;
+      }
+      .featured-desc {
+        margin: 0;
+        font-size: 14px;
+        font-weight: lighter;
+        padding: 3px;
+      }
+    }
+
+    .small-blog-list {
+      display: flex; /* Use flexbox for layout */
+      flex-direction: column; /* Stack the cards vertically */
+      gap: 20px; /* Space between blog cards */
+      padding-top: 20px; /* Optional padding around the list */
+    }
+
+    .small-blog-card {
+      display: flex; /* Use flexbox for horizontal layout within each card */
+      align-items: flex-start; /* Align items to the top */
+      background-color: #f0f0f0;
+      border-radius: 12px;
+      overflow: hidden; /* Ensure content stays within card */
+      height: fit-content;
+    }
+
+    .small-blog-image {
+      width: 50%; /* Set a fixed width for the image */
+      height: 100px; /* Maintain aspect ratio */
+      object-fit: cover; /* Cover to maintain aspect ratio */
+      border-radius: 12px; /* Rounded corners for the image */
+    }
+
+    .small-blog-content {
+      flex: 1; /* Allow content to take up remaining space */
+      padding-left: 10px;
+    }
+
+    .small-blog-title {
+      font-size: 16px; /* Font size for the title */
+      margin: 0; /* Remove margin for better alignment */
+    }
+
+    .small-blog-description {
+      font-size: 12px; /* Font size for the description */
+      color: #666; /* Color for the description text */
+      margin-top: 4px; /* Optional: add margin for space between title and description */
+    }
+  }
+
+  .blog-list-container-right {
+    width: 80%;
+    background-color: #fff; /* Example background color */
+    padding: 20px;
+
+    .main-blog-list {
+      display: flex; /* Use flexbox for horizontal alignment */
+      flex-direction: column; /* Stack the cards vertically */
+      gap: 16px; /* Space between blog cards */
+    }
+
+    .main-blog-card {
+      display: flex; /* Use flexbox for horizontal layout within each card */
+      align-items: flex-start; /* Align items at the start (top) */
+      background-color: #fff; /* Background color of the card */
+      height: fit-content;
+    }
+
+    .main-blog-image {
+      width: 37%; /* Set the image width to 50% of the card */
+      height: 250px; /* Set a fixed height for the image */
+      object-fit: cover; /* Cover the area while maintaining aspect ratio */
+      border-radius: 12px; /* Optional: rounded corners for the image */
+      margin-right: 16px;
+    }
+
+    .main-blog-content {
+      flex: 1; /* Allow content to take up remaining space */
+      display: flex; /* Use flexbox for the content area */
+      flex-direction: column; /* Stack title and description vertically */
+      justify-content: flex-start; /* Align content at the start (top) */
+    }
+
+    .main-blog-title {
+      margin: 0 0 4px; /* Margin below the title */
+    }
+
+    .main-blog-description {
+      color: #666; /* Color for the description text */
+      margin: 0; /* Remove default margin */
+    }
+  }
+}

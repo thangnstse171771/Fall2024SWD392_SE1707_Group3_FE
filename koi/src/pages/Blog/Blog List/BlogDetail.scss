@@ -1,0 +1,61 @@
+.blog-detail-container-right {
+  width: 80%;
+  background-color: #fff; /* Example background color */
+  padding: 20px;
+  .blog-detail-header {
+    h1 {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    // Center align author and date if needed
+    .author-date-style {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 20px;
+
+      p {
+        font-size: 1rem;
+        color: #666;
+        margin: 0 2px;
+        display: inline-block;
+
+        &:nth-child(2) {
+          color: rgb(204, 7, 7);
+          font-style: italic;
+        }
+
+        &:nth-child(4) {
+          color: black;
+        }
+      }
+    }
+  }
+
+  .blog-detail-image-container {
+    display: flex;
+    justify-content: center;
+    .blog-detail-image {
+      width: 90%;
+      height: auto;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    }
+  }
+  .blog-detail-body {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #444;
+    padding-bottom: 20px;
+    text-align: left; // Ensures left alignment
+
+    p {
+      margin-bottom: 15px;
+      text-align: left; // Ensures left alignment specifically for the paragraph
+    }
+  }
+}
