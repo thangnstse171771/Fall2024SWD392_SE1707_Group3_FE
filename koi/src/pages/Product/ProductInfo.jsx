@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { Form, Input, Button, Switch } from "antd"; // Import Switch
+import { Form, Input, Button, Switch, Spin, Alert } from "antd";
 import { toast } from "react-toastify";
-import api from "../../config/axios"; // Ensure correct path to api
+import api from "../../config/axios";
+import noImage from "../../assets/noimage.jpg";
 
 const ProductInfo = () => {
-  const { id } = useParams(); // Extract 'id' from URL
+  const { id } = useParams();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState(null);
-  const [isEditable, setIsEditable] = useState(false); // State to control edit mode
+  const [isEditable, setIsEditable] = useState(false);
+  const [backgroundImg, setBackgroundImg] = useState(noImage);
 
-  // Fetch product details from the API
+  const labelStyle = { fontWeight: "bold", color: "rgb(255,0,0)" };
+
   const fetchProductDetails = async () => {
     setLoading(true);
     try {
@@ -20,6 +23,7 @@ const ProductInfo = () => {
         headers: { accept: "application/json" },
       });
       setProfile(response.data.data);
+      setBackgroundImg(response.data.image || noImage);
       form.setFieldsValue(response.data);
       setLoading(false);
     } catch (err) {
@@ -29,34 +33,32 @@ const ProductInfo = () => {
     }
   };
 
-  // Function to handle form submission
   const handleSubmit = async (values) => {
     setLoading(true);
     try {
-      // Get userId from local storage
-      const userId = localStorage.getItem("userId"); // Assuming userId is stored as "userId"
-
+      const userId = localStorage.getItem("userId");
       const updatedProduct = {
-        ...profile,
-        ...values,
-        userId: userId, // Add userId to the updated product
+        userId: userId,
+        productName: values.productName,
+        productDescription: values.productDescription,
+        productPrice: values.productPrice,
+        isActive: values.isActive,
+        image: values.image,
       };
-
-      setProfile(updatedProduct);
+      await api.put(`/api/products/updateProduct/${id}`, updatedProduct);
       toast.success("Product updated successfully!");
       setLoading(false);
+      window.location.reload();
     } catch (error) {
       toast.error("Failed to update product.");
       setLoading(false);
     }
   };
 
-  // Function to handle switch change
   const handleStatusChange = (checked) => {
     form.setFieldsValue({ isActive: checked });
   };
 
-  // Function to toggle edit mode
   const toggleEdit = () => {
     setIsEditable(!isEditable);
   };
@@ -68,20 +70,14 @@ const ProductInfo = () => {
   return (
     <div className="product-info">
       {error ? (
-        <div>
-          <h3>{error}</h3>
-        </div>
-      ) : loading ? (
-        <p>Loading product data...</p>
+        <Alert message={error} type="error" />
       ) : (
-        <>
+        <Spin spinning={loading} tip="Loading product data...">
           <img
             className="product-img"
-            src={
-              profile?.productImage ||
-              "https://cdn11.bigcommerce.com/s-c81ee/product_images/uploaded_images/ridersuperone-1-.jpg"
-            }
+            src={backgroundImg}
             alt={profile?.productName}
+            style={{ minWidth: "500px", maxWidth: "1200px" }}
           />
           <div className="product-form-container">
             <Form
@@ -90,37 +86,34 @@ const ProductInfo = () => {
               onFinish={handleSubmit}
               noValidate
             >
-              {/* Non-editable Product ID */}
-              <Form.Item label="Product ID" name="productId">
+              <Form.Item
+                label={<span style={labelStyle}>Product ID</span>}
+                name="productId"
+              >
                 <Input readOnly />
               </Form.Item>
-
-              {/* Editable Product Name */}
               <Form.Item
-                label="Product Name"
+                label={<span style={labelStyle}>Product Name</span>}
                 name="productName"
                 rules={[
                   { required: true, message: "Please input the product name!" },
                 ]}
               >
-                <Input
-                  placeholder="Product name"
-                  disabled={!isEditable} // Disable input when not in edit mode
-                />
+                <Input placeholder="Product name" disabled={!isEditable} />
               </Form.Item>
-
-              {/* Editable Status */}
-              <Form.Item label="Status" name="isActive" valuePropName="checked">
+              <Form.Item
+                label={<span style={labelStyle}>Status</span>}
+                name="isActive"
+                valuePropName="checked"
+              >
                 <Switch
                   checked={profile?.isActive}
                   onChange={handleStatusChange}
-                  disabled={!isEditable} // Disable switch when not in edit mode
+                  disabled={!isEditable}
                 />
               </Form.Item>
-
-              {/* Editable Product Price */}
               <Form.Item
-                label="Product Price ($)"
+                label={<span style={labelStyle}>Product Price ($)</span>}
                 name="productPrice"
                 rules={[
                   {
@@ -132,22 +125,18 @@ const ProductInfo = () => {
                 <Input
                   type="number"
                   placeholder="Enter product price"
-                  disabled={!isEditable} // Disable input when not in edit mode
+                  disabled={!isEditable}
                 />
               </Form.Item>
-
-              {/* Non-editable Username */}
               <Form.Item
-                label="Username"
+                label={<span style={labelStyle}>Username</span>}
                 name={["User", "username"]}
                 rules={[{ required: true, message: "Username is required!" }]}
               >
                 <Input readOnly />
               </Form.Item>
-
-              {/* Editable Product Description */}
               <Form.Item
-                label="Product Description"
+                label={<span style={labelStyle}>Product Description</span>}
                 name="productDescription"
                 rules={[
                   { required: true, message: "Please input the description!" },
@@ -155,10 +144,18 @@ const ProductInfo = () => {
               >
                 <Input.TextArea
                   placeholder="Enter product description"
-                  disabled={!isEditable} // Disable textarea when not in edit mode
+                  disabled={!isEditable}
                 />
               </Form.Item>
-
+              <Form.Item
+                label={<span style={labelStyle}>Image URL</span>}
+                name="image"
+                rules={[
+                  { required: true, message: "Please input the image URL!" },
+                ]}
+              >
+                <Input placeholder="Enter image URL" disabled={!isEditable} />
+              </Form.Item>
               <Form.Item>
                 <Button type="primary" onClick={toggleEdit}>
                   {isEditable ? "Cancel" : "Edit"}
@@ -177,7 +174,7 @@ const ProductInfo = () => {
               </Form.Item>
             </Form>
           </div>
-        </>
+        </Spin>
       )}
     </div>
   );
