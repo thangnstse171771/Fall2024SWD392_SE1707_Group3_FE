@@ -107,7 +107,10 @@ export default function ProductListForManger() {
               <TableCell align="left">{product.productName}</TableCell>
               <TableCell align="left">{product.productDescription}</TableCell>
               <TableCell align="center">{product.productPrice}</TableCell>
-              <TableCell align="center">
+              <TableCell
+                align="center"
+                style={{ color: "green", fontWeight: "bold" }}
+              >
                 {product.isActive ? "Active" : "Inactive"}
               </TableCell>
               <TableCell align="center">{product.User.username}</TableCell>

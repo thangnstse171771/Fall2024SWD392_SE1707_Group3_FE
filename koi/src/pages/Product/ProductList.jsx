@@ -91,7 +91,7 @@ export default function ProductList() {
     const payload = {
       ...values,
       userId,
-      isActive: false, // Set isActive to false by default
+      isActive: "waiting", // Set isActive to false by default
     };
     console.log(payload);
     try {
