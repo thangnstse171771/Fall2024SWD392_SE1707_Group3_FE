@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import api from "../../../config/axios";
-import { Modal, Avatar, Card, Pagination, Input, Button } from "antd";
+import { Modal, Avatar, Card, Pagination, Button } from "antd";
 import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -12,7 +12,6 @@ const { Meta } = Card;
 const PondFishList = ({ onFishAdded }) => {
   const token = sessionStorage.getItem("token");
   const { id: currentPondId } = useParams();
-  const [searchTerm, setSearchTerm] = useState("");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -43,7 +42,7 @@ const PondFishList = ({ onFishAdded }) => {
         "/api/koi/addKoi",
         {
           ...values,
-          currentPondId: Number(currentPondId), // Include the current pond ID
+          currentPondId: Number(currentPondId),
         },
         {
           headers: {
@@ -51,9 +50,9 @@ const PondFishList = ({ onFishAdded }) => {
           },
         }
       );
-      fetchKoiList(); // Refresh the list after adding
+      fetchKoiList();
       toast.success("Koi fish added successfully!");
-      setOpen(false); // Close the modal
+      setOpen(false);
       onFishAdded();
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to add koi fish!");
@@ -98,11 +97,8 @@ const PondFishList = ({ onFishAdded }) => {
   }, []);
 
   const filteredKoi = koiList
-    .filter((koi) => koi.currentPondId === Number(currentPondId)) // Filter by pondId
-    .filter((koi) =>
-      koi.koiName.toLowerCase().includes(searchTerm.toLowerCase())
-    ); // Additional filter by search term
-
+    .filter((koi) => koi.currentPondId === Number(currentPondId))
+    .filter((koi) => koi.status === "active");
   // Pagination logic
   const indexOfLastKoi = currentPage * itemsPerPage;
   const indexOfFirstKoi = indexOfLastKoi - itemsPerPage;
@@ -121,45 +117,43 @@ const PondFishList = ({ onFishAdded }) => {
         <AddFishInProfile
           open={open}
           onSubmit={handleSubmit}
-          onCancel={() => setOpen(false)} // Close the modal
+          onCancel={() => setOpen(false)}
           loading={loading}
         />
       </div>
       <div className="pond-fish-list-container">
         <div className="fish-list-grid">
-          {currentKoi
-            .filter((koi) => koi.status === "active")
-            .map((koi) => (
-              <Card
-                key={koi.fishId}
-                className="fish-list-card"
-                cover={
-                  <img
-                    className="fish-list-card-image"
-                    alt={koi.koiName}
-                    src={koi.koiImage}
-                  />
-                }
-                actions={[
-                  <EditOutlined
-                    key="edit"
-                    onClick={() => navigate(`/manage-koi/my-koi/${koi.fishId}`)}
-                  />,
-                  <DeleteOutlined
-                    key="delete"
-                    onClick={() => handleDeleteConfirmation(koi.fishId)}
-                  />,
-                ]}
-              >
-                <Meta
-                  avatar={
-                    <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=8" />
-                  }
-                  title={koi.koiName}
-                  description={`Gender: ${koi.koiGender}, Breed: ${koi.koiBreed}, Origin: ${koi.koiOrigin}`}
+          {currentKoi.map((koi) => (
+            <Card
+              key={koi.fishId}
+              className="fish-list-card"
+              cover={
+                <img
+                  className="fish-list-card-image"
+                  alt={koi.koiName}
+                  src={koi.koiImage}
                 />
-              </Card>
-            ))}
+              }
+              actions={[
+                <EditOutlined
+                  key="edit"
+                  onClick={() => navigate(`/manage-koi/my-koi/${koi.fishId}`)}
+                />,
+                <DeleteOutlined
+                  key="delete"
+                  onClick={() => handleDeleteConfirmation(koi.fishId)}
+                />,
+              ]}
+            >
+              <Meta
+                avatar={
+                  <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=8" />
+                }
+                title={koi.koiName}
+                description={`Gender: ${koi.koiGender}, Breed: ${koi.koiBreed}, Origin: ${koi.koiOrigin}`}
+              />
+            </Card>
+          ))}
         </div>
         <div className="pagination-list-container">
           <Pagination

@@ -10,6 +10,10 @@ const AddPondPopup = ({
   loading,
 }) => {
   const [form] = Form.useForm();
+  
+  const calculatePondSize = (length, width) => {
+    return length * width || 0;
+  };
 
   return (
     <Modal
@@ -26,6 +30,11 @@ const AddPondPopup = ({
         }}
         layout="vertical"
         noValidate
+        onValuesChange={(changedValues, allValues) => {
+          const { pondLength, pondWidth } = allValues;
+          const pondSize = calculatePondSize(pondLength, pondWidth);
+          form.setFieldsValue({ pondSize });
+        }}
       >
         <Form.Item
           label="Pond Name"
@@ -54,7 +63,29 @@ const AddPondPopup = ({
         </Form.Item>
 
         <Form.Item
-          label="Pond Size (m²)"
+          label="Pond Length (m)"
+          name="pondLength"
+          rules={[{ required: true, message: "Please input the pond length!" }]}
+        >
+          <Input
+            type="number"
+            placeholder="Enter pond length"
+          />
+        </Form.Item>
+
+        <Form.Item
+          label="Pond Width (m)"
+          name="pondWidth"
+          rules={[{ required: true, message: "Please input the pond width!" }]}
+        >
+          <Input
+            type="number"
+            placeholder="Enter pond width"
+          />
+        </Form.Item>
+
+        <Form.Item
+          label="Pond Size (m²) (3 - 33m²)"
           name="pondSize"
           rules={[
             { required: true, message: "Please input the pond size!" },
@@ -77,9 +108,8 @@ const AddPondPopup = ({
         >
           <Input
             type="number"
-            value={pondData.pondSize}
-            onChange={handleInputChange}
-            placeholder="Enter pond size"
+            readOnly
+            placeholder="Calculated pond size"
           />
         </Form.Item>
 
@@ -90,9 +120,9 @@ const AddPondPopup = ({
             { required: true, message: "Please input the pond depth!" },
             {
               validator: (_, value) => {
-                if (value > 2) {
+                if (value > 3) {
                   return Promise.reject(
-                    new Error("Pond depth cannot exceed 2 meters!")
+                    new Error("Pond depth cannot exceed 3 meters!")
                   );
                 }
                 return Promise.resolve();
@@ -109,15 +139,24 @@ const AddPondPopup = ({
         </Form.Item>
 
         <Form.Item
-          label="Pond Volume (m³)"
+          label="Pond Volume (m³) ( >= 1.3 m³ )"
           name="pondVolume"
           rules={[
             { required: true, message: "Please input the pond volume!" },
             {
               validator: (_, value) => {
+                const pondSize = form.getFieldValue('pondSize');
+                const pondDepth = form.getFieldValue('pondDepth');
+                const multiply = pondSize * pondDepth;
+
                 if (value < 1.3) {
                   return Promise.reject(
                     new Error("Pond volume must be at least 1.3 m³!")
+                  );
+                }
+                if (value > multiply + 1) {
+                  return Promise.reject(
+                    new Error(`Volume cant exceed ${multiply + 1} m³!`)
                   );
                 }
                 return Promise.resolve();
@@ -134,7 +173,7 @@ const AddPondPopup = ({
         </Form.Item>
 
         <Form.Item
-          label="Pond Drains"
+          label="Pond Drains (1 - 2)"
           name="pondDrains"
           rules={[
             {
@@ -167,7 +206,7 @@ const AddPondPopup = ({
         </Form.Item>
 
         <Form.Item
-          label="Pond Aeration Capacity (m³/hour)"
+          label="Pond Aeration Capacity (m³/hour) (Volume * 1.5 or * 2)"
           name="pondAeroCapacity"
           rules={[
             {
@@ -199,7 +238,7 @@ const AddPondPopup = ({
         </Form.Item>
 
         <Form.Item
-          label="Pond Capacity of Koi Fish"
+          label="Pond Capacity of Koi Fish ( <= Volume ) "
           name="pondCapacityOfKoiFish"
           rules={[
             {
