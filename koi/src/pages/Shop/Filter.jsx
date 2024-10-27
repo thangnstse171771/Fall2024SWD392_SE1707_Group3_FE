@@ -16,10 +16,13 @@ const Filter = ({ setFilteredCategory }) => {
       });
 
       if (response.data && Array.isArray(response.data)) {
-        const fetchedCategories = response.data.map(
-          (category) => category.categoryName
-        ); // Lấy tên danh mục
-        setCategories(["All", ...fetchedCategories]); // Thêm "All" vào đầu danh sách
+        // Chỉnh sửa để lưu categoryId và categoryName
+        const fetchedCategories = response.data.map((category) => ({
+          id: category.categoryId, // categoryId
+          name: category.categoryName, // categoryName
+        }));
+
+        setCategories([{ id: "All", name: "All" }, ...fetchedCategories]); // Thêm "All" vào đầu danh sách
       } else {
         console.error("No categories found.");
       }
@@ -36,13 +39,7 @@ const Filter = ({ setFilteredCategory }) => {
   }, []);
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        padding: "20px",
-      }}
-    >
+    <div style={{ display: "flex", justifyContent: "center", padding: "20px" }}>
       <div
         style={{
           width: "35%",
@@ -55,30 +52,29 @@ const Filter = ({ setFilteredCategory }) => {
         }}
         className="custom-scrollbar"
       >
-        {/* Hiển thị danh sách danh mục */}
-        {loading ? ( // Kiểm tra trạng thái tải
+        {loading ? (
           <p>Loading categories...</p>
         ) : (
-          categories.map((category) => (
+          categories.map(({ id, name }) => (
             <button
-              key={category}
+              key={id}
               onClick={() => {
-                setActiveCategory(category);
-                setFilteredCategory(category);
+                setActiveCategory(name);
+                setFilteredCategory(id); // Lưu categoryId để lọc
               }}
               style={{
                 minWidth: "100px",
                 padding: "10px 15px",
                 margin: "0 5px",
-                backgroundColor: activeCategory === category ? "red" : "#fff",
-                color: activeCategory === category ? "#fff" : "#000",
+                backgroundColor: activeCategory === name ? "red" : "#fff",
+                color: activeCategory === name ? "#fff" : "#000",
                 border: "1px solid #ddd",
                 borderRadius: "20px",
                 cursor: "pointer",
                 whiteSpace: "nowrap",
               }}
             >
-              {category}
+              {name}
             </button>
           ))
         )}

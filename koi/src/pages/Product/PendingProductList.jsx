@@ -109,7 +109,7 @@ export default function PendingProductList() {
 
   return (
     <div>
-      <Button
+      {/* <Button
         type="primary"
         onClick={handleOpenModal}
         style={{
@@ -119,7 +119,7 @@ export default function PendingProductList() {
         }}
       >
         Create New Product
-      </Button>
+      </Button> */}
 
       <TableContainer component={Paper}>
         <Table aria-label="product table">
@@ -170,41 +170,45 @@ export default function PendingProductList() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {products.map((product) => (
-              <TableRow key={product.productId}>
-                <TableCell align="center">{product.productId}</TableCell>
-                <TableCell align="left">{product.productName}</TableCell>
-                <TableCell align="left">{product.productDescription}</TableCell>
-                <TableCell align="center">{product.productPrice}</TableCell>
-                <TableCell
-                  align="center"
-                  style={{ color: "Green", fontWeight: "bold" }}
-                >
-                  {product.isActive ? "Active" : "Inactive"}
-                </TableCell>
-                <TableCell align="center">{product.User.username}</TableCell>
-                <TableCell align="center">
-                  <Button
-                    style={{ color: "rgb(180,0,0)" }}
-                    onClick={() =>
-                      navigate(`/ProductDetails/${product.productId}`)
-                    }
+            {products
+              .filter((product) => product.isActive === "waiting")
+              .map((product) => (
+                <TableRow key={product.productId}>
+                  <TableCell align="center">{product.productId}</TableCell>
+                  <TableCell align="left">{product.productName}</TableCell>
+                  <TableCell align="left">
+                    {product.productDescription}
+                  </TableCell>
+                  <TableCell align="center">{product.productPrice}</TableCell>
+                  <TableCell
+                    align="center"
+                    style={{ color: "Green", fontWeight: "bold" }}
                   >
-                    View
-                  </Button>
-                  {localStorage.getItem("usertype") === "Manager" && (
+                    {product.isActive === "waiting" ? "Waiting" : ""}
+                  </TableCell>
+                  <TableCell align="center">{product.User.username}</TableCell>
+                  <TableCell align="center">
                     <Button
                       style={{ color: "rgb(180,0,0)" }}
                       onClick={() =>
                         navigate(`/ProductDetails/${product.productId}`)
                       }
                     >
-                      Review
+                      View
                     </Button>
-                  )}
-                </TableCell>
-              </TableRow>
-            ))}
+                    {localStorage.getItem("usertype") === "Manager" && (
+                      <Button
+                        style={{ color: "rgb(180,0,0)" }}
+                        onClick={() =>
+                          navigate(`/ProductDetails/${product.productId}`)
+                        }
+                      >
+                        Review
+                      </Button>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>

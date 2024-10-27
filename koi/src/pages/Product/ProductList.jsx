@@ -20,6 +20,7 @@ import {
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import api from "../../config/axios";
+import noImage from "../../assets/noimage.jpg";
 
 const { Option } = Select; // Destructure Option from Select
 
@@ -28,9 +29,10 @@ export default function ProductList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [imagePreview, setImagePreview] = useState(null);
+  // const [imagePreview, setImagePreview] = useState(null);
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const [imagePreview, setImagePreview] = useState(noImage);
 
   const [categories, setCategories] = useState([]); // State để lưu danh sách danh mục
   const fetchCategories = async () => {
@@ -56,6 +58,17 @@ export default function ProductList() {
       setLoading(false); // Đặt trạng thái tải là false sau khi hoàn thành
     }
   };
+  const handleRemoveProduct = async (productId) => {
+    try {
+      await api.post(`/api/products/updateProductActiveStatus/${productId}`, {
+        isActive: "inactive",
+      });
+      message.success("Product removed successfully!");
+      fetchProducts(); // Refresh product list
+    } catch (error) {
+      message.error("Failed to remove product. Please try again.");
+    }
+  };
 
   const fetchProducts = async () => {
     try {
@@ -78,13 +91,18 @@ export default function ProductList() {
 
   const handleOpenModal = () => {
     form.resetFields();
-    setImagePreview(null);
+
+    console.log("Setting imagePreview to noImage:", noImage);
+    setImagePreview(noImage);
     setIsModalVisible(true);
   };
 
   const handleCloseModal = () => setIsModalVisible(false);
 
-  const handleImageUrlChange = (e) => setImagePreview(e.target.value);
+  const handleImageUrlChange = (e) => {
+    const url = e.target.value;
+    setImagePreview(url ? url : noImage);
+  };
 
   const handleFormSubmit = async (values) => {
     const userId = localStorage.getItem("userId");
@@ -191,6 +209,12 @@ export default function ProductList() {
                     }
                   >
                     View
+                  </Button>
+                  <Button
+                    style={{ color: "red", marginLeft: "8px" }}
+                    onClick={() => handleRemoveProduct(product.productId)}
+                  >
+                    Remove
                   </Button>
                 </TableCell>
               </TableRow>
