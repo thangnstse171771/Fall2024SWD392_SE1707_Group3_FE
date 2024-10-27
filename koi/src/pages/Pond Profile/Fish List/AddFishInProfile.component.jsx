@@ -135,13 +135,13 @@ const AddFishInProfile = ({ open, onCancel, onSubmit, loading }) => {
           />
         </Form.Item>
 
-        <Form.Item
+        {/* <Form.Item
           label="Price"
           name="price"
           rules={[{ required: true, message: "Please enter the price!" }]}
         >
           <Input type="number" placeholder="Enter price in USD" />
-        </Form.Item>
+        </Form.Item> */}
 
         <Form.Item>
           <Button type="primary" danger htmlType="submit" loading={loading}>
