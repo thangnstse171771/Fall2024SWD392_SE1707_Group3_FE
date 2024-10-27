@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Form, Input, Button, Switch, Spin, Alert } from "antd";
 import { toast } from "react-toastify";
 import api from "../../config/axios";
@@ -7,13 +7,13 @@ import noImage from "../../assets/noimage.jpg";
 
 const ProductInfo = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState(null);
   const [isEditable, setIsEditable] = useState(false);
   const [backgroundImg, setBackgroundImg] = useState(noImage);
-
   const labelStyle = { fontWeight: "bold", color: "rgb(255,0,0)" };
 
   const fetchProductDetails = async () => {
@@ -42,13 +42,13 @@ const ProductInfo = () => {
         productName: values.productName,
         productDescription: values.productDescription,
         productPrice: values.productPrice,
-        isActive: values.isActive,
+        isActive: "waiting",
         image: values.image,
       };
       await api.put(`/api/products/updateProduct/${id}`, updatedProduct);
       toast.success("Product updated successfully!");
       setLoading(false);
-      window.location.reload();
+      navigate("/ManageWorkplace");
     } catch (error) {
       toast.error("Failed to update product.");
       setLoading(false);
@@ -61,6 +61,38 @@ const ProductInfo = () => {
 
   const toggleEdit = () => {
     setIsEditable(!isEditable);
+  };
+
+  // Hàm xử lý khi nhấn nút Approve
+  const handleApprove = async () => {
+    setLoading(true);
+    try {
+      await api.patch(`/api/products/updateProductActiveStatus/${id}`, {
+        isActive: "active",
+      });
+      toast.success("Product approved successfully!");
+      setLoading(false);
+      fetchProductDetails();
+    } catch (error) {
+      toast.error("Failed to approve product.");
+      setLoading(false);
+    }
+  };
+
+  // Hàm xử lý khi nhấn nút Reject
+  const handleReject = async () => {
+    setLoading(true);
+    try {
+      await api.patch(`/api/products/updateProductActiveStatus/${id}`, {
+        isActive: "inactive",
+      });
+      toast.success("Product rejected successfully!");
+      setLoading(false);
+      fetchProductDetails();
+    } catch (error) {
+      toast.error("Failed to reject product.");
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -77,10 +109,17 @@ const ProductInfo = () => {
             className="product-img"
             src={backgroundImg}
             alt={profile?.productName}
-            style={{ minWidth: "500px", maxWidth: "1200px" }}
+            style={{
+              width: "100%",
+              minWidth: "300px",
+              maxWidth: "1200px",
+              maxHeight: "500px",
+              objectFit: "contain",
+            }}
           />
           <div className="product-form-container">
             <Form
+              style={{ minWidth: "650px" }}
               form={form}
               layout="vertical"
               onFinish={handleSubmit}
@@ -109,7 +148,7 @@ const ProductInfo = () => {
                 <Switch
                   checked={profile?.isActive}
                   onChange={handleStatusChange}
-                  disabled={!isEditable}
+                  disabled={true}
                 />
               </Form.Item>
               <Form.Item
@@ -170,6 +209,25 @@ const ProductInfo = () => {
                   >
                     Save Changes
                   </Button>
+                )}
+                {localStorage.getItem("usertype") === "Manager" && (
+                  <>
+                    <Button
+                      style={{ backgroundColor: "green", marginLeft: "8px" }}
+                      onClick={handleApprove}
+                    >
+                      Approve
+                    </Button>
+                    <Button
+                      style={{
+                        backgroundColor: "rgb(180,0,0)",
+                        marginLeft: "8px",
+                      }}
+                      onClick={handleReject}
+                    >
+                      Reject
+                    </Button>
+                  </>
                 )}
               </Form.Item>
             </Form>

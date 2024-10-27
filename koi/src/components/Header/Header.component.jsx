@@ -58,7 +58,7 @@ function Header() {
         {(userType === "Admin" ||
           userType === "Manager" ||
           userType === "Staff") && (
-          <Link to="/CustomerList">MANAGE CUSTOMER</Link>
+          <Link to="/ManageWorkplace">MANAGE WORKPLACE</Link>
         )}
         {userType === "Staff" && (
           <Link to="/blogmanagement">BLOG MANAGEMENT</Link>

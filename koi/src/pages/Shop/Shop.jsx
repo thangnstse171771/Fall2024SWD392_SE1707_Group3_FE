@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Slider from "react-slick";
 import ProductCard from "./ProductCard";
 import Filter from "./Filter";
@@ -7,42 +7,25 @@ import "slick-carousel/slick/slick-theme.css";
 import anhbia from "../../assets/anhbia.jpg";
 import "./Shop.css";
 import FooterContact from "./FooterContact";
-
-// Dữ liệu sản phẩm mẫu
-const products = [
-  {
-    id: 1,
-    name: "Product 1",
-    category: "Electronics",
-    price: 100,
-    image: anhbia,
-  },
-  {
-    id: 2,
-    name: "Product 2",
-    category: "Clothes",
-    price: 200,
-    image: anhbia,
-  },
-  {
-    id: 3,
-    name: "Product 3",
-    category: "Electronics",
-    price: 300,
-    image: anhbia,
-  },
-  {
-    id: 4,
-    name: "Product 4",
-    category: "Shoes",
-    price: 400,
-    image: anhbia,
-  },
-  // Thêm nhiều sản phẩm ở đây...
-];
+import api from "../../config/axios";
 
 const Shop = () => {
   const [filteredCategory, setFilteredCategory] = useState("All");
+  const [products, setProducts] = useState([]);
+
+  // Fetch products from the API
+  const fetchProducts = async () => {
+    try {
+      const response = await api.get("/api/products/getAllProducts");
+      setProducts(response.data);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   // Cấu hình cho carousel
   const sliderSettings = {
@@ -53,11 +36,11 @@ const Shop = () => {
     slidesToScroll: 1,
   };
 
-  // Lọc sản phẩm theo category
+  // Lọc sản phẩm theo categoryId
   const filteredProducts =
     filteredCategory === "All"
       ? products
-      : products.filter((product) => product.category === filteredCategory);
+      : products.filter((product) => product.categoryId === filteredCategory); // Sử dụng categoryId
 
   return (
     <div style={{ padding: "20px" }}>
@@ -115,19 +98,19 @@ const Shop = () => {
       <div
         style={{
           display: "flex",
-          flexWrap: "wrap", // Allow items to wrap to the next line
-          justifyContent: "flex-start", // Align items to the left
-          gap: "20px", // Adds space between cards
+          flexWrap: "wrap",
+          justifyContent: "flex-start",
+          gap: "20px",
         }}
       >
         {filteredProducts.map((product) => (
           <div
-            key={product.id}
+            key={product.productId}
             style={{
               display: "flex",
               justifyContent: "center",
-              flex: "0 1 calc(25% - 20px)", // Each card takes up 25% width with a gap
-              marginBottom: "20px", // Adds margin at the bottom for spacing
+              flex: "0 1 calc(25% - 20px)",
+              marginBottom: "20px",
             }}
           >
             <ProductCard product={product} />
