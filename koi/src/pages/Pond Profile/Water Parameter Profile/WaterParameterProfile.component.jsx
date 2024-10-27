@@ -12,6 +12,8 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 
+import WaterParameters from "../../Water Parameters/WaterParameters.component";
+
 const WaterParameterProfile = () => {
   const { id } = useParams();
   const [parameterProfile, setParameterProfile] = useState({});
@@ -212,6 +214,8 @@ const WaterParameterProfile = () => {
               </tr>
             </tbody>
           </table>
+
+          {/* <WaterParameters/> */}
         </>
       )}
     </div>

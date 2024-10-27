@@ -87,10 +87,7 @@ const PondProfileInfo = ({ refresh }) => {
         <>
           <img
             className="koi-profile-img"
-            src={
-              profile.pondImage ||
-              "https://cdn11.bigcommerce.com/s-c81ee/product_images/uploaded_images/ridersuperone-1-.jpg"
-            }
+            src={profile.pondImage}
             alt={profile.pondName}
           />
           <div className="pond-form-container">
@@ -175,9 +172,18 @@ const PondProfileInfo = ({ refresh }) => {
                   { required: true, message: "Please input the pond volume!" },
                   {
                     validator: (_, value) => {
+                      const pondSize = form.getFieldValue("pondSize");
+                      const pondDepth = form.getFieldValue("pondDepth");
+                      const multiply = pondSize * pondDepth;
+
                       if (value < 1.3) {
                         return Promise.reject(
                           new Error("Pond volume must be at least 1.3 m³!")
+                        );
+                      }
+                      if (value > multiply + 1) {
+                        return Promise.reject(
+                          new Error(`Volume cant exceed ${multiply + 1} m³!`)
                         );
                       }
                       return Promise.resolve();
@@ -288,11 +294,20 @@ const PondProfileInfo = ({ refresh }) => {
                   Pond Slots:{" "}
                   {profile.pondCapacity
                     ? profile.pondCapacity.currentCount
-                    : "N/A"}/{profile.pondCapacityOfKoiFish}
+                    : "N/A"}
+                  /{profile.pondCapacityOfKoiFish}
                 </div>
               </Form.Item>
 
               <Form.Item>
+                <Button
+                  onClick={() => {
+                    fetchPondDetails();
+                  }}
+                  style={{ marginRight: "8px" }}
+                >
+                  Revert 
+                </Button>
                 <Button
                   type="primary"
                   danger
