@@ -214,7 +214,7 @@ const ProductInfo = () => {
                     Save Changes
                   </Button>
                 )}
-                {localStorage.getItem("userType") === "Manager" && (
+                {localStorage.getItem("usertype") === "Manager" && (
                   <>
                     <Button
                       style={{
@@ -224,7 +224,7 @@ const ProductInfo = () => {
                       }}
                       onClick={handleApprove}
                     >
-                      Approve
+                      Approve for OnBoard
                     </Button>
                     <Button
                       style={{

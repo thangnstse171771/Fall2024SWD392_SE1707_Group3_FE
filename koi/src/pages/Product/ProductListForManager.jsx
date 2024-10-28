@@ -111,16 +111,15 @@ export default function ProductListForManger() {
                 align="center"
                 style={{ color: "green", fontWeight: "bold" }}
               >
-                {product.isActive ? "Active" : "Inactive"}
+                {product.isActive}
               </TableCell>
               <TableCell align="center">{product.User.username}</TableCell>
               <TableCell align="center">
                 <Button
+                  style={{ color: "rgb(180,0,0)" }}
                   onClick={() =>
-                    navigate(`/manage-product/view/${product.productId}`, {
-                      state: { viewOnly: true },
-                    })
-                  } // Pass viewOnly state
+                    navigate(`/ProductDetails/${product.productId}`)
+                  }
                 >
                   View
                 </Button>

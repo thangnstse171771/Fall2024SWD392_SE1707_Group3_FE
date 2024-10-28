@@ -60,8 +60,8 @@ export default function ProductList() {
   };
   const handleRemoveProduct = async (productId) => {
     try {
-      await api.post(`/api/products/updateProductActiveStatus/${productId}`, {
-        isActive: "inactive",
+      await api.patch(`/api/products/updateProductActiveStatus/${productId}`, {
+        isActive: "inActive",
       });
       message.success("Product removed successfully!");
       fetchProducts(); // Refresh product list
@@ -210,12 +210,14 @@ export default function ProductList() {
                   >
                     View
                   </Button>
-                  <Button
-                    style={{ color: "red", marginLeft: "8px" }}
-                    onClick={() => handleRemoveProduct(product.productId)}
-                  >
-                    Remove
-                  </Button>
+                  {localStorage.getItem("usertype") === "Manager" && (
+                    <Button
+                      style={{ color: "red", marginLeft: "8px" }}
+                      onClick={() => handleRemoveProduct(product.productId)}
+                    >
+                      Remove
+                    </Button>
+                  )}
                 </TableCell>
               </TableRow>
             ))}
