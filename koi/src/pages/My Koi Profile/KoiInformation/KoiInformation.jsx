@@ -117,9 +117,7 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
         <p>
           <strong>Origin:</strong> {koi.koiOrigin || "N/A"}
         </p>
-        <p>
-          <strong>Current Pond ID:</strong> {koi.currentPondId}
-        </p>
+
         {!viewOnly && (
           <div className="edit-btn-container">
             <Button className="edit-btn" onClick={handleEdit}>
@@ -193,21 +191,7 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
                 ))}
             </Select>
           </Form.Item>
-          <Form.Item
-            name="pondId"
-            label="Current Pond"
-            rules={[{ required: true, message: "Please select a pond!" }]}
-          >
-            <Select placeholder="Select a pond">
-              {ponds
-                .filter((pond) => pond.status === "active")
-                .map((pond) => (
-                  <Option key={pond.pondId} value={pond.pondId}>
-                    {pond.pondName}
-                  </Option>
-                ))}
-            </Select>
-          </Form.Item>
+
           <Form.Item>
             <Button type="primary" htmlType="submit" className="submit-btn">
               Update Koi Fish

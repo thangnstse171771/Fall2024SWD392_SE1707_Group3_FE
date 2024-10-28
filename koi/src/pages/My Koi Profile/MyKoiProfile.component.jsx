@@ -6,6 +6,7 @@ import api from "../../config/axios";
 import KoiInformation from "./KoiInformation/KoiInformation";
 import KoiHealth from "./KoiHealth/KoiHealth";
 import KoiRecord from "./KoiRecord/KoiRecord";
+import KoiTransfer from "./KoiTransfer/KoiTransfer"; // Import KoiTransfer
 import "./MyKoiProfile.scss";
 
 const MyKoiProfile = () => {
@@ -123,6 +124,13 @@ const MyKoiProfile = () => {
         <div className="koi-profile__section koi-profile__section--record">
           <Card className="koi-profile__card">
             <KoiRecord koi={koi} />
+          </Card>
+        </div>
+
+        <Divider style={{ borderColor: "#7cb305" }}>Koi Transfer</Divider>
+        <div className="koi-profile__section koi-profile__section--transfer">
+          <Card className="koi-profile__card">
+            <KoiTransfer koi={koi} ponds={ponds} />{" "}
           </Card>
         </div>
       </div>
