@@ -6,10 +6,8 @@ import api from "../../config/axios";
 
 const RecommendationsProducts = () => {
   const { id } = useParams();
-  const [waterPara, setWaterPara] = useState([]);
-  const [productRecommendId, setProductRecommendId] = useState([]);
-  const [productList, setProductList] = useState([]);
-  const [recommendedProducts, setRecommendedProducts] = useState([]);
+  const [pond, setPond] = useState({});
+  const [productRecommend, setProductRecommend] = useState([]);
   const [error, setError] = useState(null);
 
   const token = sessionStorage.getItem("token");
@@ -22,7 +20,7 @@ const RecommendationsProducts = () => {
         },
       });
       const parameter = response.data;
-      setWaterPara(parameter);
+      setPond(parameter);
       return parameter.waterParameterId;
     } catch (error) {
       toast.error(error.response?.data?.message);
@@ -30,7 +28,7 @@ const RecommendationsProducts = () => {
     }
   };
 
-  const fetchProductRecommendId = async (waterParameterId) => {
+  const fetchProductRecommend = async (waterParameterId) => {
     try {
       const response = await api.get(
         `/api/productRecommends/getProductRecommendByWaterParameterId/${waterParameterId}`,
@@ -41,25 +39,11 @@ const RecommendationsProducts = () => {
         }
       );
       const product = response.data;
-      setProductRecommendId(product);
+      const filteredProducts = product.filter(
+        (recommend) => recommend.Product !== null
+      );
+      setProductRecommend(filteredProducts);
     } catch (error) {
-      // toast.error(error.response?.data?.message);
-      setError(error.response?.data?.message);
-      console.log("Error: ", error);
-    }
-  };
-
-  const fetchProductList = async () => {
-    try {
-      const response = await api.get(`/api/products/getAllProducts`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const list = response.data;
-      setProductList(list);
-    } catch (error) {
-      toast.error(error.response?.data?.message);
       setError(error.response?.data?.message);
       console.log("Error: ", error);
     }
@@ -69,32 +53,21 @@ const RecommendationsProducts = () => {
     const fetchData = async () => {
       const waterParameterId = await fetchWaterParaDetail();
       if (waterParameterId) {
-        fetchProductRecommendId(waterParameterId);
+        fetchProductRecommend(waterParameterId);
       }
     };
     fetchData();
-    fetchProductList();
   }, [id]);
-
-  useEffect(() => {
-    if (productRecommendId.length > 0 && productList.length > 0) {
-      const recommended = productRecommendId.map((rec) =>
-        productList.find((product) => product.productId === rec.productId)
-      );
-      setRecommendedProducts(recommended);
-    }
-  }, [productRecommendId, productList]);
 
   return (
     <div className="recommend-product-page">
-      <h1>Recommended Products</h1>
+      <h1>Recommended Products for {pond.Pond?.pondName || "Unknown Pond"}</h1>
       <div className="product-list">
-        {recommendedProducts.length > 0 ? (
-          recommendedProducts.map((product) => (
-            <div key={product.productId} className="product-item">
-              <h2>{product.productName}</h2>
-              <p>{product.productDescription}</p>
-              <p>Price: ${product.productPrice}</p>
+        {productRecommend.length > 0 ? (
+          productRecommend.map((recommend) => (
+            <div key={recommend.Product.productId} className="product-item">
+              <h2>{recommend.Product.productName}</h2>
+              <p>Price: ${recommend.Product.productPrice || "N/A"}</p>
             </div>
           ))
         ) : (
