@@ -6,7 +6,7 @@ import api from "../../config/axios";
 
 const RecommendationsProducts = () => {
   const { id } = useParams();
-  const { pond, setPond } = useState({});
+  const [pond, setPond] = useState({});
   const [productRecommend, setProductRecommend] = useState([]);
   const [error, setError] = useState(null);
 
@@ -61,7 +61,7 @@ const RecommendationsProducts = () => {
 
   return (
     <div className="recommend-product-page">
-      <h1>Recommended Products for {pond.Pond.pondName}</h1>
+      <h1>Recommended Products for {pond.Pond?.pondName || "Unknown Pond"}</h1>
       <div className="product-list">
         {productRecommend.length > 0 ? (
           productRecommend.map((recommend) => (
