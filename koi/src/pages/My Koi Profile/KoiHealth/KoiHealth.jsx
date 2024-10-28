@@ -1,13 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { Card, Table, Spin, Button, Modal, Form, Input, DatePicker, message } from "antd";
+import {
+  Card,
+  Table,
+  Spin,
+  Button,
+  Modal,
+  Form,
+  Input,
+  DatePicker,
+  message,
+} from "antd";
 import api from "../../../config/axios";
 import "./KoiHealth.scss";
+import moment from "moment";
 
 const KoiHealth = ({ koi }) => {
   const [healthData, setHealthData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 5; // Number of records per page
 
   useEffect(() => {
     const fetchKoiHealth = async () => {
@@ -67,16 +82,32 @@ const KoiHealth = ({ koi }) => {
     }
   };
 
+  // Calculate current data for pagination
+  const paginatedData = healthData.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
+  const totalRecords = healthData.length;
+
+  // Function to disable past dates
+  const disabledDate = (current) => {
+    return current && current < moment().startOf("day");
+  };
+
   return (
     <Card title="Koi Health Records" style={{ marginBottom: 16 }}>
-      <Button type="primary" onClick={() => setIsModalVisible(true)} style={{ marginBottom: 16 }}>
+      <Button
+        type="primary"
+        onClick={() => setIsModalVisible(true)}
+        style={{ marginBottom: 16 }}
+      >
         Add Koi Health Record
       </Button>
       {loading ? (
         <Spin tip="Loading health data..." />
       ) : (
         <Table
-          dataSource={healthData}
+          dataSource={paginatedData}
           columns={[
             {
               title: "Health ID",
@@ -116,7 +147,12 @@ const KoiHealth = ({ koi }) => {
             },
           ]}
           rowKey="healthId"
-          pagination={false}
+          pagination={{
+            current: currentPage,
+            pageSize,
+            total: totalRecords,
+            onChange: (page) => setCurrentPage(page),
+          }}
         />
       )}
 
@@ -132,7 +168,7 @@ const KoiHealth = ({ koi }) => {
             label="Health Date"
             rules={[{ required: true, message: "Please select health date!" }]}
           >
-            <DatePicker style={{ width: "100%" }} />
+            <DatePicker style={{ width: "100%" }} disabledDate={disabledDate} />
           </Form.Item>
           <Form.Item
             name="illness"
@@ -146,7 +182,7 @@ const KoiHealth = ({ koi }) => {
             label="End Date"
             rules={[{ required: true, message: "Please select end date!" }]}
           >
-            <DatePicker style={{ width: "100%" }} />
+            <DatePicker style={{ width: "100%" }} disabledDate={disabledDate} />
           </Form.Item>
           <Form.Item
             name="medicine"
