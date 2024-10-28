@@ -25,18 +25,7 @@ function ManageKoi() {
           />
           <h1 className="manage-koi-text">My Pond</h1>
         </div>
-      </Link>
-
-      <Link to="/manage-koi/water-parameters" className="manage-koi-card">
-        <div>
-          <img
-            src={WaterParametersIcon}
-            alt="My Koi Logo"
-            className="manage-koi-logos"
-          />
-          <h1 className="manage-koi-text">Water Parameters</h1>
-        </div>
-      </Link>   
+      </Link>  
 
       <Link to="/manage-koi/recommendations" className="customer-recommendations-card">
         <div>

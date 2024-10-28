@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Line, Bar } from "react-chartjs-2";
-import api from "../../config/axios"; // Import the axios instance
+import api from "../../config/axios";
 import {
   Chart,
   CategoryScale,
@@ -27,66 +27,27 @@ Chart.register(
   Filler
 );
 
-const WaterParameters = () => {
-  const [ponds, setPonds] = useState([]);
-  const [selectedPond, setSelectedPond] = useState(null);
+const WaterParameters = ({ pondId }) => {
   const [waterData, setWaterData] = useState(null);
 
   useEffect(() => {
-    // Fetch all ponds for the user
-    const fetchPonds = async () => {
-      const token = sessionStorage.getItem("token");
-
-      try {
-        const response = await api.get("/api/pond/getAllPondsByUser", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            Accept: "application/json",
-          },
-        });
-
-        if (response.data.success) {
-          const activePonds = response.data.data.filter(
-            (pond) => pond.status === "active"
-          );
-          setPonds(activePonds);
-          if (activePonds.length > 0) {
-            setSelectedPond(activePonds[0].pondId); // Set default to the first active pond
-          }
-        } else {
-          console.error("Failed to fetch ponds.");
-        }
-      } catch (error) {
-        console.error("Error fetching ponds:", error);
-      }
-    };
-
-    fetchPonds();
-  }, []);
-
-  useEffect(() => {
-    if (selectedPond) {
-      // Fetch water parameters for the selected pond
+    if (pondId) {
       const fetchWaterParameters = async () => {
         const token = sessionStorage.getItem("token");
 
         try {
-          const response = await api.get(
-            `/api/waterPara/pond/${selectedPond}/all`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-                Accept: "application/json",
-              },
-            }
-          );
+          const response = await api.get(`/api/waterPara/pond/${pondId}/all`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              Accept: "application/json",
+            },
+          });
 
           if (response.data) {
-            // Sort the water data by recordDate in ascending order
             const sortedData = response.data.sort(
               (a, b) => new Date(a.recordDate) - new Date(b.recordDate)
             );
-            setWaterData(sortedData); // Set sorted data to state
+            setWaterData(sortedData);
           } else {
             console.error("Failed to fetch water parameters.");
           }
@@ -97,28 +58,21 @@ const WaterParameters = () => {
 
       fetchWaterParameters();
     }
-  }, [selectedPond]);
-
-  const handlePondSelect = (event) => {
-    setSelectedPond(event.target.value);
-  };
+  }, [pondId]);
 
   const formatLabels = (data) => {
     const dateCount = {};
 
-    // Count occurrences of each date
     data.forEach((entry) => {
       const date = new Date(entry.recordDate).toLocaleDateString();
       dateCount[date] = (dateCount[date] || 0) + 1;
     });
 
-    // Format the labels with date and time where necessary
     return data.map((entry) => {
       const date = new Date(entry.recordDate);
       const formattedDate = date.toLocaleDateString();
 
       if (dateCount[formattedDate] > 1) {
-        // If the date occurs more than once, append the time (hh:mm)
         const time = date.toLocaleTimeString([], {
           hour: "2-digit",
           minute: "2-digit",
@@ -134,38 +88,16 @@ const WaterParameters = () => {
     const warnings = [];
     if (waterData) {
       const latestData = waterData[waterData.length - 1];
-      if (latestData.temperature > 24) {
-        warnings.push("Temperature is too high (> 24°C)");
-      }
-      if (latestData.pondSaltLevel > 7) {
-        warnings.push("Salt level is too high (> 7g/L)");
-      }
-      if (latestData.pondPHLevel < 6.5) {
-        warnings.push("pH level is too low (< 6.5)");
-      }
+      if (latestData.temperature > 24) warnings.push("Temperature is too high (> 24°C)");
+      if (latestData.pondSaltLevel > 7) warnings.push("Salt level is too high (> 7g/L)");
+      if (latestData.pondPHLevel < 6.5) warnings.push("pH level is too low (< 6.5)");
     }
-    return warnings.length > 0
-      ? warnings
-      : ["All parameters are within standards."];
+    return warnings.length > 0 ? warnings : ["All parameters are within standards."];
   };
 
   return (
     <div className="water-parameters-page">
       <h1>Water Parameters Monitoring</h1>
-      <div>
-        <label htmlFor="pond-select">Select Pond: </label>
-        <select
-          id="pond-select"
-          value={selectedPond}
-          onChange={handlePondSelect}
-        >
-          {ponds.map((pond) => (
-            <option key={pond.pondId} value={pond.pondId}>
-              {pond.pondName}
-            </option>
-          ))}
-        </select>
-      </div>
       <div className="charts">
         <div className="chart-container">
           <h2>Line Chart</h2>
