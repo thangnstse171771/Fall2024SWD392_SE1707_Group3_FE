@@ -58,11 +58,22 @@ const KoiHealth = ({ koi }) => {
   }, [koi.fishId]);
 
   const handleAddHealth = async (values) => {
+    if (values.endDate.isBefore(values.healthDate)) {
+      message.error("End date must be after health date!");
+      return;
+    }
+
     const token = sessionStorage.getItem("token");
+    const formattedValues = {
+      ...values,
+      healthDate: values.healthDate.format("YYYY-MM-DD"), // Format date for submission
+      endDate: values.endDate.format("YYYY-MM-DD"),
+      fishId: koi.fishId,
+    };
     try {
       const response = await api.post(
         "/api/koi/addKoiHealth",
-        { ...values, fishId: koi.fishId },
+        formattedValues,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -89,10 +100,14 @@ const KoiHealth = ({ koi }) => {
 
   const handleEditHealth = async (values) => {
     const token = sessionStorage.getItem("token");
+    const formattedValues = {
+      ...values,
+      // Do not send healthDate and endDate for edit
+    };
     try {
       const response = await api.put(
         `/api/koi/updateKoiHealth/${editingRecord.healthId}`,
-        { ...values },
+        formattedValues,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -107,7 +122,7 @@ const KoiHealth = ({ koi }) => {
         setHealthData((prevData) =>
           prevData.map((record) =>
             record.healthId === editingRecord.healthId
-              ? response.data.data
+              ? { ...record, ...values } // Update with new values
               : record
           )
         );
@@ -202,6 +217,7 @@ const KoiHealth = ({ koi }) => {
               title: "Health Date",
               dataIndex: "healthDate",
               key: "healthDate",
+              render: (text) => moment(text).format("YYYY-MM-DD"), // Format for display
             },
             {
               title: "Illness",
@@ -212,6 +228,7 @@ const KoiHealth = ({ koi }) => {
               title: "End Date",
               dataIndex: "endDate",
               key: "endDate",
+              render: (text) => moment(text).format("YYYY-MM-DD"), // Format for display
             },
             {
               title: "Medicine",
@@ -239,9 +256,7 @@ const KoiHealth = ({ koi }) => {
                     onClick={() => {
                       setEditingRecord(record);
                       form.setFieldsValue({
-                        healthDate: moment(record.healthDate),
                         illness: record.illness,
-                        endDate: moment(record.endDate),
                         medicine: record.medicine,
                         price: record.price,
                       });
@@ -289,7 +304,7 @@ const KoiHealth = ({ koi }) => {
           <Form.Item
             name="illness"
             label="Illness"
-            rules={[{ required: true, message: "Please input illness!" }]}
+            rules={[{ required: true, message: "Please enter illness!" }]}
           >
             <Input />
           </Form.Item>
@@ -303,20 +318,20 @@ const KoiHealth = ({ koi }) => {
           <Form.Item
             name="medicine"
             label="Medicine"
-            rules={[{ required: true, message: "Please input medicine!" }]}
+            rules={[{ required: true, message: "Please enter medicine!" }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="price"
-            label="Price"
-            rules={[{ required: true, message: "Please input price!" }]}
+            label="Price ($)"
+            rules={[{ required: true, message: "Please enter price!" }]}
           >
-            <Input type="number" />
+            <Input type="number" min={0} />
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" className="submit-button">
-              Submit
+              Add Record
             </Button>
           </Form.Item>
         </Form>
@@ -329,45 +344,40 @@ const KoiHealth = ({ koi }) => {
         footer={null}
         className="edit-health-modal"
       >
-        <Form form={form} layout="vertical" onFinish={handleEditHealth}>
-          <Form.Item
-            name="healthDate"
-            label="Health Date"
-            rules={[{ required: true, message: "Please select health date!" }]}
-          >
-            <DatePicker style={{ width: "100%" }} disabledDate={disabledDate} />
-          </Form.Item>
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleEditHealth}
+          initialValues={{
+            illness: editingRecord?.illness,
+            medicine: editingRecord?.medicine,
+            price: editingRecord?.price,
+          }}
+        >
           <Form.Item
             name="illness"
             label="Illness"
-            rules={[{ required: true, message: "Please input illness!" }]}
+            rules={[{ required: true, message: "Please enter illness!" }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
-            name="endDate"
-            label="End Date"
-            rules={[{ required: true, message: "Please select end date!" }]}
-          >
-            <DatePicker style={{ width: "100%" }} disabledDate={disabledDate} />
-          </Form.Item>
-          <Form.Item
             name="medicine"
             label="Medicine"
-            rules={[{ required: true, message: "Please input medicine!" }]}
+            rules={[{ required: true, message: "Please enter medicine!" }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="price"
-            label="Price"
-            rules={[{ required: true, message: "Please input price!" }]}
+            label="Price ($)"
+            rules={[{ required: true, message: "Please enter price!" }]}
           >
-            <Input type="number" />
+            <Input type="number" min={0} />
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit" className="submit-button">
-              Update
+              Update Record
             </Button>
           </Form.Item>
         </Form>
