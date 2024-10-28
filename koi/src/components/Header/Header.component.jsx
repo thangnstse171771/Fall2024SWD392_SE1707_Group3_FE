@@ -54,7 +54,7 @@ function Header() {
         <Link to="/ShopCenter">SHOP</Link>
         <Link to="/blog">BLOG</Link>
         {/* Kiểm tra nếu userType không phải là 'Customer', thì hiển thị Manage Customer */}
-        {(userType === "Admin" ||
+        {(userType === "Customer" ||
           userType === "Manager" ||
           userType === "Staff") && <Link to="/manage-koi">MANAGE KOI</Link>}
         {(userType === "Admin" ||
