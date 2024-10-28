@@ -22,12 +22,12 @@ const KoiHealth = ({ koi }) => {
   const [loading, setLoading] = useState(true);
   const [isAddModalVisible, setIsAddModalVisible] = useState(false);
   const [isEditModalVisible, setIsEditModalVisible] = useState(false);
-  const [form] = Form.useForm();
+  const [addForm] = Form.useForm();
+  const [editForm] = Form.useForm();
   const [editingRecord, setEditingRecord] = useState(null);
 
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 5; // Number of records per page
+  const pageSize = 5;
 
   useEffect(() => {
     const fetchKoiHealth = async () => {
@@ -66,7 +66,7 @@ const KoiHealth = ({ koi }) => {
     const token = sessionStorage.getItem("token");
     const formattedValues = {
       ...values,
-      healthDate: values.healthDate.format("YYYY-MM-DD"), // Format date for submission
+      healthDate: values.healthDate.format("YYYY-MM-DD"),
       endDate: values.endDate.format("YYYY-MM-DD"),
       fishId: koi.fishId,
     };
@@ -87,7 +87,7 @@ const KoiHealth = ({ koi }) => {
         message.success("Koi health record added successfully!");
         setHealthData((prevData) => [response.data.data, ...prevData]);
         setIsAddModalVisible(false);
-        form.resetFields();
+        addForm.resetFields(); // Reset form after adding
       } else {
         message.error("Failed to add Koi health record.");
       }
@@ -99,11 +99,21 @@ const KoiHealth = ({ koi }) => {
   };
 
   const handleEditHealth = async (values) => {
+    if (values.endDate.isBefore(values.healthDate)) {
+      message.error("End date must be after health date!");
+      return;
+    }
+
     const token = sessionStorage.getItem("token");
+
     const formattedValues = {
-      ...values,
-      // Do not send healthDate and endDate for edit
+      illness: values.illness,
+      medicine: values.medicine,
+      price: values.price,
+      healthDate: editingRecord.healthDate,
+      endDate: values.endDate.format("YYYY-MM-DD"), // Ensure endDate is formatted
     };
+
     try {
       const response = await api.put(
         `/api/koi/updateKoiHealth/${editingRecord.healthId}`,
@@ -122,12 +132,12 @@ const KoiHealth = ({ koi }) => {
         setHealthData((prevData) =>
           prevData.map((record) =>
             record.healthId === editingRecord.healthId
-              ? { ...record, ...values } // Update with new values
+              ? { ...record, ...formattedValues }
               : record
           )
         );
         setIsEditModalVisible(false);
-        form.resetFields();
+        editForm.resetFields(); // Reset form after editing
         setEditingRecord(null);
       } else {
         message.error("Failed to update Koi health record.");
@@ -178,14 +188,12 @@ const KoiHealth = ({ koi }) => {
     }
   };
 
-  // Calculate current data for pagination
   const paginatedData = healthData.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
   const totalRecords = healthData.length;
 
-  // Function to disable past dates
   const disabledDate = (current) => {
     return current && current < moment().startOf("day");
   };
@@ -217,7 +225,7 @@ const KoiHealth = ({ koi }) => {
               title: "Health Date",
               dataIndex: "healthDate",
               key: "healthDate",
-              render: (text) => moment(text).format("YYYY-MM-DD"), // Format for display
+              render: (text) => moment(text).format("YYYY-MM-DD"),
             },
             {
               title: "Illness",
@@ -228,7 +236,7 @@ const KoiHealth = ({ koi }) => {
               title: "End Date",
               dataIndex: "endDate",
               key: "endDate",
-              render: (text) => moment(text).format("YYYY-MM-DD"), // Format for display
+              render: (text) => moment(text).format("YYYY-MM-DD"),
             },
             {
               title: "Medicine",
@@ -255,10 +263,12 @@ const KoiHealth = ({ koi }) => {
                     type="link"
                     onClick={() => {
                       setEditingRecord(record);
-                      form.setFieldsValue({
+                      editForm.setFieldsValue({
                         illness: record.illness,
                         medicine: record.medicine,
                         price: record.price,
+                        healthDate: moment(record.healthDate),
+                        endDate: moment(record.endDate),
                       });
                       setIsEditModalVisible(true);
                     }}
@@ -289,11 +299,14 @@ const KoiHealth = ({ koi }) => {
       <Modal
         title="Add Koi Health Record"
         visible={isAddModalVisible}
-        onCancel={() => setIsAddModalVisible(false)}
+        onCancel={() => {
+          setIsAddModalVisible(false);
+          addForm.resetFields(); // Reset form when closed
+        }}
         footer={null}
         className="add-health-modal"
       >
-        <Form form={form} layout="vertical" onFinish={handleAddHealth}>
+        <Form form={addForm} layout="vertical" onFinish={handleAddHealth}>
           <Form.Item
             name="healthDate"
             label="Health Date"
@@ -340,26 +353,42 @@ const KoiHealth = ({ koi }) => {
       <Modal
         title="Edit Koi Health Record"
         visible={isEditModalVisible}
-        onCancel={() => setIsEditModalVisible(false)}
+        onCancel={() => {
+          setIsEditModalVisible(false);
+          editForm.resetFields(); // Reset form when closed
+        }}
         footer={null}
         className="edit-health-modal"
       >
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={handleEditHealth}
-          initialValues={{
-            illness: editingRecord?.illness,
-            medicine: editingRecord?.medicine,
-            price: editingRecord?.price,
-          }}
-        >
+        <Form form={editForm} layout="vertical" onFinish={handleEditHealth}>
+          <Form.Item
+            name="healthDate"
+            label="Health Date"
+            rules={[{ required: true, message: "Please select health date!" }]}
+          >
+            <DatePicker
+              style={{ width: "100%" }}
+              disabled
+              value={moment(editingRecord?.healthDate)} // Set the initial value
+            />
+          </Form.Item>
           <Form.Item
             name="illness"
             label="Illness"
             rules={[{ required: true, message: "Please enter illness!" }]}
           >
             <Input />
+          </Form.Item>
+          <Form.Item
+            name="endDate"
+            label="End Date"
+            rules={[{ required: true, message: "Please select end date!" }]}
+          >
+            <DatePicker
+              style={{ width: "100%" }}
+              disabled
+              value={moment(editingRecord?.endDate)} // Set the initial value
+            />
           </Form.Item>
           <Form.Item
             name="medicine"
