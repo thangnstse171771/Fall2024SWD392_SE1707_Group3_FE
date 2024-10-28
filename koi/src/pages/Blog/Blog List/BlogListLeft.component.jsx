@@ -8,7 +8,7 @@ const BlogListLeft = () => {
 
   const fetchFeaturedBlog = async () => {
     try {
-      const response = await api.get(`/api/blog/getBlogById/5`);
+      const response = await api.get(`/api/blog/getBlogById/2`);
       setFeaturedBlog(response.data);
     } catch (error) {
       toast.error("Error fetching featured blog!");
@@ -37,12 +37,12 @@ const BlogListLeft = () => {
         <h3 className="featured-title">FEATURED</h3>
         <div className="featured-image">
           <img
-            src="https://www.thespruce.com/thmb/Sx7GCSg2FZ_-j3YKxa97EsypXGI=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/KoiPond-5fe8b3a605ef4743a55dba059cfb531b.jpg" // Replace with your actual image URL
+            src={featuredBlog.image}
             alt="Featured"
           />
           <div className="featured-overlay">
             <h4 className="featured-title">{featuredBlog.blogTitle}</h4>
-            <h4 className="featured-desc">{featuredBlog.blogContent}</h4>
+            <h4 className="featured-desc">{featuredBlog.blogContent ? `${featuredBlog.blogContent.slice(0, 70)}...` : ""}</h4>
           </div>
         </div>
       </div>
@@ -51,7 +51,7 @@ const BlogListLeft = () => {
         {blogs.slice(0, 3).map((blog) => (
           <div key={blog.blogId} className="small-blog-card">
             <img
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQc-oBPjDYorVZTRXD0AcVk-fLx6t2BR_loNQ&s"
+              src={blog.image}
               alt="blog image"
               className="small-blog-image"
             />
