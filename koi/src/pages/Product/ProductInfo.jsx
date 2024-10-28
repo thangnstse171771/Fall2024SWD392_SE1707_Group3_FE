@@ -86,7 +86,7 @@ const ProductInfo = () => {
     setLoading(true);
     try {
       await api.patch(`/api/products/updateProductActiveStatus/${id}`, {
-        isActive: "inactive",
+        isActive: "inActive",
       });
       toast.success("Product rejected successfully!");
       setLoading(false);
@@ -214,10 +214,14 @@ const ProductInfo = () => {
                     Save Changes
                   </Button>
                 )}
-                {localStorage.getItem("usertype") === "Manager" && (
+                {localStorage.getItem("userType") === "Manager" && (
                   <>
                     <Button
-                      style={{ backgroundColor: "green", marginLeft: "8px" }}
+                      style={{
+                        backgroundColor: "green",
+                        color: "white",
+                        marginLeft: "8px",
+                      }}
                       onClick={handleApprove}
                     >
                       Approve
@@ -226,6 +230,7 @@ const ProductInfo = () => {
                       style={{
                         backgroundColor: "rgb(180,0,0)",
                         marginLeft: "8px",
+                        color: "white",
                       }}
                       onClick={handleReject}
                     >
