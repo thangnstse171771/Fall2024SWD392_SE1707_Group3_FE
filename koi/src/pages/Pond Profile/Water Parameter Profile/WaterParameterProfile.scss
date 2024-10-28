@@ -4,6 +4,13 @@
   gap: 10px; /* Add some spacing between elements */
 }
 
+.ideal-parameter-example {
+  display: flex; 
+  justify-content: center;
+  margin-bottom: 20px;
+  font-size: 18px;
+}
+
 .water-parameter-profile-table {
   margin: 0 auto;
   width: 100%;
@@ -12,6 +19,7 @@
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.229);
+  margin-bottom: 20px;
 }
 
 .water-parameter-profile-table-head {

@@ -43,8 +43,7 @@ const BlogListRight = () => {
               >
                 {blog.blogTitle}
               </h1>
-              <h3 className="main-blog-description">{blog.blogContent}</h3>
-              {/* <h5 className="small-blog-description">{blog.blogContent.slice(0, 50)}...</h5> Show the first 50 characters */}
+              <h3 className="main-blog-description">{blog.blogContent.slice(0, 300)}...</h3>
             </div>
           </div>
         ))}
