@@ -1,0 +1,76 @@
+// KoiRecord.scss
+.koi-record-container {
+  margin-bottom: 16px;
+  padding: 24px;
+
+  .koi-record-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 16px;
+  }
+
+  .add-record-button {
+    margin-bottom: 20px;
+    background-color: #1890ff;
+    border: none;
+    color: #fff;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #1890ff;
+    }
+  }
+
+  .add-record-modal .ant-modal-content {
+    border-radius: 8px;
+  }
+
+  .add-record-modal .ant-modal-title {
+    font-weight: bold;
+    color: #1890ff;
+  }
+
+  .submit-btn {
+    width: 100%;
+    background-color: #1890ff;
+    color: #fff;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #40a9ff;
+    }
+  }
+
+  .record-table-container {
+    overflow: auto;
+
+    .ant-table {
+      background-color: #f9f9f9;
+      border-radius: 8px;
+
+      .ant-table-thead > tr > th {
+        background-color: #e6f7ff;
+        color: #333;
+        font-weight: bold;
+      }
+
+      .ant-table-tbody > tr:hover {
+        background-color: #e6f7ff;
+        transition: background-color 0.2s;
+      }
+    }
+  }
+
+  .no-records-message {
+    color: #999;
+    font-size: 16px;
+    text-align: center;
+    padding: 20px;
+  }
+}
+
+.loading-container {
+  text-align: center;
+  padding: 20px;
+}

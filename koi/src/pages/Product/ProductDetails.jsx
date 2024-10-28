@@ -9,21 +9,22 @@ function ProductDetails() {
   return (
     <div className="pond-profile-page">
       <div className="pond-profile-header">
-        <h1>Pond profile</h1>
+        <h1 style={{ color: "red", fontWeight: "bold" }}>PRODUCT PROFILE</h1>
       </div>
       <div className="pond-profile-body">
-        <Divider style={{ borderColor: "#7cb305" }}>Pond Info</Divider>
+        <Divider
+          style={{
+            borderColor: "#7cb305",
+            fontSize: "2em",
+            fontWeight: "500",
+            color: "darkcyan",
+          }}
+        >
+          Product Details
+        </Divider>
         <div>
           <ProductInfo />
         </div>
-        <Divider style={{ borderColor: "#7cb305" }}>Water Parameter</Divider>
-        {/* <div className="pond-profile-water-parameter">
-          <WaterParameterProfile />
-        </div> */}
-        <Divider style={{ borderColor: "#7cb305" }}>Fish List</Divider>
-        {/* <div className="pond-profile-fish-list">
-          <PondFishList />
-        </div> */}
       </div>
     </div>
   );

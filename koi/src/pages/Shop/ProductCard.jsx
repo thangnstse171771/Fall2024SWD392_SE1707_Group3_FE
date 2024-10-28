@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import api from "../../config/axios";
 
 const ProductCard = ({ product }) => {
   return (
@@ -17,28 +18,44 @@ const ProductCard = ({ product }) => {
     >
       <img
         src={product.image}
-        alt={product.name}
+        alt={product.productName} // Use productName for the alt text
         style={{
           width: "100%",
-          height: "200px",
-          objectFit: "cover",
+          height: "200px", // Fixed height to ensure a uniform card size
+          objectFit: "contain", // Ensures the entire image fits within the container
           borderRadius: "10px 10px 0 0",
         }}
       />
-      <h3 style={{ margin: "10px 0" }}>{product.name}</h3>
-      <p style={{ color: "#888", fontSize: "18px" }}>${product.price}</p>
-      <button
-        style={{
-          backgroundColor: "#008CBA",
-          color: "white",
-          padding: "10px 20px",
-          border: "none",
-          borderRadius: "5px",
-          cursor: "pointer",
-        }}
-      >
-        Add to Cart
-      </button>
+      <h3 style={{ margin: "10px 0" }}>{product.productName}</h3>
+      <p style={{ color: "#888", fontSize: "18px" }}>${product.productPrice}</p>
+      {/* Removed Add to Cart button */}
+    </div>
+  );
+};
+
+const ProductList = () => {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await api.get("/api/products/getAllProducts");
+        setProducts(response.data);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  return (
+    <div
+      style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}
+    >
+      {products.map((product) => (
+        <ProductCard key={product.productId} product={product} />
+      ))}
     </div>
   );
 };

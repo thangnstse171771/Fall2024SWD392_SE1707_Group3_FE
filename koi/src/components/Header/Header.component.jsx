@@ -51,13 +51,17 @@ function Header() {
       </div>
       <div className="navbar-links">
         <Link to="/">HOME</Link>
-        <Link to="/manage-koi">MANAGE KOI</Link>
+        {(userType === "Admin" ||
+          userType === "Manager" ||
+          userType === "Staff" ||
+          userType === "Customer") && <Link to="/manage-koi">MANAGE KOI</Link>}
         <Link to="/ShopCenter">SHOP</Link>
+        <Link to="/blog">BLOG</Link>
         {/* Kiểm tra nếu userType không phải là 'Customer', thì hiển thị Manage Customer */}
         {(userType === "Admin" ||
           userType === "Manager" ||
           userType === "Staff") && (
-          <Link to="/CustomerList">MANAGE CUSTOMER</Link>
+          <Link to="/ManageWorkplace">MANAGE WORKPLACE</Link>
         )}
         {userType === "Staff" && (
           <Link to="/blogmanagement">BLOG MANAGEMENT</Link>

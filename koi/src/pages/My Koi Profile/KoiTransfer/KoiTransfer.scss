@@ -1,0 +1,22 @@
+.koi-transfer {
+  margin: 20px;
+
+  .koi-info-card {
+    margin-bottom: 20px;
+  }
+
+  .koi-profile__header {
+    display: flex;
+    align-items: center;
+
+    .koi-profile__image {
+      width: 100px;
+      height: 100px;
+      margin-right: 20px;
+    }
+
+    .koi-profile__title {
+      font-size: 1.5rem;
+    }
+  }
+}

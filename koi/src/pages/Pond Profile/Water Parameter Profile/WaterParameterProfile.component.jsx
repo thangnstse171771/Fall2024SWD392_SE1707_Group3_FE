@@ -12,6 +12,8 @@ import {
   DeleteOutlined,
 } from "@ant-design/icons";
 
+import WaterParameters from "../../Water Parameters/WaterParameters.component";
+
 const WaterParameterProfile = () => {
   const { id } = useParams();
   const [parameterProfile, setParameterProfile] = useState({});
@@ -119,7 +121,7 @@ const WaterParameterProfile = () => {
       fetchWaterParameterById();
       toast.success("Parameter Deleted Successfully!");
     } catch (error) {
-      toast.error("Failed to delete parameter!")
+      toast.error("Failed to delete parameter!");
       console.error("Error deleting parameter:", error);
     }
   };
@@ -188,6 +190,7 @@ const WaterParameterProfile = () => {
             />
           </div>
 
+          <div className="ideal-parameter-example">Ideal Water Parameters Range</div>
           <table className="water-parameter-profile-table">
             <thead className="water-parameter-profile-table-head">
               <tr>
@@ -202,16 +205,18 @@ const WaterParameterProfile = () => {
             </thead>
             <tbody className="water-parameter-profile-table-body">
               <tr>
-                <th>{parameterProfile.temperature}</th>
-                <th>{parameterProfile.pondSaltLevel}</th>
-                <th>{parameterProfile.pondPHLevel}</th>
-                <th>{parameterProfile.pondOxygenLevel}</th>
-                <th>{parameterProfile.pondNitrite}</th>
-                <th>{parameterProfile.pondNitrate}</th>
-                <th>{parameterProfile.pondPhosphate}</th>
+                <th>15-25</th>
+                <th>0.1-0.3</th>
+                <th>7.0 - 8.5</th>
+                <th>7 - 15</th>
+                <th>0 - 0.2</th>
+                <th>0 - 20</th>
+                <th>0 - 0.25</th>
               </tr>
             </tbody>
           </table>
+          <WaterParameters pondId={id} />
+          
         </>
       )}
     </div>

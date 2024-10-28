@@ -18,17 +18,17 @@ const AddWaterParameterProfile = ({
       footer={null}
     >
       <Form
-        form={form} // Bind the form instance
+        form={form} 
         onFinish={(values) => {
           onSubmit(values);
-          form.resetFields(); // Reset form after successful submit
+          form.resetFields(); 
         }}
         layout="vertical"
         noValidate
       >
         <Form.Item
           name="temperature"
-          label="Temperature (°C)"
+          label="Temperature (°C) (0 - 100)"
           rules={[
             { required: true, message: "Please input the temperature!" },
             {
@@ -38,9 +38,9 @@ const AddWaterParameterProfile = ({
                     new Error("Temperature cannot go below 0°C!")
                   );
                 }
-                if (value > 40) {
+                if (value > 100) {
                   return Promise.reject(
-                    new Error("Temperature cannot exceed 40°C!")
+                    new Error("Temperature cannot exceed 100°C!")
                   );
                 }
                 return Promise.resolve();
@@ -58,19 +58,19 @@ const AddWaterParameterProfile = ({
 
         <Form.Item
           name="pondSaltLevel"
-          label="Salt Level (%)"
+          label="Salt Level (%) (0 - 1)"
           rules={[
             { required: true, message: "Please input the salt level!" },
             {
               validator: (_, value) => {
-                if (value < 0.1) {
+                if (value < 0) {
                   return Promise.reject(
-                    new Error("Salt Level must be at least 0.1%!")
+                    new Error("Salt Level cannot go below 0%!")
                   );
                 }
-                if (value > 0.7) {
+                if (value > 1) {
                   return Promise.reject(
-                    new Error("Salt Level cannot exceed 0.7%!")
+                    new Error("Salt Level cannot exceed 1%!")
                   );
                 }
                 return Promise.resolve();
@@ -88,7 +88,7 @@ const AddWaterParameterProfile = ({
 
         <Form.Item
           name="pondPHLevel"
-          label="pH Level (mg/L)"
+          label="pH Level (mg/L) (0 - 14)"
           rules={[
             { required: true, message: "Please input the pH level!" },
             {
@@ -118,19 +118,19 @@ const AddWaterParameterProfile = ({
 
         <Form.Item
           name="pondOxygenLevel"
-          label="Oxygen Level (mg/L)"
+          label="Oxygen Level (mg/L) (0 - 20)"
           rules={[
             { required: true, message: "Please input the oxygen level!" },
             {
               validator: (_, value) => {
-                if (value < 1) {
+                if (value < 0) {
                   return Promise.reject(
-                    new Error("Oxygen Level must be at least 1 mg/L!")
+                    new Error("Oxygen Level must be at least 0 mg/L!")
                   );
                 }
-                if (value > 15) {
+                if (value > 20) {
                   return Promise.reject(
-                    new Error("Oxygen Level cannot exceed 15 mg/L!")
+                    new Error("Oxygen Level cannot exceed 20 mg/L!")
                   );
                 }
                 return Promise.resolve();
@@ -148,7 +148,7 @@ const AddWaterParameterProfile = ({
 
         <Form.Item
           name="pondNitrite"
-          label="Nitrite (mg/L)"
+          label="Nitrite (NO₂⁻) (mg/L) (0 - 1)"
           rules={[
             { required: true, message: "Please input the nitrite level!" },
             {
@@ -158,9 +158,9 @@ const AddWaterParameterProfile = ({
                     new Error("Nitrite Level cannot go below 0 mg/L!")
                   );
                 }
-                if (value > 0.75) {
+                if (value > 1) {
                   return Promise.reject(
-                    new Error("Oxygen Level cannot exceed 0.75 mg/L!")
+                    new Error("Nitrite Level cannot exceed 1 mg/L!")
                   );
                 }
                 return Promise.resolve();
@@ -178,7 +178,7 @@ const AddWaterParameterProfile = ({
 
         <Form.Item
           name="pondNitrate"
-          label="Nitrate (mg/L)"
+          label="Nitrate (NO₃⁻) (mg/L) (0 - 100)"
           rules={[
             { required: true, message: "Please input the nitrate level!" },
             {
@@ -188,7 +188,7 @@ const AddWaterParameterProfile = ({
                     new Error("Nitrate Level cannot go below 0 mg/L!")
                   );
                 }
-                if (value > 80) {
+                if (value > 100) {
                   return Promise.reject(
                     new Error("Nitrate Level cannot exceed 80 mg/L!")
                   );
@@ -208,7 +208,7 @@ const AddWaterParameterProfile = ({
 
         <Form.Item
           name="pondPhosphate"
-          label="Phosphate (mg/L)"
+          label="Phosphate (mg/L) (0 - 2)"
           rules={[
             { required: true, message: "Please input the phosphate level!" },
             {
@@ -218,9 +218,9 @@ const AddWaterParameterProfile = ({
                     new Error("Phosphate Level cannot go below 0 mg/L!")
                   );
                 }
-                if (value > 1) {
+                if (value > 2) {
                   return Promise.reject(
-                    new Error("Phosphate Level cannot exceed 1 mg/L!")
+                    new Error("Phosphate Level cannot exceed 2 mg/L!")
                   );
                 }
                 return Promise.resolve();
@@ -242,7 +242,7 @@ const AddWaterParameterProfile = ({
           </Button>
           <Button
             onClick={() => {
-              form.resetFields(); // Reset form on cancel button click
+              form.resetFields(); 
               handleCancel();
             }}
             style={{ marginLeft: "8px" }}
