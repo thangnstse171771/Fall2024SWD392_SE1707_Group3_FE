@@ -11,6 +11,7 @@ import ManagerList from "./ManagerList";
 import PendingProductList from "../Product/PendingProductList";
 import ProductList from "../Product/ProductList";
 import ProductListForManger from "../Product/ProductListForManager";
+import ManageRecommendations from "./Manage Recommendations/ManageRecommendations";
 
 const { Header, Sider, Content } = Layout;
 
@@ -37,6 +38,7 @@ const ManageHome = () => {
     { key: "8", label: "Pending Product", roles: ["Staff", "Manager"] },
     { key: "9", label: "Onboard Product List", roles: ["Staff", "Manager"] },
     { key: "10", label: "All Product List", roles: ["Manager"] },
+    { key: "11", label: "Recommendations", roles: ["Staff", "Manager"] },
   ];
 
   const filteredMenuItems = menuItems.filter((item) =>
@@ -80,6 +82,8 @@ const ManageHome = () => {
         return <ProductList />;
       case "10":
         return <ProductListForManger />;
+      case "11":
+        return <ManageRecommendations />;
       default:
         return <AllAccountList />;
     }
