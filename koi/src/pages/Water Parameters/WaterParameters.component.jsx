@@ -88,12 +88,25 @@ const WaterParameters = ({ pondId }) => {
     const warnings = [];
     if (waterData) {
       const latestData = waterData[waterData.length - 1];
-      if (latestData.temperature > 24) warnings.push("Temperature is too high (> 24°C)");
-      if (latestData.pondSaltLevel > 7) warnings.push("Salt level is too high (> 7g/L)");
-      if (latestData.pondPHLevel < 6.5) warnings.push("pH level is too low (< 6.5)");
+      
+      if (latestData.temperature < 15 || latestData.temperature > 25) 
+        warnings.push("Temperature is out of range (15-25°C)");
+      if (latestData.pondSaltLevel < 0.1 || latestData.pondSaltLevel > 0.3) 
+        warnings.push("Salt level is out of range (0.1-0.3g/L)");
+      if (latestData.pondPHLevel < 7.0 || latestData.pondPHLevel > 8.5) 
+        warnings.push("pH level is out of range (7.0 - 8.5)");
+      if (latestData.pondOxygenLevel < 7 || latestData.pondOxygenLevel > 15) 
+        warnings.push("Oxygen level is out of range (7 - 15 mg/L)");
+      if (latestData.pondNitrite < 0 || latestData.pondNitrite > 0.2) 
+        warnings.push("Nitrite level is out of range (0 - 0.2 mg/L)");
+      if (latestData.pondNitrate < 0 || latestData.pondNitrate > 40) 
+        warnings.push("Nitrate level is out of range (ideal: 0-20, max: 40 mg/L)");
+      if (latestData.pondPhosphate < 0 || latestData.pondPhosphate > 0.25) 
+        warnings.push("Phosphate level is out of range (0 - 0.25 mg/L)");
     }
     return warnings.length > 0 ? warnings : ["All parameters are within standards."];
   };
+  
 
   return (
     <div className="water-parameters-page">
