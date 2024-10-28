@@ -31,14 +31,23 @@ const BlogManagement = () => {
 
   const handleCreateOrUpdateBlog = async (values) => {
     const token = sessionStorage.getItem("token");
+    const { blogTitle, blogContent, imageUrl } = values; // Extract values
+
+    // Prepare the payload to match API requirements
+    const payload = {
+      blogTitle,
+      blogContent,
+      image: imageUrl, // Use 'image' instead of 'imageUrl'
+    };
+
     try {
       if (editingBlog) {
-        await api.put(`/api/blog/updateBlog/${editingBlog.blogId}`, values, {
+        await api.put(`/api/blog/updateBlog/${editingBlog.blogId}`, payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
         message.success("Blog updated successfully!");
       } else {
-        await api.post("/api/blog/createBlog", values, {
+        await api.post("/api/blog/createBlog", payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
         message.success("Blog created successfully!");
@@ -78,7 +87,11 @@ const BlogManagement = () => {
   const showModal = (blog = null) => {
     setEditingBlog(blog);
     if (blog) {
-      form.setFieldsValue(blog);
+      form.setFieldsValue({
+        blogTitle: blog.blogTitle,
+        blogContent: blog.blogContent,
+        imageUrl: blog.image, // Adjust for the correct field name
+      });
     }
     setIsModalVisible(true);
   };
@@ -87,6 +100,18 @@ const BlogManagement = () => {
     { title: "Blog ID", dataIndex: "blogId", key: "blogId" },
     { title: "Title", dataIndex: "blogTitle", key: "blogTitle" },
     { title: "Content", dataIndex: "blogContent", key: "blogContent" },
+    {
+      title: "Image",
+      dataIndex: "image",
+      key: "image",
+      render: (imageUrl) => (
+        <img
+          src={imageUrl}
+          alt="Blog"
+          style={{ width: 100, height: 100, objectFit: "cover" }} // Adjust size and fit as needed
+        />
+      ),
+    },
     {
       title: "Actions",
       key: "actions",
@@ -151,6 +176,13 @@ const BlogManagement = () => {
             ]}
           >
             <Input.TextArea rows={4} />
+          </Form.Item>
+          <Form.Item
+            name="imageUrl"
+            label="Image URL"
+            rules={[{ required: true, message: "Please input the image URL!" }]}
+          >
+            <Input />
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit">
