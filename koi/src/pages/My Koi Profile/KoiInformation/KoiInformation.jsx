@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Card, Button, Modal, Form, Input, Select } from "antd";
 import { useLocation } from "react-router-dom";
 import CountrySelect from "react-select-country-list";
+import "./KoiInformation.scss";
 
 const { Option, OptGroup } = Select;
 
@@ -89,14 +90,21 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
       koiOrigin: values.origin,
       currentPondId: parseInt(values.pondId),
     };
-
     await onUpdate(formattedValues);
     setIsEditing(false);
   };
 
   return (
     <>
-      <Card title="Koi Information" style={{ marginBottom: 16 }}>
+      <Card className="koi-info-card" title="Koi Information">
+        <div className="koi-profile__header">
+          <img
+            src={koi.koiImage}
+            alt={koi.koiName}
+            className="koi-profile__image"
+          />
+          <h1 className="koi-profile__title">{koi.koiName}</h1>
+        </div>
         <p>
           <strong>Name:</strong> {koi.koiName}
         </p>
@@ -112,15 +120,17 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
         <p>
           <strong>Current Pond ID:</strong> {koi.currentPondId}
         </p>
-
         {!viewOnly && (
-          <Button type="primary" onClick={handleEdit} style={{ width: "100%" }}>
-            Edit
-          </Button>
+          <div className="edit-btn-container">
+            <Button className="edit-btn" onClick={handleEdit}>
+              Edit
+            </Button>
+          </div>
         )}
       </Card>
 
       <Modal
+        className="edit-modal"
         title="Edit Koi Information"
         visible={isEditing && !viewOnly}
         onCancel={() => setIsEditing(false)}
@@ -134,7 +144,6 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
           >
             <Input />
           </Form.Item>
-
           <Form.Item
             name="image"
             label="Image URL"
@@ -142,7 +151,6 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
           >
             <Input />
           </Form.Item>
-
           <Form.Item
             name="gender"
             label="Gender"
@@ -153,7 +161,6 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
               <Option value="Female">Female</Option>
             </Select>
           </Form.Item>
-
           <Form.Item
             name="breed"
             label="Breed"
@@ -171,7 +178,6 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
               ))}
             </Select>
           </Form.Item>
-
           <Form.Item
             name="origin"
             label="Origin"
@@ -187,7 +193,6 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
                 ))}
             </Select>
           </Form.Item>
-
           <Form.Item
             name="pondId"
             label="Current Pond"
@@ -203,9 +208,8 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
                 ))}
             </Select>
           </Form.Item>
-
           <Form.Item>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" className="submit-btn">
               Update Koi Fish
             </Button>
           </Form.Item>

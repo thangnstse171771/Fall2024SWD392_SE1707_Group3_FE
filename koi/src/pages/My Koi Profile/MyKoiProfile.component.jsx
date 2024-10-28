@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { Card, Button, Col, Row, Spin, Divider } from "antd";
+import { Card, Button, Spin, Divider } from "antd";
 import { toast } from "react-toastify";
 import api from "../../config/axios";
 import KoiInformation from "./KoiInformation/KoiInformation";
@@ -92,48 +92,44 @@ const MyKoiProfile = () => {
 
   if (!koi) {
     return (
-      <div className="loading-container">
+      <div className="koi-profile__loading">
         <Spin size="large" />
       </div>
     );
   }
 
   return (
-    <div className="koi-profile-page">
-      <div className="koi-profile-header">
-        <img
-          src={koi.koiImage}
-          alt={koi.koiName}
-          className="koi-profile-image"
-        />
-        <h1>{koi.koiName}</h1>
-      </div>
-      <Divider style={{ borderColor: "#7cb305" }}>Koi Info</Divider>
-      <Row gutter={[16, 16]} justify="center">
-        <Col xs={24} sm={12} md={8}>
-          <Card className="koi-profile-card">
+    <div className="koi-profile">
+      <div className="koi-profile__body">
+        <Divider style={{ borderColor: "#7cb305" }}>Koi Info</Divider>
+        <div className="koi-profile__section koi-profile__section--info">
+          <Card className="koi-profile__card">
             <KoiInformation
               koi={koi}
               onUpdate={handleUpdateKoi}
               ponds={ponds}
             />
           </Card>
-        </Col>
-        <Col xs={24} sm={12} md={8}>
-          <Card className="koi-profile-card">
+        </div>
+
+        <Divider style={{ borderColor: "#7cb305" }}>Koi Health</Divider>
+        <div className="koi-profile__section koi-profile__section--health">
+          <Card className="koi-profile__card">
             <KoiHealth koi={koi} />
           </Card>
-        </Col>
-        <Col xs={24} sm={12} md={8}>
-          <Card className="koi-profile-card">
+        </div>
+
+        <Divider style={{ borderColor: "#7cb305" }}>Koi Record</Divider>
+        <div className="koi-profile__section koi-profile__section--record">
+          <Card className="koi-profile__card">
             <KoiRecord koi={koi} />
           </Card>
-        </Col>
-      </Row>
+        </div>
+      </div>
       <Button
         type="primary"
         onClick={() => navigate(-1)}
-        className="back-button"
+        className="koi-profile__back-button"
       >
         Back
       </Button>

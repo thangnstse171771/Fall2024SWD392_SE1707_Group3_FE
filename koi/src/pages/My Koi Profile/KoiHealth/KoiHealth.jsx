@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Card, Table, Spin, Button, Modal, Form, Input, DatePicker, message } from "antd";
 import api from "../../../config/axios";
+import "./KoiHealth.scss";
 
 const KoiHealth = ({ koi }) => {
   const [healthData, setHealthData] = useState([]);
