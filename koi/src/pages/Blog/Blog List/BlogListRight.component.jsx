@@ -31,7 +31,7 @@ const BlogListRight = () => {
         {blogs.map((blog) => (
           <div key={blog.blogId} className="main-blog-card">
             <img
-              src="https://www.grandkoi.com/wp-content/uploads/2023/06/tips-to-build-a-koi-pond.jpg"
+              src={blog.image}
               alt="blog image"
               className="main-blog-image"
               onClick={() => handleBlogClick(blog.blogId)}

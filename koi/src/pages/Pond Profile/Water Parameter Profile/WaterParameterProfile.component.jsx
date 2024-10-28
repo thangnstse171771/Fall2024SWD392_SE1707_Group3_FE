@@ -215,8 +215,8 @@ const WaterParameterProfile = () => {
               </tr>
             </tbody>
           </table>
-
-          <WaterParameters />
+          <WaterParameters pondId={id} />
+          
         </>
       )}
     </div>
