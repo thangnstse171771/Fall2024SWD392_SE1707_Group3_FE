@@ -51,8 +51,7 @@ function Header() {
       </div>
       <div className="navbar-links">
         <Link to="/">HOME</Link>
-        {(userType === "Admin" ||
-          userType === "Manager" ||
+        {(userType === "Manager" ||
           userType === "Staff" ||
           userType === "Customer") && <Link to="/manage-koi">MANAGE KOI</Link>}
         <Link to="/ShopCenter">SHOP</Link>
