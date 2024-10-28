@@ -73,6 +73,8 @@ const ProductInfo = () => {
       toast.success("Product approved successfully!");
       setLoading(false);
       fetchProductDetails();
+
+      navigate("/ManageWorkplace");
     } catch (error) {
       toast.error("Failed to approve product.");
       setLoading(false);
@@ -89,6 +91,8 @@ const ProductInfo = () => {
       toast.success("Product rejected successfully!");
       setLoading(false);
       fetchProductDetails();
+
+      navigate("/ManageWorkplace");
     } catch (error) {
       toast.error("Failed to reject product.");
       setLoading(false);
