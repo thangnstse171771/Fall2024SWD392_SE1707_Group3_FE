@@ -9,10 +9,13 @@ import {
   Input,
   DatePicker,
   message,
+  Typography,
 } from "antd";
 import api from "../../../config/axios";
 import "./KoiHealth.scss";
 import moment from "moment";
+
+const { Title } = Typography;
 
 const KoiHealth = ({ koi }) => {
   const [healthData, setHealthData] = useState([]);
@@ -95,11 +98,14 @@ const KoiHealth = ({ koi }) => {
   };
 
   return (
-    <Card title="Koi Health Records" style={{ marginBottom: 16 }}>
+    <Card className="koi-health-card">
+      <Title level={2} className="koi-health-title">
+        Koi Health Records
+      </Title>
       <Button
         type="primary"
         onClick={() => setIsModalVisible(true)}
-        style={{ marginBottom: 16 }}
+        className="add-health-button"
       >
         Add Koi Health Record
       </Button>
@@ -161,8 +167,9 @@ const KoiHealth = ({ koi }) => {
         visible={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         footer={null}
+        className="add-health-modal"
       >
-        <Form form={form} onFinish={handleAddHealth}>
+        <Form form={form} layout="vertical" onFinish={handleAddHealth}>
           <Form.Item
             name="healthDate"
             label="Health Date"

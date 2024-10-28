@@ -1,20 +1,10 @@
 import React, { useEffect, useState } from "react";
-import {
-  Spin,
-  Form,
-  Input,
-  Button,
-  Modal,
-  Typography,
-  Table,
-  Select,
-} from "antd";
+import { Spin, Form, Input, Button, Modal, Typography, Table } from "antd";
 import { toast } from "react-toastify";
 import api from "../../../config/axios";
 import "./KoiRecord.scss";
 
 const { Title } = Typography;
-const { Option } = Select;
 
 const KoiRecord = ({ koi }) => {
   const [koiRecords, setKoiRecords] = useState([]);
@@ -124,6 +114,13 @@ const KoiRecord = ({ koi }) => {
         Add Koi Record
       </Button>
 
+      <Table
+        dataSource={koiRecords}
+        columns={columns}
+        rowKey="recordDate"
+        pagination={false}
+      />
+
       <Modal
         title="Add Koi Record"
         visible={isModalVisible}
@@ -135,62 +132,45 @@ const KoiRecord = ({ koi }) => {
           <Form.Item
             label="Record Date"
             name="recordDate"
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: "Please input record date!" }]}
           >
             <Input type="text" readOnly />
           </Form.Item>
           <Form.Item
             label="Length (cm)"
             name="length"
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: "Please input length!" }]}
           >
-            <Input type="number" step="0.1" />
+            <Input type="number" />
           </Form.Item>
           <Form.Item
             label="Weight (kg)"
             name="weight"
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: "Please input weight!" }]}
           >
-            <Input type="number" step="0.1" />
+            <Input type="number" />
           </Form.Item>
           <Form.Item
             label="Body Shape"
             name="bodyShape"
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: "Please input body shape!" }]}
           >
-            <Select placeholder="Select body shape">
-              <Option value="slim">Slim</Option>
-              <Option value="normal">Normal</Option>
-              <Option value="heavy">Heavy</Option>
-            </Select>
+            <Input />
           </Form.Item>
           <Form.Item
             label="Age (months)"
             name="age"
-            rules={[{ required: true }]}
+            rules={[{ required: true, message: "Please input age!" }]}
           >
             <Input type="number" />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit" className="submit-btn">
-              Submit
+            <Button type="primary" htmlType="submit">
+              Add Record
             </Button>
           </Form.Item>
         </Form>
       </Modal>
-
-      <div className="record-table-container">
-        {koiRecords.length > 0 ? (
-          <Table
-            dataSource={koiRecords}
-            columns={columns}
-            rowKey="id"
-            pagination={{ pageSize: 5 }}
-          />
-        ) : (
-          <p className="no-records-message">No koi records found.</p>
-        )}
-      </div>
     </div>
   );
 };

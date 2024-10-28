@@ -7,11 +7,6 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 
-  &:hover {
-    transform: scale(1.02);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-  }
-
   .ant-card-head-title {
     font-size: 20px;
     font-weight: bold;
@@ -21,19 +16,19 @@
   .add-health-button {
     display: inline-block;
     margin-bottom: 16px;
-    background: #52c41a;
+    background: #1890ff;
     color: #fff;
     border: none;
     transition: background 0.3s ease;
 
     &:hover {
-      background: #389e0d;
+      background: #1890ff;
     }
   }
 
   .ant-spin-dot {
     font-size: 18px;
-    color: #389e0d;
+    color: #1890ff;
   }
 }
 
@@ -69,7 +64,7 @@
 .add-health-modal {
   .ant-modal-title {
     font-size: 18px;
-    color: #1890ff;
+    color: #000000;
   }
 
   .ant-modal-footer {
