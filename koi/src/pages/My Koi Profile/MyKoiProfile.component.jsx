@@ -13,6 +13,8 @@ const MyKoiProfile = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [koi, setKoi] = useState(null);
+
+  const userType = localStorage.getItem("usertype");
   const [ponds, setPonds] = useState([]);
 
   useEffect(() => {
@@ -25,6 +27,7 @@ const MyKoiProfile = () => {
             Authorization: `Bearer ${token}`,
           },
         });
+        console.log(response.data);
 
         if (response.data.success) {
           setKoi(response.data.data);
@@ -128,11 +131,13 @@ const MyKoiProfile = () => {
         </div>
 
         <Divider style={{ borderColor: "#7cb305" }}>Koi Transfer</Divider>
-        <div className="koi-profile__section koi-profile__section--transfer">
-          <Card className="koi-profile__card">
-            <KoiTransfer koi={koi} ponds={ponds} />{" "}
-          </Card>
-        </div>
+        {userType === "Customer" && (
+          <div className="koi-profile__section koi-profile__section--transfer">
+            <Card className="koi-profile__card">
+              <KoiTransfer koi={koi} ponds={ponds} />{" "}
+            </Card>
+          </div>
+        )}
       </div>
       <Button
         type="primary"
