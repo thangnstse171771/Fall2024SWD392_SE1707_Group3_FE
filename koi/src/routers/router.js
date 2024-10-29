@@ -46,7 +46,9 @@ export const router = createBrowserRouter([
       {
         path: "/manage-koi",
         element: (
-          <ProtectedRoute allowedRoles={["Customer", "Admin", "Manager"]}>
+          <ProtectedRoute
+            allowedRoles={["Customer", "Admin", "Manager", "Staff"]}
+          >
             <ManageKoi />
           </ProtectedRoute>
         ),
@@ -54,7 +56,9 @@ export const router = createBrowserRouter([
       {
         path: "/manage-koi/my-koi",
         element: (
-          <ProtectedRoute allowedRoles={["Customer", "Admin", "Manager"]}>
+          <ProtectedRoute
+            allowedRoles={["Customer", "Admin", "Manager", "Staff"]}
+          >
             <MyKoi />
           </ProtectedRoute>
         ),
@@ -62,7 +66,9 @@ export const router = createBrowserRouter([
       {
         path: "/manage-koi/my-koi/:id",
         element: (
-          <ProtectedRoute allowedRoles={["Customer", "Admin", "Manager"]}>
+          <ProtectedRoute
+            allowedRoles={["Customer", "Admin", "Manager", "Staff"]}
+          >
             <MyKoiProfile />
           </ProtectedRoute>
         ),
@@ -70,7 +76,9 @@ export const router = createBrowserRouter([
       {
         path: "/manage-koi/my-pond",
         element: (
-          <ProtectedRoute allowedRoles={["Customer", "Admin", "Manager"]}>
+          <ProtectedRoute
+            allowedRoles={["Customer", "Admin", "Manager", "Staff"]}
+          >
             <MyPond />
           </ProtectedRoute>
         ),
@@ -86,7 +94,9 @@ export const router = createBrowserRouter([
       {
         path: "/profile",
         element: (
-          <ProtectedRoute allowedRoles={["Customer", "Admin", "Manager"]}>
+          <ProtectedRoute
+            allowedRoles={["Customer", "Admin", "Manager", "Staff"]}
+          >
             <Profile />
           </ProtectedRoute>
         ),
@@ -98,7 +108,9 @@ export const router = createBrowserRouter([
       {
         path: "/pond-profile/:id",
         element: (
-          <ProtectedRoute allowedRoles={["Customer", "Admin", "Manager"]}>
+          <ProtectedRoute
+            allowedRoles={["Customer", "Admin", "Manager", "Staff"]}
+          >
             <PondProfile />
           </ProtectedRoute>
         ),

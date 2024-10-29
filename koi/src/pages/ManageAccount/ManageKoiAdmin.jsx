@@ -52,7 +52,7 @@ export default function ManageKoiAdmin() {
     );
     if (!confirmDelete) return;
     try {
-      await api.delete(`/api/koi/deleteKoi/${fishId}`);
+      await api.put(`/api/koi/deleteKoiByUser/${fishId}`);
       // Xóa thành công, cập nhật lại danh sách koi
       setKoiFish(koiFish.filter((koi) => koi.fishId !== fishId));
     } catch (error) {

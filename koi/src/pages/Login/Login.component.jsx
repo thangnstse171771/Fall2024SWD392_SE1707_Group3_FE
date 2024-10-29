@@ -9,7 +9,6 @@ import { toast } from "react-toastify";
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -25,22 +24,22 @@ const Login = () => {
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
         localStorage.setItem("usertype", response.data.user.usertype);
-        localStorage.setItem("userId", response.data.user.userId); // Lưu userId với khóa "userId"
+        localStorage.setItem("userId", response.data.user.userId);
         localStorage.setItem("userInfo", JSON.stringify(response.data.user));
 
         toast.success("Login successful!");
         navigate("/");
       } else {
-        setErrorMessage("Login failed. Token not found.");
+        toast.error("Login failed. Token not found.");
       }
     } catch (error) {
-      setErrorMessage("Login failed. Please check your username or password.");
-      console.error(
-        "Error during login:",
-        error.response?.data || error.message
-      );
+      const message =
+        error.response?.data?.message ||
+        "Login failed. Please check your username or password.";
+      toast.error(message); // Display the error message from the backend
+      console.error("Error during login:", message);
     } finally {
-      setPassword("");
+      setPassword(""); // Clear the password field
     }
   };
 
@@ -57,7 +56,6 @@ const Login = () => {
           <form className="login-form" onSubmit={handleSubmit}>
             <h2>Login</h2>
             <p>Login to access your account</p>
-            {errorMessage && <p className="error-message">{errorMessage}</p>}
             <div className="input-group">
               <label htmlFor="username">Username</label>
               <input
