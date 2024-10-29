@@ -8,15 +8,14 @@ import { toast } from "react-toastify";
 const PondProfileInfo = ({ refresh }) => {
   const { id } = useParams();
 
-  const [form] = Form.useForm(); // Create form instance
-  const [loading, setLoading] = useState(true); // For loading state
+  const [form] = Form.useForm(); 
+  const [loading, setLoading] = useState(true); 
   const [profile, setProfile] = useState({});
   const [error, setError] = useState(null);
   const token = sessionStorage.getItem("token");
 
   const userType = localStorage.getItem("usertype");
 
-  // Function to fetch pond details
   const fetchPondDetails = async () => {
     try {
       const response = await api.get(`/api/pond/getPondById/${id}`, {
@@ -27,7 +26,7 @@ const PondProfileInfo = ({ refresh }) => {
       const pondData = response.data.data;
 
       setProfile(pondData);
-      form.setFieldsValue(pondData); // Set form fields with fetched data
+      form.setFieldsValue(pondData); 
     } catch (err) {
       setError(err.response?.data?.message);
       toast.error(err.response?.data?.message || "Failed to load pond data.");
@@ -36,7 +35,6 @@ const PondProfileInfo = ({ refresh }) => {
     }
   };
 
-  // Function to handle form submission
   const handleSubmit = async (values) => {
     setLoading(true);
     try {
@@ -62,8 +60,8 @@ const PondProfileInfo = ({ refresh }) => {
 
       if (response.status === 200) {
         toast.success("Pond updated successfully!");
-        fetchPondDetails(); // Fetch updated pond details
-        form.resetFields(); // Reset form fields after successful submit
+        fetchPondDetails(); 
+        form.resetFields(); 
       } else {
         throw new Error("Failed to update pond.");
       }
@@ -74,7 +72,6 @@ const PondProfileInfo = ({ refresh }) => {
     }
   };
 
-  // Fetch pond details when the component mounts
   useEffect(() => {
     fetchPondDetails();
   }, [refresh]);

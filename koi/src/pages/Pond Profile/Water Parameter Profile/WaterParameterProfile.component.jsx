@@ -21,6 +21,7 @@ const WaterParameterProfile = () => {
   const token = sessionStorage.getItem("token");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   const userType = localStorage.getItem("usertype");
   const [addParameter, setAddParameter] = useState({
@@ -104,10 +105,11 @@ const WaterParameterProfile = () => {
       setOpen(false);
       toast.success("Parameter Created Successfully!");
       fetchWaterParameterById();
+      setRefresh(!refresh);
     } catch (error) {
       toast.error("Failed to add parameter!");
       console.error("Error creating water parameter:", error);
-      setError("Failed to create water parameter.");
+      setError("Failed to add parameter.");
     } finally {
       setLoading(false);
     }
@@ -122,6 +124,7 @@ const WaterParameterProfile = () => {
       });
       fetchWaterParameterById();
       toast.success("Parameter Deleted Successfully!");
+      setRefresh(!refresh);
     } catch (error) {
       toast.error("Failed to delete parameter!");
       console.error("Error deleting parameter:", error);
@@ -210,8 +213,8 @@ const WaterParameterProfile = () => {
             </thead>
             <tbody className="water-parameter-profile-table-body">
               <tr>
-                <th>15-25</th>
-                <th>0.1-0.3</th>
+                <th>15 - 25</th>
+                <th>0.1 - 0.3</th>
                 <th>7.0 - 8.5</th>
                 <th>7 - 15</th>
                 <th>0 - 0.2</th>
@@ -220,7 +223,7 @@ const WaterParameterProfile = () => {
               </tr>
             </tbody>
           </table>
-          <WaterParameters pondId={id} />
+          <WaterParameters pondId={id} refreshTrigger={refresh} />
         </>
       )}
     </div>

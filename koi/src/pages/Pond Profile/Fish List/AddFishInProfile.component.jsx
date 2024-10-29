@@ -65,10 +65,10 @@ const AddFishInProfile = ({ open, onCancel, onSubmit, loading }) => {
   return (
     <Modal title="Add New Fish" open={open} onCancel={onCancel} footer={null}>
       <Form
-        form={form} // Bind the form instance
+        form={form} 
         onFinish={(values) => {
           onSubmit(values);
-          form.resetFields(); // Reset form after successful submit
+          form.resetFields(); 
         }}
         layout="vertical"
         noValidate
@@ -135,21 +135,13 @@ const AddFishInProfile = ({ open, onCancel, onSubmit, loading }) => {
           />
         </Form.Item>
 
-        {/* <Form.Item
-          label="Price"
-          name="price"
-          rules={[{ required: true, message: "Please enter the price!" }]}
-        >
-          <Input type="number" placeholder="Enter price in USD" />
-        </Form.Item> */}
-
         <Form.Item>
           <Button type="primary" danger htmlType="submit" loading={loading}>
             Submit
           </Button>
           <Button
             onClick={() => {
-              form.resetFields(); // Reset form on cancel button click
+              form.resetFields(); 
               onCancel();
             }}
             style={{ marginLeft: "8px" }}

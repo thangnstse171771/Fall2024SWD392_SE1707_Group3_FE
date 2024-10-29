@@ -27,7 +27,7 @@ Chart.register(
   Filler
 );
 
-const WaterParameters = ({ pondId }) => {
+const WaterParameters = ({ pondId, refreshTrigger }) => {
   const [waterData, setWaterData] = useState(null);
 
   useEffect(() => {
@@ -58,7 +58,7 @@ const WaterParameters = ({ pondId }) => {
 
       fetchWaterParameters();
     }
-  }, [pondId]);
+  }, [pondId, refreshTrigger]);
 
   const formatLabels = (data) => {
     const dateCount = {};
