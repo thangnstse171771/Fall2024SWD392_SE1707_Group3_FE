@@ -5,6 +5,8 @@ import Filter from "./Filter";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import anhbia from "../../assets/anhbia.jpg";
+import anhbia2 from "../../assets/wall.webp";
+import anhbia3 from "../../assets/wall2.jpeg";
 import "./Shop.css";
 import FooterContact from "./FooterContact";
 import api from "../../config/axios";
@@ -62,7 +64,7 @@ const Shop = () => {
           </div>
           <div>
             <img
-              src={anhbia}
+              src={anhbia2}
               alt="Banner 2"
               style={{
                 width: "100%",
@@ -75,7 +77,7 @@ const Shop = () => {
           </div>
           <div>
             <img
-              src={anhbia}
+              src={anhbia3}
               alt="Banner 3"
               style={{
                 width: "100%",

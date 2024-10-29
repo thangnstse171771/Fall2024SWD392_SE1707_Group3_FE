@@ -29,6 +29,8 @@ const KoiHealth = ({ koi }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5;
 
+  const userType = localStorage.getItem("usertype");
+
   useEffect(() => {
     const fetchKoiHealth = async () => {
       const token = sessionStorage.getItem("token");
@@ -203,13 +205,15 @@ const KoiHealth = ({ koi }) => {
       <Title level={2} className="koi-health-title">
         Koi Health Records
       </Title>
-      <Button
-        type="primary"
-        onClick={() => setIsAddModalVisible(true)}
-        className="add-health-button"
-      >
-        Add Koi Health Record
-      </Button>
+      {userType === "Customer" && (
+        <Button
+          type="primary"
+          onClick={() => setIsAddModalVisible(true)}
+          className="add-health-button"
+        >
+          Add Koi Health Record
+        </Button>
+      )}
       {loading ? (
         <Spin tip="Loading health data..." />
       ) : (

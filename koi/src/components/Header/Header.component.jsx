@@ -62,7 +62,7 @@ function Header() {
           userType === "Staff") && (
           <Link to="/ManageWorkplace">MANAGE WORKPLACE</Link>
         )}
-        {userType === "Staff" && (
+        {(userType === "Staff" || userType === "Manager") && (
           <Link to="/blogmanagement">BLOG MANAGEMENT</Link>
         )}
       </div>
