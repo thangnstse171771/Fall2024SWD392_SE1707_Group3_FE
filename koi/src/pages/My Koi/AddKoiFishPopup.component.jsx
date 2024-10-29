@@ -8,9 +8,19 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
   const [form] = Form.useForm();
 
   const handleFinish = (values) => {
+    const koiNameTrimmed = values.name.trim();
+
+    // Kiểm tra xem tên có ít nhất một từ không
+    if (!koiNameTrimmed) {
+      return Modal.error({
+        title: "Validation Error",
+        content: "Koi name must contain at least one word!",
+      });
+    }
+
     const formattedValues = {
-      koiName: values.name,
-      koiImage: values.image,
+      koiName: koiNameTrimmed,
+      koiImage: values.image.trim(),
       koiGender: values.gender,
       koiBreed: values.breed,
       koiOrigin: values.origin,
@@ -89,7 +99,19 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
         <Form.Item
           name="name"
           label="Koi Name"
-          rules={[{ required: true, message: "Please input the koi name!" }]}
+          rules={[
+            { required: true, message: "Please input the koi name!" },
+            {
+              validator: (_, value) => {
+                if (value && value.trim() === "") {
+                  return Promise.reject(
+                    new Error("Koi name must contain at least one word!")
+                  );
+                }
+                return Promise.resolve();
+              },
+            },
+          ]}
         >
           <Input />
         </Form.Item>
