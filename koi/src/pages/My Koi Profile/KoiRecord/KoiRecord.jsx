@@ -1,10 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Spin, Form, Input, Button, Modal, Typography, Table } from "antd";
+import {
+  Spin,
+  Form,
+  Input,
+  Button,
+  Modal,
+  Typography,
+  Table,
+  Select,
+} from "antd";
 import { toast } from "react-toastify";
 import api from "../../../config/axios";
 import "./KoiRecord.scss";
 
 const { Title } = Typography;
+const { Option } = Select;
 
 const KoiRecord = ({ koi }) => {
   const [koiRecords, setKoiRecords] = useState([]);
@@ -147,28 +157,71 @@ const KoiRecord = ({ koi }) => {
           <Form.Item
             label="Length (cm)"
             name="length"
-            rules={[{ required: true, message: "Please input length!" }]}
+            rules={[
+              { required: true, message: "Please input length!" },
+              {
+                validator: (_, value) => {
+                  const numValue = Number(value);
+                  if (numValue >= 0 && numValue <= 126) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("Length must be between 0 and 126 cm!")
+                  );
+                },
+              },
+            ]}
           >
             <Input type="number" />
           </Form.Item>
           <Form.Item
             label="Weight (kg)"
             name="weight"
-            rules={[{ required: true, message: "Please input weight!" }]}
+            rules={[
+              { required: true, message: "Please input weight!" },
+              {
+                validator: (_, value) => {
+                  const numValue = Number(value);
+                  if (numValue >= 0 && numValue <= 15) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("Weight must be between 0 and 15 kg!")
+                  );
+                },
+              },
+            ]}
           >
             <Input type="number" />
           </Form.Item>
           <Form.Item
             label="Body Shape"
             name="bodyShape"
-            rules={[{ required: true, message: "Please input body shape!" }]}
+            rules={[{ required: true, message: "Please select body shape!" }]}
           >
-            <Input />
+            <Select placeholder="Select body shape">
+              <Option value="slim">Slim</Option>
+              <Option value="normal">Normal</Option>
+              <Option value="heavy">Heavy</Option>
+            </Select>
           </Form.Item>
           <Form.Item
             label="Age (months)"
             name="age"
-            rules={[{ required: true, message: "Please input age!" }]}
+            rules={[
+              { required: true, message: "Please input age!" },
+              {
+                validator: (_, value) => {
+                  const numValue = Number(value);
+                  if (numValue >= 1) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("Age must be greater than 1 month!")
+                  );
+                },
+              },
+            ]}
           >
             <Input type="number" />
           </Form.Item>
