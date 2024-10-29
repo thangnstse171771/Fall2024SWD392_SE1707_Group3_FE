@@ -76,7 +76,6 @@ const ManageRecommendations = () => {
       fontWeight: "bold",
       color: "rgb(180,0,0)",
       padding: "10px",
-      width: "20%",
     },
     bodyRow: {},
     bodyCell: {},
@@ -111,16 +110,16 @@ const ManageRecommendations = () => {
         <TableContainer component={Paper} style={tableStyles.container}>
           <TableHead>
             <TableRow>
-              <TableCell style={tableStyles.headCell} align="center">
+              <TableCell style={{ width: "15%", color: "rgb(180,0,0)"  }} align="center">
                 ID
               </TableCell>
-              <TableCell style={tableStyles.headCell} align="center">
+              <TableCell style={{ color: "rgb(180,0,0)" }} align="center">
                 CATEGORY
               </TableCell>
-              <TableCell style={tableStyles.headCell} align="center">
+              <TableCell style={{ color: "rgb(180,0,0)" }} align="center">
                 POND
               </TableCell>
-              <TableCell style={tableStyles.headCell} align="center">
+              <TableCell style={{ color: "rgb(180,0,0)" }} align="center">
                 ACTIONS
               </TableCell>
             </TableRow>
@@ -128,16 +127,16 @@ const ManageRecommendations = () => {
           <TableBody>
             {recommendations.map((rec) => (
               <TableRow key={rec.id} style={tableStyles.bodyRow} hover>
-                <TableCell align="center" style={tableStyles.bodyCell}>
+                <TableCell align="center" style={{ width: "15%" }}>
                   {rec.recommendId}
                 </TableCell>
-                <TableCell align="center" style={tableStyles.bodyCell}>
+                <TableCell align="center" style={{ width: "20%" }}>
                   {getCategoryName(rec.categoryId)}
                 </TableCell>
-                <TableCell align="center" style={tableStyles.bodyCell}>
+                <TableCell align="center" style={{ width: "20%" }}>
                   {getPondName(rec.waterParameterId)}
                 </TableCell>
-                <TableCell align="center" style={tableStyles.bodyCell}>
+                <TableCell align="center" style={{ width: "20%" }}>
                   <Button
                     style={{ color: "rgb(180,0,0)" }}
                     // onClick={() =>
@@ -145,12 +144,6 @@ const ManageRecommendations = () => {
                     // }
                   >
                     View
-                  </Button>
-                  <Button
-                    style={{ color: "red", marginLeft: "8px" }}
-                    // onClick={() => handleRemoveProduct(product.productId)}
-                  >
-                    Remove
                   </Button>
                 </TableCell>
               </TableRow>
