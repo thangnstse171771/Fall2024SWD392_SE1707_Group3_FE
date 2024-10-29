@@ -19,6 +19,8 @@ const PondFishList = ({ onFishAdded }) => {
   const [koiList, setKoiList] = useState([]);
   const navigate = useNavigate();
 
+  const userType = localStorage.getItem("usertype");
+
   const fetchKoiList = async () => {
     try {
       const response = await api.get("/api/koi/getAllKoiByUser", {
@@ -106,20 +108,24 @@ const PondFishList = ({ onFishAdded }) => {
 
   return (
     <>
-      <div className="fish-list-profile-actions-button-group">
-        <h3>Actions</h3>
-        <Button
-          size="large"
-          className="add-fish-button"
-          icon={<PlusOutlined />}
-          onClick={showPopup}
-        />
-        <AddFishInProfile
-          open={open}
-          onSubmit={handleSubmit}
-          onCancel={() => setOpen(false)}
-          loading={loading}
-        />
+      <div>
+        {userType === "Customer" && (
+          <div className="fish-list-profile-actions-button-group">
+            <h3>Actions</h3>
+            <Button
+              size="large"
+              className="add-fish-button"
+              icon={<PlusOutlined />}
+              onClick={showPopup}
+            />
+            <AddFishInProfile
+              open={open}
+              onSubmit={handleSubmit}
+              onCancel={() => setOpen(false)}
+              loading={loading}
+            />
+          </div>
+        )}
       </div>
       <div className="pond-fish-list-container">
         <div className="fish-list-grid">
@@ -139,10 +145,14 @@ const PondFishList = ({ onFishAdded }) => {
                   key="edit"
                   onClick={() => navigate(`/manage-koi/my-koi/${koi.fishId}`)}
                 />,
-                <DeleteOutlined
-                  key="delete"
-                  onClick={() => handleDeleteConfirmation(koi.fishId)}
-                />,
+                <div>
+                  {userType === "Customer" && (
+                    <DeleteOutlined
+                      key="delete"
+                      onClick={() => handleDeleteConfirmation(koi.fishId)}
+                    />
+                  )}
+                </div>,
               ]}
             >
               <Meta

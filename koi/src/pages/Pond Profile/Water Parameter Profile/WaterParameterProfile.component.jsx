@@ -21,6 +21,8 @@ const WaterParameterProfile = () => {
   const token = sessionStorage.getItem("token");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const userType = localStorage.getItem("usertype");
   const [addParameter, setAddParameter] = useState({
     pondId: id,
     temperature: "",
@@ -164,33 +166,36 @@ const WaterParameterProfile = () => {
         </div>
       ) : (
         <>
-          <div className="parameter-actions-button-group">
-            <h3>Actions</h3>
-            <Button
-              size="large"
-              className="delete-parameter-button"
-              icon={<EditOutlined />}
-              onClick={showPopup}
-            />
-            <AddWaterParameterProfile
-              open={open}
-              onSubmit={handleSubmit}
-              handleCancel={handleCancel}
-              handleInputChange={handleInputChange}
-              addParameter={addParameter}
-              loading={loading}
-            />
-            <Button
-              size="large"
-              className="delete-parameter-button"
-              icon={<DeleteOutlined />}
-              onClick={() =>
-                handleDeleteConfirmation(parameterProfile.waterParameterId)
-              }
-            />
+          {userType === "Customer" && (
+            <div className="parameter-actions-button-group">
+              <h3>Actions</h3>
+              <Button
+                size="large"
+                className="delete-parameter-button"
+                icon={<EditOutlined />}
+                onClick={showPopup}
+              />
+              <AddWaterParameterProfile
+                open={open}
+                onSubmit={handleSubmit}
+                handleCancel={handleCancel}
+                handleInputChange={handleInputChange}
+                addParameter={addParameter}
+                loading={loading}
+              />
+              <Button
+                size="large"
+                className="delete-parameter-button"
+                icon={<DeleteOutlined />}
+                onClick={() =>
+                  handleDeleteConfirmation(parameterProfile.waterParameterId)
+                }
+              />
+            </div>
+          )}
+          <div className="ideal-parameter-example">
+            Ideal Water Parameters Range
           </div>
-
-          <div className="ideal-parameter-example">Ideal Water Parameters Range</div>
           <table className="water-parameter-profile-table">
             <thead className="water-parameter-profile-table-head">
               <tr>
@@ -216,7 +221,6 @@ const WaterParameterProfile = () => {
             </tbody>
           </table>
           <WaterParameters pondId={id} />
-          
         </>
       )}
     </div>

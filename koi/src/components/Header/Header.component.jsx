@@ -57,12 +57,12 @@ function Header() {
         <Link to="/ShopCenter">SHOP</Link>
         <Link to="/blog">BLOG</Link>
         {/* Kiểm tra nếu userType không phải là 'Customer', thì hiển thị Manage Customer */}
-        {(userType === "Customer" ||
+        {(userType === "Admin" ||
           userType === "Manager" ||
           userType === "Staff") && (
           <Link to="/ManageWorkplace">MANAGE WORKPLACE</Link>
         )}
-        {userType === "Staff" && (
+        {(userType === "Staff" || userType === "Manager") && (
           <Link to="/blogmanagement">BLOG MANAGEMENT</Link>
         )}
       </div>

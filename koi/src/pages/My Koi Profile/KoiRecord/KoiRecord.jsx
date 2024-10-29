@@ -12,6 +12,8 @@ const KoiRecord = ({ koi }) => {
   const [form] = Form.useForm();
   const [isModalVisible, setIsModalVisible] = useState(false);
 
+  const userType = localStorage.getItem("usertype");
+
   useEffect(() => {
     const fetchAllKoiRecords = async () => {
       const token = sessionStorage.getItem("token");
@@ -110,9 +112,15 @@ const KoiRecord = ({ koi }) => {
       <Title level={2} className="koi-record-title">
         Koi Records
       </Title>
-      <Button type="primary" onClick={showModal} className="add-record-button">
-        Add Koi Record
-      </Button>
+      {userType === "Customer" && (
+        <Button
+          type="primary"
+          onClick={showModal}
+          className="add-record-button"
+        >
+          Add Koi Record
+        </Button>
+      )}
 
       <Table
         dataSource={koiRecords}
@@ -164,6 +172,7 @@ const KoiRecord = ({ koi }) => {
           >
             <Input type="number" />
           </Form.Item>
+
           <Form.Item>
             <Button type="primary" htmlType="submit">
               Add Record

@@ -14,6 +14,8 @@ const PondProfileInfo = ({ refresh }) => {
   const [error, setError] = useState(null);
   const token = sessionStorage.getItem("token");
 
+  const userType = localStorage.getItem("usertype");
+
   // Function to fetch pond details
   const fetchPondDetails = async () => {
     try {
@@ -298,25 +300,26 @@ const PondProfileInfo = ({ refresh }) => {
                   /{profile.pondCapacityOfKoiFish}
                 </div>
               </Form.Item>
-
-              <Form.Item>
-                <Button
-                  onClick={() => {
-                    fetchPondDetails();
-                  }}
-                  style={{ marginRight: "8px" }}
-                >
-                  Revert 
-                </Button>
-                <Button
-                  type="primary"
-                  danger
-                  htmlType="submit"
-                  loading={loading}
-                >
-                  Save Changes
-                </Button>
-              </Form.Item>
+              {userType === "Customer" && (
+                <Form.Item>
+                  <Button
+                    onClick={() => {
+                      fetchPondDetails();
+                    }}
+                    style={{ marginRight: "8px" }}
+                  >
+                    Revert
+                  </Button>
+                  <Button
+                    type="primary"
+                    danger
+                    htmlType="submit"
+                    loading={loading}
+                  >
+                    Save Changes
+                  </Button>
+                </Form.Item>
+              )}
             </Form>
           </div>
         </>
