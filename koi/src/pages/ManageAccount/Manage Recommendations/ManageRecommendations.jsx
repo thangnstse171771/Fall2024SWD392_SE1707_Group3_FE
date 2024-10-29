@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "antd";
 import {
+  Table,
   TableBody,
   TableContainer,
   TableHead,
@@ -72,12 +73,6 @@ const ManageRecommendations = () => {
       borderRadius: "8px",
       overflow: "hidden",
     },
-    headCell: {
-      fontWeight: "bold",
-      color: "rgb(180,0,0)",
-      padding: "10px",
-      width: "20%",
-    },
     bodyRow: {},
     bodyCell: {},
   };
@@ -109,53 +104,52 @@ const ManageRecommendations = () => {
         </div>
       ) : (
         <TableContainer component={Paper} style={tableStyles.container}>
-          <TableHead>
-            <TableRow>
-              <TableCell style={tableStyles.headCell} align="center">
-                ID
-              </TableCell>
-              <TableCell style={tableStyles.headCell} align="center">
-                CATEGORY
-              </TableCell>
-              <TableCell style={tableStyles.headCell} align="center">
-                POND
-              </TableCell>
-              <TableCell style={tableStyles.headCell} align="center">
-                ACTIONS
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {recommendations.map((rec) => (
-              <TableRow key={rec.id} style={tableStyles.bodyRow} hover>
-                <TableCell align="center" style={tableStyles.bodyCell}>
-                  {rec.recommendId}
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell
+                  style={{ width: "10%", color: "rgb(180,0,0)" }}
+                  align="center"
+                >
+                  ID
                 </TableCell>
-                <TableCell align="center" style={tableStyles.bodyCell}>
-                  {getCategoryName(rec.categoryId)}
+                <TableCell style={{ color: "rgb(180,0,0)" }} align="center">
+                  CATEGORY
                 </TableCell>
-                <TableCell align="center" style={tableStyles.bodyCell}>
-                  {getPondName(rec.waterParameterId)}
+                <TableCell style={{ color: "rgb(180,0,0)" }} align="center">
+                  POND
                 </TableCell>
-                <TableCell align="center" style={tableStyles.bodyCell}>
-                  <Button
-                    style={{ color: "rgb(180,0,0)" }}
-                    // onClick={() =>
-                    //   navigate(`/ProductDetails/${product.productId}`)
-                    // }
-                  >
-                    View
-                  </Button>
-                  <Button
-                    style={{ color: "red", marginLeft: "8px" }}
-                    // onClick={() => handleRemoveProduct(product.productId)}
-                  >
-                    Remove
-                  </Button>
+                <TableCell style={{ color: "rgb(180,0,0)" }} align="center">
+                  ACTIONS
                 </TableCell>
               </TableRow>
-            ))}
-          </TableBody>
+            </TableHead>
+            <TableBody>
+              {recommendations.map((rec) => (
+                <TableRow key={rec.id} style={tableStyles.bodyRow} hover>
+                  <TableCell align="center" style={{ width: "15%" }}>
+                    {rec.recommendId}
+                  </TableCell>
+                  <TableCell align="center" style={{ width: "20%" }}>
+                    {getCategoryName(rec.categoryId)}
+                  </TableCell>
+                  <TableCell align="center" style={{ width: "20%" }}>
+                    {getPondName(rec.waterParameterId)}
+                  </TableCell>
+                  <TableCell align="center" style={{ width: "20%" }}>
+                    <Button
+                      style={{ color: "rgb(180,0,0)" }}
+                      // onClick={() =>
+                      //   navigate(`/ProductDetails/${product.productId}`)
+                      // }
+                    >
+                      View
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </TableContainer>
       )}
     </div>

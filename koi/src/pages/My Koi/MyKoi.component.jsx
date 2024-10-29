@@ -152,46 +152,52 @@ const MyKoi = () => {
         />
       </div>
       <div className="koi-grid">
-        {currentKoi.map((koi) => (
-          <Card
-            key={koi.fishId}
-            className="koi-card"
-            cover={
-              <img
-                className="koi-card-image"
-                alt={koi.koiName}
-                src={koi.koiImage}
-              />
-            }
-            actions={[
-              <EditOutlined
-                key="edit"
-                onClick={() => navigate(`/manage-koi/my-koi/${koi.fishId}`)}
-              />,
-              <DeleteOutlined
-                key="delete"
-                onClick={() => handleDeleteConfirmation(koi.fishId)}
-              />,
-            ]}
-          >
-            <Meta
-              avatar={
-                <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=8" />
+        {currentKoi.length === 0 ? (
+          <p>No Koi fish found.</p>
+        ) : (
+          currentKoi.map((koi) => (
+            <Card
+              key={koi.fishId}
+              className="koi-card"
+              cover={
+                <img
+                  className="koi-card-image"
+                  alt={koi.koiName}
+                  src={koi.koiImage}
+                />
               }
-              title={koi.koiName}
-              description={`Gender: ${koi.koiGender}, Breed: ${koi.koiBreed}`}
-            />
-          </Card>
-        ))}
+              actions={[
+                <EditOutlined
+                  key="edit"
+                  onClick={() => navigate(`/manage-koi/my-koi/${koi.fishId}`)}
+                />,
+                <DeleteOutlined
+                  key="delete"
+                  onClick={() => handleDeleteConfirmation(koi.fishId)}
+                />,
+              ]}
+            >
+              <Meta
+                avatar={
+                  <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=8" />
+                }
+                title={koi.koiName}
+                description={`Gender: ${koi.koiGender}, Breed: ${koi.koiBreed}`}
+              />
+            </Card>
+          ))
+        )}
       </div>
-      <div className="pagination-container">
-        <Pagination
-          current={currentPage}
-          pageSize={itemsPerPage}
-          total={filteredKoi.length}
-          onChange={(page) => setCurrentPage(page)}
-        />
-      </div>
+      {filteredKoi.length > 0 && (
+        <div className="pagination-container">
+          <Pagination
+            current={currentPage}
+            pageSize={itemsPerPage}
+            total={filteredKoi.length}
+            onChange={(page) => setCurrentPage(page)}
+          />
+        </div>
+      )}
     </div>
   );
 };
