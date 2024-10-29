@@ -9,7 +9,7 @@ function PondProfile() {
   const [refreshPondProfile, setRefreshPondProfile] = useState(false);
 
   const handlePondProfileRefresh = () => {
-    setRefreshPondProfile((prev) => !prev); // Toggle the state to trigger useEffect in PondProfileInfo
+    setRefreshPondProfile((prev) => !prev); 
   };
 
   return (

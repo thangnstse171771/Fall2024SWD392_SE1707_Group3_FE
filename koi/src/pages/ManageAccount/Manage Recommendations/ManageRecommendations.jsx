@@ -52,13 +52,11 @@ const ManageRecommendations = () => {
     fetchData();
   }, []);
 
-  // Helper function to get category name by categoryId
   const getCategoryName = (categoryId) => {
     const category = categories.find((cat) => cat.categoryId === categoryId);
     return category ? category.categoryName : "Unknown Category";
   };
 
-  // Helper function to get pond name by waterParameterId
   const getPondName = (waterParameterId) => {
     const parameter = waterParameters.find(
       (param) => param.waterParameterId === waterParameterId
@@ -95,7 +93,7 @@ const ManageRecommendations = () => {
         onClose={hidePopup}
         categories={categories}
         waterParameters={waterParameters}
-        onAddSuccess={fetchData} // Refresh data on successful add
+        onAddSuccess={fetchData} 
       />
 
       {loading ? (

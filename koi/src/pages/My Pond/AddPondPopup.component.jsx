@@ -23,10 +23,10 @@ const AddPondPopup = ({
       footer={null}
     >
       <Form
-        form={form} // Bind the form instance
+        form={form} 
         onFinish={(values) => {
           onSubmit(values);
-          form.resetFields(); // Reset form after successful submit
+          form.resetFields(); 
         }}
         layout="vertical"
         noValidate
@@ -249,7 +249,6 @@ const AddPondPopup = ({
               validator: async (_, value) => {
                 const pondVolume = form.getFieldValue("pondVolume");
         
-                // Ensure we parse the values to numbers for proper comparison
                 const parsedValue = parseFloat(value);
                 const parsedVolume = parseFloat(pondVolume);
         

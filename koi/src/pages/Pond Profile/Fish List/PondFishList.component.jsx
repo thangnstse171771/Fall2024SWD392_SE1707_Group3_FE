@@ -101,7 +101,7 @@ const PondFishList = ({ onFishAdded }) => {
   const filteredKoi = koiList
     .filter((koi) => koi.currentPondId === Number(currentPondId))
     .filter((koi) => koi.status === "active");
-  // Pagination logic
+
   const indexOfLastKoi = currentPage * itemsPerPage;
   const indexOfFirstKoi = indexOfLastKoi - itemsPerPage;
   const currentKoi = filteredKoi.slice(indexOfFirstKoi, indexOfLastKoi);
