@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import api from "../../../config/axios";
+import { Link } from "react-router-dom";
 
 const BlogListLeft = () => {
   const [featuredBlog, setFeaturedBlog] = useState({});
@@ -34,15 +35,18 @@ const BlogListLeft = () => {
   return (
     <div>
       <div className="featured-card">
-        <h3 className="featured-title">FEATURED</h3>
+        <h3 className="featured-text">FEATURED</h3>
         <div className="featured-image">
-          <img
-            src={featuredBlog.image}
-            alt="Featured"
-          />
+          <img src={featuredBlog.image} alt="Featured" />
           <div className="featured-overlay">
-            <h4 className="featured-title">{featuredBlog.blogTitle}</h4>
-            <h4 className="featured-desc">{featuredBlog.blogContent ? `${featuredBlog.blogContent.slice(0, 70)}...` : ""}</h4>
+            <Link to={`/blog/${featuredBlog.blogId}`} className="featured-title">
+              <h4 >{featuredBlog.blogTitle}</h4>
+            </Link>
+            <h4 className="featured-desc">
+              {featuredBlog.blogContent
+                ? `${featuredBlog.blogContent.slice(0, 70)}...`
+                : ""}
+            </h4>
           </div>
         </div>
       </div>
@@ -50,13 +54,21 @@ const BlogListLeft = () => {
       <div className="small-blog-list">
         {blogs.slice(0, 3).map((blog) => (
           <div key={blog.blogId} className="small-blog-card">
-            <img
-              src={blog.image}
-              alt="blog image"
-              className="small-blog-image"
-            />
+            <Link
+              to={`/blog/${blog.blogId}`}
+              className="small-blog-image-container"
+            >
+              <img
+                src={blog.image}
+                alt="blog image"
+                className="small-blog-image"
+              />
+            </Link>
+
             <div className="small-blog-content">
-              <h4 className="small-blog-title">{blog.blogTitle}</h4>
+              <Link to={`/blog/${blog.blogId}`} className="small-blog-title">
+                <h4>{blog.blogTitle}</h4>
+              </Link>
               <h5 className="small-blog-description">
                 {blog.blogContent.slice(0, 50)}...
               </h5>
