@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+
 import api from "../../../config/axios";
 
 const BlogListRight = () => {
@@ -30,20 +31,31 @@ const BlogListRight = () => {
       <div className="main-blog-list">
         {blogs.map((blog) => (
           <div key={blog.blogId} className="main-blog-card">
-            <img
-              src={blog.image}
-              alt="blog image"
-              className="main-blog-image"
-              onClick={() => handleBlogClick(blog.blogId)}
-            />
+            <Link
+              to={`/blog/${blog.blogId}`}
+              className="main-blog-img-container"
+            >
+              <img
+                src={blog.image}
+                alt="blog image"
+                className="main-blog-image"
+              />
+            </Link>
+
             <div className="main-blog-content">
-              <h1
-                className="main-blog-title"
-                onClick={() => handleBlogClick(blog.blogId)}
-              >
-                {blog.blogTitle}
-              </h1>
-              <h3 className="main-blog-description">{blog.blogContent.slice(0, 300)}...</h3>
+              <Link to={`/blog/${blog.blogId}`} className="main-blog-title">
+                <h1>{blog.blogTitle}</h1>
+              </Link>
+              <h3 className="main-blog-description">
+                {blog.blogContent.slice(0, 300)}...
+              </h3>
+              <div className="main-blog-author-container">
+                <h3 className="main-blog-author-extra">by</h3>
+                <h3 className="main-blog-author">
+                   {blog.User?.username || "Unknown Author"}
+                </h3>
+                <h3 className="main-blog-author-extra">- {new Date(blog.blogDate).toLocaleDateString()}</h3>
+              </div>
             </div>
           </div>
         ))}

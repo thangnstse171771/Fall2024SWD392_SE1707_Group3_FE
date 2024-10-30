@@ -21,7 +21,7 @@ const BlogDetail = () => {
 
   useEffect(() => {
     fetchBlogDetail();
-  }, []);
+  }, [id]);
 
   return (
     <div className="blog-list-page">

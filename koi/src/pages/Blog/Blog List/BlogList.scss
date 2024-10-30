@@ -11,7 +11,7 @@
 
   .blog-list-container-left {
     width: 20%;
-    background-color: #f0f0f0; 
+    background-color: #f0f0f0;
     padding: 20px;
 
     .featured-card {
@@ -21,15 +21,34 @@
       background-color: #fff;
     }
 
-    .featured-title {
+    .featured-text {
       padding: 15px;
       font-size: 18px;
       font-weight: bold;
       margin: 0;
     }
 
+    .featured-title {
+      padding: 3px;
+      font-size: 20px;
+      font-family: "Times New Roman", Times, serif;
+      display: inline-block;
+      text-decoration: none;
+      color: white;
+      width: fit-content;
+
+      h4 {
+        margin: 0;
+        line-height: 1.2;
+      }
+
+      &:hover {
+        color: rgb(255, 206, 80);
+      }
+    }
+
     .featured-image {
-      position: relative; 
+      position: relative;
       img {
         width: 100%;
         height: auto;
@@ -49,12 +68,7 @@
       ); /* Fade effect */
       color: white;
       padding: 10px;
-
-      .featured-title {
-        padding: 3px;
-        font-size: 20px;
-        font-family: "Times New Roman", Times, serif;
-      }
+      
       .featured-desc {
         margin: 0;
         font-size: 14px;
@@ -64,85 +78,140 @@
     }
 
     .small-blog-list {
-      display: flex; 
-      flex-direction: column; 
-      gap: 20px; 
-      padding-top: 20px; 
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-top: 20px;
     }
 
     .small-blog-card {
-      display: flex; 
-      align-items: flex-start; 
+      display: flex;
+      align-items: flex-start;
       background-color: #f0f0f0;
       border-radius: 12px;
-      overflow: hidden; 
+      overflow: hidden;
       height: fit-content;
     }
 
-    .small-blog-image {
-      width: 50%; 
-      height: 100px; 
-      object-fit: cover; 
-      border-radius: 12px; 
+    .small-blog-image-container {
+      width: 50%;
+      height: 100px;
+      overflow: hidden;
+      .small-blog-image {
+        width: 100%;
+        height: auto;
+        max-height: 100%;
+        border-radius: 12px;
+        object-fit: cover;
+      }
     }
 
     .small-blog-content {
-      flex: 1; 
+      flex: 1;
       padding-left: 10px;
     }
 
     .small-blog-title {
-      font-size: 16px; 
-      margin: 0; 
+      display: inline-block;
+      text-decoration: none;
+      color: black;
+      width: fit-content;
+
+      h4 {
+        margin: 0;
+        line-height: 1.2;
+      }
+
+      &:hover {
+        color: rgb(222, 165, 20);
+      }
     }
 
     .small-blog-description {
-      font-size: 12px; 
-      color: #666; 
-      margin-top: 4px; 
+      font-size: 12px;
+      color: #666;
+      margin-top: 4px;
     }
   }
 
   .blog-list-container-right {
     width: 80%;
-    background-color: #fff; 
+    background-color: #fff;
     padding: 20px;
 
     .main-blog-list {
-      display: flex; 
-      flex-direction: column; 
-      gap: 16px; 
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
 
     .main-blog-card {
-      display: flex; 
-      align-items: flex-start; 
-      background-color: #fff; 
+      display: flex;
+      align-items: flex-start;
+      background-color: #fff;
       height: fit-content;
     }
 
-    .main-blog-image {
-      width: 37%; 
-      height: 250px; 
-      object-fit: cover; 
-      border-radius: 12px; 
+    .main-blog-img-container {
+      width: 37%;
+      height: 250px;
+      overflow: hidden;
       margin-right: 16px;
+
+      .main-blog-image {
+        width: 100%;
+        height: auto;
+        max-height: 100%;
+        border-radius: 12px;
+        object-fit: cover;
+      }
     }
 
     .main-blog-content {
-      flex: 1; 
-      display: flex; 
-      flex-direction: column; 
-      justify-content: flex-start; 
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
     }
 
     .main-blog-title {
-      margin: 0 0 4px; 
+      display: inline-block;
+      text-decoration: none;
+      color: black;
+      width: fit-content;
+
+      h1 {
+        margin: 0;
+        line-height: 1.2;
+      }
+
+      &:hover {
+        color: rgb(222, 165, 20);
+      }
     }
 
     .main-blog-description {
-      color: #666; 
-      margin: 0; 
+      color: black;
+      margin: 0;
+      font-weight: 400;
+      font-size: larger;
+    }
+
+    .main-blog-author-container {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      margin-bottom: 0;
+
+      .main-blog-author-extra {
+        color: black;
+        font-weight: 400;
+        font-size: medium;
+      }
+
+      .main-blog-author {
+        color: rgb(222, 165, 20);
+      }
     }
   }
 }
