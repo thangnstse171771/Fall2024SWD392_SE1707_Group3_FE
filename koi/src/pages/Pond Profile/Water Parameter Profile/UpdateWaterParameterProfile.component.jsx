@@ -1,34 +1,30 @@
-import { Modal, Input, Button, Form } from "antd";
+import React from "react";
+import { Modal, Form, Input, Button } from "antd";
 
-const AddWaterParameterProfile = ({
-  open,
-  handleCancel,
-  onSubmit,
-  addParameter,
-  handleInputChange,
+const UpdateWaterParameterProfile = ({
+  openUpdate,
+  handleCancelUpdate,
+  handleUpdateSubmit,
+  handleUpdateChange,
+  updateParameter,
   loading,
 }) => {
-  const [form] = Form.useForm();
 
   return (
     <Modal
-      title="Add Water Parameter"
-      open={open}
-      onCancel={handleCancel}
+      title="Update Water Parameter Profile"
+      visible={openUpdate}
+      onCancel={handleCancelUpdate}
       footer={null}
     >
       <Form
-        form={form} 
-        onFinish={(values) => {
-          onSubmit(values);
-          form.resetFields(); 
-        }}
         layout="vertical"
-        noValidate
+        onFinish={handleUpdateSubmit}
+        initialValues={updateParameter}
       >
         <Form.Item
-          name="temperature"
           label="Temperature (°C) (0 - 100)"
+          name="temperature"
           rules={[
             { required: true, message: "Please input the temperature!" },
             {
@@ -49,16 +45,16 @@ const AddWaterParameterProfile = ({
           ]}
         >
           <Input
+            name="temperature"
             type="number"
-            value={addParameter.temperature}
-            onChange={handleInputChange}
-            placeholder="Enter temperature"
+            placeholder="Enter temperature (°C)"
+            onChange={handleUpdateChange}
           />
         </Form.Item>
 
         <Form.Item
-          name="pondSaltLevel"
           label="Salt Level (%) (0 - 1)"
+          name="pondSaltLevel"
           rules={[
             { required: true, message: "Please input the salt level!" },
             {
@@ -79,16 +75,16 @@ const AddWaterParameterProfile = ({
           ]}
         >
           <Input
+            name="pondSaltLevel"
             type="number"
-            value={addParameter.pondSaltLevel}
-            onChange={handleInputChange}
-            placeholder="Enter salt level"
+            placeholder="Enter salt level (%)"
+            onChange={handleUpdateChange}
           />
         </Form.Item>
 
         <Form.Item
-          name="pondPHLevel"
           label="pH Level (mg/L) (0 - 14)"
+          name="pondPHLevel"
           rules={[
             { required: true, message: "Please input the pH level!" },
             {
@@ -109,16 +105,16 @@ const AddWaterParameterProfile = ({
           ]}
         >
           <Input
+            name="pondPHLevel"
             type="number"
-            value={addParameter.pondPHLevel}
-            onChange={handleInputChange}
-            placeholder="Enter pH level"
+            placeholder="Enter pH level (mg/L)"
+            onChange={handleUpdateChange}
           />
         </Form.Item>
 
         <Form.Item
-          name="pondOxygenLevel"
           label="Oxygen Level (mg/L) (0 - 20)"
+          name="pondOxygenLevel"
           rules={[
             { required: true, message: "Please input the oxygen level!" },
             {
@@ -139,16 +135,16 @@ const AddWaterParameterProfile = ({
           ]}
         >
           <Input
+            name="pondOxygenLevel"
             type="number"
-            value={addParameter.pondOxygenLevel}
-            onChange={handleInputChange}
-            placeholder="Enter oxygen level"
+            placeholder="Enter oxygen level (mg/L)"
+            onChange={handleUpdateChange}
           />
         </Form.Item>
 
         <Form.Item
-          name="pondNitrite"
           label="Nitrite (NO₂⁻) (mg/L) (0 - 1)"
+          name="pondNitrite"
           rules={[
             { required: true, message: "Please input the nitrite level!" },
             {
@@ -169,16 +165,16 @@ const AddWaterParameterProfile = ({
           ]}
         >
           <Input
+            name="pondNitrite"
             type="number"
-            value={addParameter.pondNitrite}
-            onChange={handleInputChange}
-            placeholder="Enter nitrite level"
+            placeholder="Enter nitrite (mg/L)"
+            onChange={handleUpdateChange}
           />
         </Form.Item>
 
         <Form.Item
-          name="pondNitrate"
           label="Nitrate (NO₃⁻) (mg/L) (0 - 100)"
+          name="pondNitrate"
           rules={[
             { required: true, message: "Please input the nitrate level!" },
             {
@@ -199,16 +195,16 @@ const AddWaterParameterProfile = ({
           ]}
         >
           <Input
+            name="pondNitrate"
             type="number"
-            value={addParameter.pondNitrate}
-            onChange={handleInputChange}
-            placeholder="Enter nitrate level"
+            placeholder="Enter nitrate (mg/L)"
+            onChange={handleUpdateChange}
           />
         </Form.Item>
 
         <Form.Item
-          name="pondPhosphate"
           label="Phosphate (mg/L) (0 - 2)"
+          name="pondPhosphate"
           rules={[
             { required: true, message: "Please input the phosphate level!" },
             {
@@ -229,10 +225,10 @@ const AddWaterParameterProfile = ({
           ]}
         >
           <Input
+            name="pondPhosphate"
             type="number"
-            value={addParameter.pondPhosphate}
-            onChange={handleInputChange}
-            placeholder="Enter phosphate level"
+            placeholder="Enter phosphate (mg/L)"
+            onChange={handleUpdateChange}
           />
         </Form.Item>
 
@@ -242,8 +238,7 @@ const AddWaterParameterProfile = ({
           </Button>
           <Button
             onClick={() => {
-              form.resetFields(); 
-              handleCancel();
+              handleCancelUpdate();
             }}
             style={{ marginLeft: "8px" }}
           >
@@ -255,4 +250,4 @@ const AddWaterParameterProfile = ({
   );
 };
 
-export default AddWaterParameterProfile;
+export default UpdateWaterParameterProfile;
