@@ -8,15 +8,14 @@ import { toast } from "react-toastify";
 const PondProfileInfo = ({ refresh }) => {
   const { id } = useParams();
 
-  const [form] = Form.useForm(); // Create form instance
-  const [loading, setLoading] = useState(true); // For loading state
+  const [form] = Form.useForm(); 
+  const [loading, setLoading] = useState(true); 
   const [profile, setProfile] = useState({});
   const [error, setError] = useState(null);
   const token = sessionStorage.getItem("token");
 
   const userType = localStorage.getItem("usertype");
 
-  // Function to fetch pond details
   const fetchPondDetails = async () => {
     try {
       const response = await api.get(`/api/pond/getPondById/${id}`, {
@@ -27,7 +26,7 @@ const PondProfileInfo = ({ refresh }) => {
       const pondData = response.data.data;
 
       setProfile(pondData);
-      form.setFieldsValue(pondData); // Set form fields with fetched data
+      form.setFieldsValue(pondData); 
     } catch (err) {
       setError(err.response?.data?.message);
       toast.error(err.response?.data?.message || "Failed to load pond data.");
@@ -36,7 +35,6 @@ const PondProfileInfo = ({ refresh }) => {
     }
   };
 
-  // Function to handle form submission
   const handleSubmit = async (values) => {
     setLoading(true);
     try {
@@ -62,8 +60,8 @@ const PondProfileInfo = ({ refresh }) => {
 
       if (response.status === 200) {
         toast.success("Pond updated successfully!");
-        fetchPondDetails(); // Fetch updated pond details
-        form.resetFields(); // Reset form fields after successful submit
+        fetchPondDetails(); 
+        form.resetFields(); 
       } else {
         throw new Error("Failed to update pond.");
       }
@@ -74,19 +72,18 @@ const PondProfileInfo = ({ refresh }) => {
     }
   };
 
-  // Fetch pond details when the component mounts
   useEffect(() => {
     fetchPondDetails();
   }, [refresh]);
 
   return (
-    <div className="pond-profile-info">
+    <div>
       {error ? (
         <div>
           <h3>{error}</h3>
         </div>
       ) : (
-        <>
+        <div className="pond-profile-info">
           <img
             className="koi-profile-img"
             src={profile.pondImage}
@@ -123,7 +120,7 @@ const PondProfileInfo = ({ refresh }) => {
               </Form.Item>
 
               <Form.Item
-                label="Pond Size (m²)"
+                label="Pond Size (m²) (3 - 33)"
                 name="pondSize"
                 rules={[
                   { required: true, message: "Please input the pond size!" },
@@ -148,7 +145,7 @@ const PondProfileInfo = ({ refresh }) => {
               </Form.Item>
 
               <Form.Item
-                label="Pond Depth (m)"
+                label="Pond Depth (m) (0.9 - 3)"
                 name="pondDepth"
                 rules={[
                   { required: true, message: "Please input the pond depth!" },
@@ -168,7 +165,7 @@ const PondProfileInfo = ({ refresh }) => {
               </Form.Item>
 
               <Form.Item
-                label="Pond Volume (m³)"
+                label="Pond Volume (m³) (>= 1.3)"
                 name="pondVolume"
                 rules={[
                   { required: true, message: "Please input the pond volume!" },
@@ -197,7 +194,7 @@ const PondProfileInfo = ({ refresh }) => {
               </Form.Item>
 
               <Form.Item
-                label="Pond Drains"
+                label="Pond Drains (1 - 2)"
                 name="pondDrains"
                 rules={[
                   {
@@ -225,7 +222,7 @@ const PondProfileInfo = ({ refresh }) => {
               </Form.Item>
 
               <Form.Item
-                label="Pond Aeration Capacity (m³/hour)"
+                label="Pond Aeration Capacity (m³/hour) (Volume * 1.5 or * 2)"
                 name="pondAeroCapacity"
                 rules={[
                   {
@@ -238,7 +235,7 @@ const PondProfileInfo = ({ refresh }) => {
                       if (value < pondVolume * 1.5 || value > pondVolume * 2) {
                         return Promise.reject(
                           new Error(
-                            "Pond aeration capacity must be between 1.5 and 2 times the volume!"
+                            "Pond aeration capacity must be between 1.5 or 2 times the volume!"
                           )
                         );
                       }
@@ -254,7 +251,7 @@ const PondProfileInfo = ({ refresh }) => {
               </Form.Item>
 
               <Form.Item
-                label="Pond Capacity of Koi Fish"
+                label="Pond Capacity of Koi Fish  (<= Volume) "
                 name="pondCapacityOfKoiFish"
                 rules={[
                   {
@@ -322,7 +319,7 @@ const PondProfileInfo = ({ refresh }) => {
               )}
             </Form>
           </div>
-        </>
+        </div>
       )}
     </div>
   );

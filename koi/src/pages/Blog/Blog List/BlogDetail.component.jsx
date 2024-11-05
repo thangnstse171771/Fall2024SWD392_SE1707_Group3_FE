@@ -21,7 +21,7 @@ const BlogDetail = () => {
 
   useEffect(() => {
     fetchBlogDetail();
-  }, []);
+  }, [id]);
 
   return (
     <div className="blog-list-page">
@@ -42,7 +42,7 @@ const BlogDetail = () => {
           <div className="blog-detail-image-container">
             <img
               className="blog-detail-image"
-              src="https://www.thespruce.com/thmb/Sx7GCSg2FZ_-j3YKxa97EsypXGI=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/KoiPond-5fe8b3a605ef4743a55dba059cfb531b.jpg"
+              src={blogDetail.image}
               alt="blog detail"
             />
           </div>

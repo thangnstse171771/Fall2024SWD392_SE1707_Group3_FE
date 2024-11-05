@@ -22,6 +22,10 @@ const KoiRecord = ({ koi }) => {
   const [form] = Form.useForm();
   const [isModalVisible, setIsModalVisible] = useState(false);
 
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 5; // Fixed page size to 5
+
   const userType = localStorage.getItem("usertype");
 
   useEffect(() => {
@@ -40,6 +44,7 @@ const KoiRecord = ({ koi }) => {
           const filteredRecords = response.data.data.filter(
             (record) => record.fishId === koi.fishId
           );
+
           setKoiRecords(filteredRecords || []);
         } else {
           toast.error("Failed to fetch koi records.");
@@ -77,10 +82,15 @@ const KoiRecord = ({ koi }) => {
 
       if (response.data.message === "KoiRecord added successfully") {
         toast.success("Koi record added successfully!");
-        setKoiRecords((prevRecords) => [
-          ...prevRecords,
-          response.data.koiRecord,
-        ]);
+        setKoiRecords((prevRecords) => {
+          // Place the new record at the beginning
+          const newRecords = [response.data.koiRecord, ...prevRecords];
+          // Sort records after addition
+          newRecords.sort(
+            (a, b) => new Date(b.recordDate) - new Date(a.recordDate)
+          );
+          return newRecords;
+        });
         form.resetFields();
         setIsModalVisible(false);
       } else {
@@ -117,6 +127,10 @@ const KoiRecord = ({ koi }) => {
     { title: "Age (months)", dataIndex: "age", key: "age" },
   ];
 
+  // Calculate paginated data
+  const startIndex = (currentPage - 1) * pageSize;
+  const paginatedData = koiRecords.slice(startIndex, startIndex + pageSize);
+
   return (
     <div className="koi-record-container">
       <Title level={2} className="koi-record-title">
@@ -133,10 +147,18 @@ const KoiRecord = ({ koi }) => {
       )}
 
       <Table
-        dataSource={koiRecords}
+        dataSource={paginatedData}
         columns={columns}
         rowKey="recordDate"
-        pagination={false}
+        pagination={{
+          current: currentPage,
+          pageSize: pageSize, // Fixed to 5
+          total: koiRecords.length,
+          onChange: (page) => {
+            setCurrentPage(page);
+          },
+          showSizeChanger: false, // Disable page size changer
+        }}
       />
 
       <Modal

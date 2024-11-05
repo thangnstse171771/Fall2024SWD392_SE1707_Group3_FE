@@ -1,16 +1,16 @@
 .blog-detail-container-right {
   width: 80%;
-  background-color: #fff; /* Example background color */
+  background-color: #fff; 
   padding: 20px;
   .blog-detail-header {
     h1 {
       font-size: 2rem;
-      font-weight: bold;
+      font-weight: bolder;
       color: #333;
       margin-bottom: 10px;
+      font-family: "Times New Roman", Times, serif;
     }
 
-    // Center align author and date if needed
     .author-date-style {
       display: flex;
       align-items: center;
@@ -51,11 +51,11 @@
     line-height: 1.6;
     color: #444;
     padding-bottom: 20px;
-    text-align: left; // Ensures left alignment
+    text-align: left; 
 
     p {
       margin-bottom: 15px;
-      text-align: left; // Ensures left alignment specifically for the paragraph
+      text-align: left; 
     }
   }
 }

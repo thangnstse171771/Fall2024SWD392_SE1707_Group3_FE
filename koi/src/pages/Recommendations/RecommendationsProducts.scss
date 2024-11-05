@@ -3,69 +3,63 @@
   height: auto;
   padding: 20px;
 
-  .product-list {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr); // 5 cards per row
-    gap: 20px; // Space between cards
+  .recommend-list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
-  .product-item {
-    background-color: #f9f9f9;
-    padding: 15px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    text-align: center;
-    transition: transform 0.3s ease;
+  .recommend-product-list-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .recommend-product-card {
+    transition: transform 0.3s, box-shadow 0.3s;
+    border-radius: 8px;
+    overflow: hidden;
+    height: fit-content;
+
+    .recommend-product-card-image {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+    }
 
     &:hover {
-      transform: translateY(-5px); // Slight hover effect
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     }
 
-    h2 {
-      font-size: 18px;
-      margin-bottom: 10px;
-      color: #333;
+    .ant-card-meta {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      height: 25px;
     }
 
-    p {
-      font-size: 14px;
-      color: #666;
-      margin-bottom: 5px;
-    }
-
-    p:last-child {
-      font-weight: bold;
-      color: #333;
+    .ant-card-meta-title {
+      text-align: center;
     }
   }
 
-  @media (max-width: 1200px) {
-    .product-list {
-      grid-template-columns: repeat(
-        4,
-        1fr
-      ); // Adjust to 4 cards per row on smaller screens
-    }
-  }
+  .no-recommend-product-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80vh;
 
-  @media (max-width: 992px) {
-    .product-list {
-      grid-template-columns: repeat(3, 1fr); // Adjust to 3 cards per row
-    }
-  }
+    .no-recommend-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center; 
+      gap: 10px;
+      text-align: center;
 
-  @media (max-width: 768px) {
-    .product-list {
-      grid-template-columns: repeat(
-        2,
-        1fr
-      ); // Adjust to 2 cards per row on smaller screens
-    }
-  }
-
-  @media (max-width: 576px) {
-    .product-list {
-      grid-template-columns: 1fr; // Adjust to 1 card per row on very small screens
+      .no-recommend-product-notify {
+        width: 500px;
+        font-size: larger;
+      }
     }
   }
 }

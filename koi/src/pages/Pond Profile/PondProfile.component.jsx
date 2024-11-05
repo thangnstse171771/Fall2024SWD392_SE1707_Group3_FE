@@ -7,9 +7,10 @@ import { Divider } from "antd";
 
 function PondProfile() {
   const [refreshPondProfile, setRefreshPondProfile] = useState(false);
+  const userType = localStorage.getItem("usertype");
 
   const handlePondProfileRefresh = () => {
-    setRefreshPondProfile((prev) => !prev); // Toggle the state to trigger useEffect in PondProfileInfo
+    setRefreshPondProfile((prev) => !prev);
   };
 
   return (
@@ -20,16 +21,20 @@ function PondProfile() {
       <div className="pond-profile-body">
         <Divider style={{ borderColor: "#7cb305" }}>Pond Info</Divider>
         <div>
-          <PondProfileInfo refresh={refreshPondProfile}/>
+          <PondProfileInfo refresh={refreshPondProfile} />
         </div>
         <Divider style={{ borderColor: "#7cb305" }}>Water Parameter</Divider>
         <div className="pond-profile-water-parameter">
           <WaterParameterProfile />
         </div>
-        <Divider style={{ borderColor: "#7cb305" }}>Fish List</Divider>
-        <div className="pond-profile-fish-list">
-          <PondFishList onFishAdded={handlePondProfileRefresh}/>
-        </div>
+        {userType === "Customer" && (
+          <>
+            <Divider style={{ borderColor: "#7cb305" }}>Fish List</Divider>
+            <div className="pond-profile-fish-list">
+              <PondFishList onFishAdded={handlePondProfileRefresh} />
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

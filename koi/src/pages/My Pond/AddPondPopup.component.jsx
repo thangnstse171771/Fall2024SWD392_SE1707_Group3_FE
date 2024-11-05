@@ -23,10 +23,10 @@ const AddPondPopup = ({
       footer={null}
     >
       <Form
-        form={form} // Bind the form instance
+        form={form} 
         onFinish={(values) => {
           onSubmit(values);
-          form.resetFields(); // Reset form after successful submit
+          form.resetFields(); 
         }}
         layout="vertical"
         noValidate
@@ -85,7 +85,7 @@ const AddPondPopup = ({
         </Form.Item>
 
         <Form.Item
-          label="Pond Size (m²) (3 - 33m²)"
+          label="Pond Size (m²) (3 - 33)"
           name="pondSize"
           rules={[
             { required: true, message: "Please input the pond size!" },
@@ -114,12 +114,17 @@ const AddPondPopup = ({
         </Form.Item>
 
         <Form.Item
-          label="Pond Depth (m)"
+          label="Pond Depth (m) (0.9 - 3)"
           name="pondDepth"
           rules={[
             { required: true, message: "Please input the pond depth!" },
             {
               validator: (_, value) => {
+                if (value < 0.9) {
+                  return Promise.reject(
+                    new Error("Pond depth must be at least 0.9 meters!")
+                  );
+                }
                 if (value > 3) {
                   return Promise.reject(
                     new Error("Pond depth cannot exceed 3 meters!")
@@ -139,7 +144,7 @@ const AddPondPopup = ({
         </Form.Item>
 
         <Form.Item
-          label="Pond Volume (m³) ( >= 1.3 m³ )"
+          label="Pond Volume (m³) (>= 1.3)"
           name="pondVolume"
           rules={[
             { required: true, message: "Please input the pond volume!" },
@@ -238,7 +243,7 @@ const AddPondPopup = ({
         </Form.Item>
 
         <Form.Item
-          label="Pond Capacity of Koi Fish ( <= Volume ) "
+          label="Pond Capacity of Koi Fish (<= Volume) "
           name="pondCapacityOfKoiFish"
           rules={[
             {
@@ -249,7 +254,6 @@ const AddPondPopup = ({
               validator: async (_, value) => {
                 const pondVolume = form.getFieldValue("pondVolume");
         
-                // Ensure we parse the values to numbers for proper comparison
                 const parsedValue = parseFloat(value);
                 const parsedVolume = parseFloat(pondVolume);
         
