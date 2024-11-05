@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 import api from "../../../config/axios";
 import { Modal, Avatar, Card, Pagination, Button } from "antd";
-import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  DeleteOutlined,
+  PlusOutlined,
+  PlusCircleOutlined,
+} from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./PondFishList.scss";
@@ -107,17 +112,89 @@ const PondFishList = ({ onFishAdded }) => {
   const currentKoi = filteredKoi.slice(indexOfFirstKoi, indexOfLastKoi);
 
   return (
-    <>
-      <div>
-        {userType === "Customer" && (
-          <div className="fish-list-profile-actions-button-group">
-            <h3>Actions</h3>
-            <Button
-              size="large"
-              className="add-fish-button"
-              icon={<PlusOutlined />}
-              onClick={showPopup}
-            />
+    <div>
+      {filteredKoi.length > 0 ? (
+        <div>
+          <div>
+            {userType === "Customer" && (
+              <div className="fish-list-profile-actions-button-group">
+                <h3>Actions</h3>
+                <Button
+                  size="large"
+                  className="add-fish-button"
+                  icon={<PlusOutlined />}
+                  onClick={showPopup}
+                />
+                <AddFishInProfile
+                  open={open}
+                  onSubmit={handleSubmit}
+                  onCancel={() => setOpen(false)}
+                  loading={loading}
+                />
+              </div>
+            )}
+          </div>
+          <div className="pond-fish-list-container">
+            <div className="fish-list-grid">
+              {currentKoi.map((koi) => (
+                <Card
+                  key={koi.fishId}
+                  className="fish-list-card"
+                  cover={
+                    <img
+                      className="fish-list-card-image"
+                      alt={koi.koiName}
+                      src={koi.koiImage}
+                    />
+                  }
+                  actions={[
+                    <EditOutlined
+                      key="edit"
+                      onClick={() =>
+                        navigate(`/manage-koi/my-koi/${koi.fishId}`)
+                      }
+                    />,
+                    <div>
+                      {userType === "Customer" && (
+                        <DeleteOutlined
+                          key="delete"
+                          onClick={() => handleDeleteConfirmation(koi.fishId)}
+                        />
+                      )}
+                    </div>,
+                  ]}
+                >
+                  <Meta
+                    avatar={
+                      <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=8" />
+                    }
+                    title={koi.koiName}
+                    description={`Gender: ${koi.koiGender}, Breed: ${koi.koiBreed}, Origin: ${koi.koiOrigin}`}
+                  />
+                </Card>
+              ))}
+            </div>
+            <div className="pagination-list-container">
+              <Pagination
+                current={currentPage}
+                pageSize={itemsPerPage}
+                total={filteredKoi.length}
+                onChange={(page) => setCurrentPage(page)}
+              />
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div>
+          <h3>There are no fishes in this pond.</h3>
+          <div className="add-button-wrapper">
+            {userType === "Customer" && (
+              <Button
+                className="plus-parameter-profile-button"
+                icon={<PlusCircleOutlined style={{ fontSize: "40px" }} />}
+                onClick={showPopup}
+              />
+            )}
             <AddFishInProfile
               open={open}
               onSubmit={handleSubmit}
@@ -125,56 +202,9 @@ const PondFishList = ({ onFishAdded }) => {
               loading={loading}
             />
           </div>
-        )}
-      </div>
-      <div className="pond-fish-list-container">
-        <div className="fish-list-grid">
-          {currentKoi.map((koi) => (
-            <Card
-              key={koi.fishId}
-              className="fish-list-card"
-              cover={
-                <img
-                  className="fish-list-card-image"
-                  alt={koi.koiName}
-                  src={koi.koiImage}
-                />
-              }
-              actions={[
-                <EditOutlined
-                  key="edit"
-                  onClick={() => navigate(`/manage-koi/my-koi/${koi.fishId}`)}
-                />,
-                <div>
-                  {userType === "Customer" && (
-                    <DeleteOutlined
-                      key="delete"
-                      onClick={() => handleDeleteConfirmation(koi.fishId)}
-                    />
-                  )}
-                </div>,
-              ]}
-            >
-              <Meta
-                avatar={
-                  <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=8" />
-                }
-                title={koi.koiName}
-                description={`Gender: ${koi.koiGender}, Breed: ${koi.koiBreed}, Origin: ${koi.koiOrigin}`}
-              />
-            </Card>
-          ))}
         </div>
-        <div className="pagination-list-container">
-          <Pagination
-            current={currentPage}
-            pageSize={itemsPerPage}
-            total={filteredKoi.length}
-            onChange={(page) => setCurrentPage(page)}
-          />
-        </div>
-      </div>
-    </>
+      )}
+    </div>
   );
 };
 
