@@ -149,11 +149,13 @@ const WaterParameterProfile = () => {
         <div>
           <h3>{error}</h3>
           <div className="add-button-wrapper">
-            <Button
-              className="plus-parameter-profile-button"
-              icon={<PlusCircleOutlined style={{ fontSize: "40px" }} />}
-              onClick={showPopup}
-            />
+            {userType === "Customer" && (
+              <Button
+                className="plus-parameter-profile-button"
+                icon={<PlusCircleOutlined style={{ fontSize: "40px" }} />}
+                onClick={showPopup}
+              />
+            )}
           </div>
           <AddWaterParameterProfile
             open={open}
