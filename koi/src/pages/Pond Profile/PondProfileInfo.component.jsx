@@ -77,13 +77,13 @@ const PondProfileInfo = ({ refresh }) => {
   }, [refresh]);
 
   return (
-    <div className="pond-profile-info">
+    <div>
       {error ? (
         <div>
           <h3>{error}</h3>
         </div>
       ) : (
-        <>
+        <div className="pond-profile-info">
           <img
             className="koi-profile-img"
             src={profile.pondImage}
@@ -120,7 +120,7 @@ const PondProfileInfo = ({ refresh }) => {
               </Form.Item>
 
               <Form.Item
-                label="Pond Size (m²)"
+                label="Pond Size (m²) (3 - 33)"
                 name="pondSize"
                 rules={[
                   { required: true, message: "Please input the pond size!" },
@@ -145,7 +145,7 @@ const PondProfileInfo = ({ refresh }) => {
               </Form.Item>
 
               <Form.Item
-                label="Pond Depth (m)"
+                label="Pond Depth (m) (0.9 - 3)"
                 name="pondDepth"
                 rules={[
                   { required: true, message: "Please input the pond depth!" },
@@ -165,7 +165,7 @@ const PondProfileInfo = ({ refresh }) => {
               </Form.Item>
 
               <Form.Item
-                label="Pond Volume (m³)"
+                label="Pond Volume (m³) (>= 1.3)"
                 name="pondVolume"
                 rules={[
                   { required: true, message: "Please input the pond volume!" },
@@ -194,7 +194,7 @@ const PondProfileInfo = ({ refresh }) => {
               </Form.Item>
 
               <Form.Item
-                label="Pond Drains"
+                label="Pond Drains (1 - 2)"
                 name="pondDrains"
                 rules={[
                   {
@@ -222,7 +222,7 @@ const PondProfileInfo = ({ refresh }) => {
               </Form.Item>
 
               <Form.Item
-                label="Pond Aeration Capacity (m³/hour)"
+                label="Pond Aeration Capacity (m³/hour) (Volume * 1.5 or * 2)"
                 name="pondAeroCapacity"
                 rules={[
                   {
@@ -235,7 +235,7 @@ const PondProfileInfo = ({ refresh }) => {
                       if (value < pondVolume * 1.5 || value > pondVolume * 2) {
                         return Promise.reject(
                           new Error(
-                            "Pond aeration capacity must be between 1.5 and 2 times the volume!"
+                            "Pond aeration capacity must be between 1.5 or 2 times the volume!"
                           )
                         );
                       }
@@ -251,7 +251,7 @@ const PondProfileInfo = ({ refresh }) => {
               </Form.Item>
 
               <Form.Item
-                label="Pond Capacity of Koi Fish"
+                label="Pond Capacity of Koi Fish  (<= Volume) "
                 name="pondCapacityOfKoiFish"
                 rules={[
                   {
@@ -319,7 +319,7 @@ const PondProfileInfo = ({ refresh }) => {
               )}
             </Form>
           </div>
-        </>
+        </div>
       )}
     </div>
   );
