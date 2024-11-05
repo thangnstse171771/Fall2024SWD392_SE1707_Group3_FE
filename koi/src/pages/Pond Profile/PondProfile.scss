@@ -1,20 +1,20 @@
 .pond-profile-page {
-  height: 100vh; /* Full viewport height */
+  height: 100vh; 
   display: flex;
   flex-direction: column;
   margin-bottom: 50px;
   height: auto;
 
   .pond-profile-header {
-    width: 100%; /* Full width for the header */
-    padding-left: 20px; /* Add padding to the left for spacing */
-    box-sizing: border-box; /* Ensure padding doesn't affect width */
+    width: 100%; 
+    padding-left: 20px; 
+    box-sizing: border-box; 
   }
 
   .pond-profile-body {
     width: 100%;
-    max-width: 1400px; /* Limit body width for readability */
-    margin: 0 auto; /* Center the body horizontally */
+    max-width: 1400px; 
+    margin: 0 auto; 
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -22,8 +22,8 @@
 
     .pond-profile-info {
       display: flex;
-      align-items: center; /* Vertically center the content */
-      justify-content: space-between; /* Space them evenly */
+      align-items: center; 
+      justify-content: space-between; 
       gap: 20px;
 
       .pond-form-container {
@@ -35,62 +35,33 @@
 
         form {
           display: flex;
-          flex-wrap: wrap; // Allow wrapping of form items to create a two-column layout
+          flex-wrap: wrap; 
           width: 100%;
-          max-width: 900px; // Limit the width of the form container
-          gap: 20px; // Add space between form items
+          max-width: 900px; 
+          gap: 20px; 
       
           .ant-form-item {
-            flex: 1 1 calc(50% - 20px); // Two items per row (50% width minus gap)
-            min-width: 250px; // Minimum width for smaller screens
+            flex: 1 1 calc(50% - 20px); 
+            min-width: 250px; 
           }
       
           .ant-form-item:last-child {
-            flex-basis: 100%; // Make the last form item (Submit button) take full width
+            flex-basis: 100%; 
             display: flex;
-            justify-content: flex-end; // Align the button to the right
+            justify-content: flex-end; 
           }
         }
       }
 
       .koi-profile-img {
-        max-width: 50%; /* Set the width of the image */
-        height: auto; /* Maintain aspect ratio */
-        border-radius: 8px; /* Optional: rounded corners */
+        max-width: 50%; 
+        height: auto; 
+        border-radius: 8px; 
       }
 
       .pond-profile-info > div {
-        flex-grow: 1; /* Allows PondProfileInfo to take the remaining space */
+        flex-grow: 1; 
       }
-
-      // .pond-form-container .form-group {
-      //   display: flex;
-      //   align-items: center;
-      //   justify-content: space-between;
-      //   gap: 20px;
-      //   padding-bottom: 10px;
-      // }
-
-      // .pond-form-container label {
-      //   font-weight: 600;
-      //   color: #333;
-      //   width: 40%; /* Adjust the width of the label */
-      // }
-
-      // .pond-form-container input {
-      //   width: 65%; /* Adjust the width of the input field to fit next to the label */
-      //   padding: 10px;
-      //   border-radius: 4px;
-      //   border: 1px solid #ddd;
-      //   font-size: 16px;
-      //   background-color: #fff;
-      //   transition: border-color 0.2s;
-
-      //   &:focus {
-      //     border-color: #7cb305;
-      //     outline: none;
-      //   }
-      // }
 
       .fish-count-text {
         display: flex;
@@ -102,7 +73,7 @@
 
       .submit-pond-edit-button {
         display: flex;
-        justify-content: flex-end; /* Aligns the button to the right */
+        justify-content: flex-end; 
         margin-top: 20px;
       }
       .submit-pond-edit-button button {

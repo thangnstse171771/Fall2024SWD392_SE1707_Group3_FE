@@ -4,12 +4,14 @@ import { useParams } from "react-router-dom";
 import api from "../../../config/axios";
 import "./WaterParameterProfile.scss";
 import AddWaterParameterProfile from "./AddWaterParameterProfile.component";
+import UpdateWaterParameterProfile from "./UpdateWaterParameterProfile.component";
 import { toast } from "react-toastify";
 import { Button, Modal } from "antd";
 import {
   PlusCircleOutlined,
   EditOutlined,
   DeleteOutlined,
+  PlusOutlined,
 } from "@ant-design/icons";
 
 import WaterParameters from "../../Water Parameters/WaterParameters.component";
@@ -17,14 +19,27 @@ import WaterParameters from "../../Water Parameters/WaterParameters.component";
 const WaterParameterProfile = () => {
   const { id } = useParams();
   const [parameterProfile, setParameterProfile] = useState({});
+  const [waterParameterId, setWaterParameterId] = useState(null);
   const [error, setError] = useState(null);
   const token = sessionStorage.getItem("token");
   const [open, setOpen] = useState(false);
+  const [openUpdate, setOpenUpdate] = useState(false);
   const [loading, setLoading] = useState(false);
-
+  const [refresh, setRefresh] = useState(false);
   const userType = localStorage.getItem("usertype");
+
   const [addParameter, setAddParameter] = useState({
     pondId: id,
+    temperature: "",
+    pondSaltLevel: "",
+    pondPHLevel: "",
+    pondOxygenLevel: "",
+    pondNitrite: "",
+    pondNitrate: "",
+    pondPhosphate: "",
+  });
+
+  const [updateParameter, setUpdateParameter] = useState({
     temperature: "",
     pondSaltLevel: "",
     pondPHLevel: "",
@@ -38,6 +53,10 @@ const WaterParameterProfile = () => {
     setOpen(true);
   };
 
+  const showUpdatePopup = () => {
+    setOpenUpdate(true);
+    setUpdateParameter({ ...parameterProfile });
+  };
   const handleCancel = () => {
     setOpen(false);
     setAddParameter({
@@ -52,10 +71,20 @@ const WaterParameterProfile = () => {
     });
   };
 
+  const handleCancelUpdate = () => setOpenUpdate(false);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setAddParameter({
       ...addParameter,
+      [name]: value,
+    });
+  };
+
+  const handleUpdateChange = (e) => {
+    const { name, value } = e.target;
+    setUpdateParameter({
+      ...updateParameter,
       [name]: value,
     });
   };
@@ -70,6 +99,7 @@ const WaterParameterProfile = () => {
         },
       });
       setParameterProfile(response.data);
+      setWaterParameterId(response.data.waterParameterId);
     } catch (error) {
       setError(
         error.response?.data?.message || "Failed to fetch water parameter."
@@ -104,10 +134,45 @@ const WaterParameterProfile = () => {
       setOpen(false);
       toast.success("Parameter Created Successfully!");
       fetchWaterParameterById();
+      setRefresh(!refresh);
     } catch (error) {
       toast.error("Failed to add parameter!");
       console.error("Error creating water parameter:", error);
-      setError("Failed to create water parameter.");
+      setError("Failed to add parameter.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateSubmit = async () => {
+    setLoading(true);
+    try {
+      await api.put(
+        `/api/waterPara/updateWaterParameter/${waterParameterId}`,
+        {
+          temperature: parseFloat(updateParameter.temperature),
+          pondSaltLevel: parseFloat(updateParameter.pondSaltLevel),
+          pondPHLevel: parseFloat(updateParameter.pondPHLevel),
+          pondOxygenLevel: parseFloat(updateParameter.pondOxygenLevel),
+          pondNitrite: parseFloat(updateParameter.pondNitrite),
+          pondNitrate: parseFloat(updateParameter.pondNitrate),
+          pondPhosphate: parseFloat(updateParameter.pondPhosphate),
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setOpenUpdate(false);
+      toast.success("Parameter Updated Successfully!");
+      fetchWaterParameterById();
+      setRefresh(!refresh);
+    } catch (error) {
+      toast.error("Failed to update parameter!");
+      console.error("Error updating water parameter:", error);
+      setError("Failed to update parameter.");
     } finally {
       setLoading(false);
     }
@@ -122,6 +187,7 @@ const WaterParameterProfile = () => {
       });
       fetchWaterParameterById();
       toast.success("Parameter Deleted Successfully!");
+      setRefresh(!refresh);
     } catch (error) {
       toast.error("Failed to delete parameter!");
       console.error("Error deleting parameter:", error);
@@ -174,7 +240,7 @@ const WaterParameterProfile = () => {
               <Button
                 size="large"
                 className="delete-parameter-button"
-                icon={<EditOutlined />}
+                icon={<PlusOutlined />}
                 onClick={showPopup}
               />
               <AddWaterParameterProfile
@@ -185,6 +251,22 @@ const WaterParameterProfile = () => {
                 addParameter={addParameter}
                 loading={loading}
               />
+
+              <Button
+                size="large"
+                className="delete-parameter-button"
+                icon={<EditOutlined />}
+                onClick={showUpdatePopup}
+              />
+              <UpdateWaterParameterProfile
+                openUpdate={openUpdate}
+                handleCancelUpdate={handleCancelUpdate}
+                handleUpdateSubmit={handleUpdateSubmit}
+                handleUpdateChange={handleUpdateChange}
+                updateParameter={updateParameter}
+                loading={loading}
+              />
+
               <Button
                 size="large"
                 className="delete-parameter-button"
@@ -212,8 +294,8 @@ const WaterParameterProfile = () => {
             </thead>
             <tbody className="water-parameter-profile-table-body">
               <tr>
-                <th>15-25</th>
-                <th>0.1-0.3</th>
+                <th>15 - 25</th>
+                <th>0.1 - 0.3</th>
                 <th>7.0 - 8.5</th>
                 <th>7 - 15</th>
                 <th>0 - 0.2</th>
@@ -222,7 +304,7 @@ const WaterParameterProfile = () => {
               </tr>
             </tbody>
           </table>
-          <WaterParameters pondId={id} />
+          <WaterParameters pondId={id} refreshTrigger={refresh} />
         </>
       )}
     </div>

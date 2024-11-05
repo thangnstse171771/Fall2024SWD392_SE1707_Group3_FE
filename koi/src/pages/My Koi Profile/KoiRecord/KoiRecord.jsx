@@ -1,16 +1,30 @@
 import React, { useEffect, useState } from "react";
-import { Spin, Form, Input, Button, Modal, Typography, Table } from "antd";
+import {
+  Spin,
+  Form,
+  Input,
+  Button,
+  Modal,
+  Typography,
+  Table,
+  Select,
+} from "antd";
 import { toast } from "react-toastify";
 import api from "../../../config/axios";
 import "./KoiRecord.scss";
 
 const { Title } = Typography;
+const { Option } = Select;
 
 const KoiRecord = ({ koi }) => {
   const [koiRecords, setKoiRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [form] = Form.useForm();
   const [isModalVisible, setIsModalVisible] = useState(false);
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 5; // Fixed page size to 5
 
   const userType = localStorage.getItem("usertype");
 
@@ -30,6 +44,7 @@ const KoiRecord = ({ koi }) => {
           const filteredRecords = response.data.data.filter(
             (record) => record.fishId === koi.fishId
           );
+
           setKoiRecords(filteredRecords || []);
         } else {
           toast.error("Failed to fetch koi records.");
@@ -67,10 +82,15 @@ const KoiRecord = ({ koi }) => {
 
       if (response.data.message === "KoiRecord added successfully") {
         toast.success("Koi record added successfully!");
-        setKoiRecords((prevRecords) => [
-          ...prevRecords,
-          response.data.koiRecord,
-        ]);
+        setKoiRecords((prevRecords) => {
+          // Place the new record at the beginning
+          const newRecords = [response.data.koiRecord, ...prevRecords];
+          // Sort records after addition
+          newRecords.sort(
+            (a, b) => new Date(b.recordDate) - new Date(a.recordDate)
+          );
+          return newRecords;
+        });
         form.resetFields();
         setIsModalVisible(false);
       } else {
@@ -107,6 +127,10 @@ const KoiRecord = ({ koi }) => {
     { title: "Age (months)", dataIndex: "age", key: "age" },
   ];
 
+  // Calculate paginated data
+  const startIndex = (currentPage - 1) * pageSize;
+  const paginatedData = koiRecords.slice(startIndex, startIndex + pageSize);
+
   return (
     <div className="koi-record-container">
       <Title level={2} className="koi-record-title">
@@ -123,10 +147,18 @@ const KoiRecord = ({ koi }) => {
       )}
 
       <Table
-        dataSource={koiRecords}
+        dataSource={paginatedData}
         columns={columns}
         rowKey="recordDate"
-        pagination={false}
+        pagination={{
+          current: currentPage,
+          pageSize: pageSize, // Fixed to 5
+          total: koiRecords.length,
+          onChange: (page) => {
+            setCurrentPage(page);
+          },
+          showSizeChanger: false, // Disable page size changer
+        }}
       />
 
       <Modal
@@ -147,28 +179,71 @@ const KoiRecord = ({ koi }) => {
           <Form.Item
             label="Length (cm)"
             name="length"
-            rules={[{ required: true, message: "Please input length!" }]}
+            rules={[
+              { required: true, message: "Please input length!" },
+              {
+                validator: (_, value) => {
+                  const numValue = Number(value);
+                  if (numValue >= 0 && numValue <= 126) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("Length must be between 0 and 126 cm!")
+                  );
+                },
+              },
+            ]}
           >
             <Input type="number" />
           </Form.Item>
           <Form.Item
             label="Weight (kg)"
             name="weight"
-            rules={[{ required: true, message: "Please input weight!" }]}
+            rules={[
+              { required: true, message: "Please input weight!" },
+              {
+                validator: (_, value) => {
+                  const numValue = Number(value);
+                  if (numValue >= 0 && numValue <= 15) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("Weight must be between 0 and 15 kg!")
+                  );
+                },
+              },
+            ]}
           >
             <Input type="number" />
           </Form.Item>
           <Form.Item
             label="Body Shape"
             name="bodyShape"
-            rules={[{ required: true, message: "Please input body shape!" }]}
+            rules={[{ required: true, message: "Please select body shape!" }]}
           >
-            <Input />
+            <Select placeholder="Select body shape">
+              <Option value="slim">Slim</Option>
+              <Option value="normal">Normal</Option>
+              <Option value="heavy">Heavy</Option>
+            </Select>
           </Form.Item>
           <Form.Item
             label="Age (months)"
             name="age"
-            rules={[{ required: true, message: "Please input age!" }]}
+            rules={[
+              { required: true, message: "Please input age!" },
+              {
+                validator: (_, value) => {
+                  const numValue = Number(value);
+                  if (numValue >= 1) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error("Age must be greater than 1 month!")
+                  );
+                },
+              },
+            ]}
           >
             <Input type="number" />
           </Form.Item>

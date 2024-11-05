@@ -1,7 +1,7 @@
 .parameter-actions-button-group {
   display: flex;
-  align-items: center; /* Align items vertically at the center */
-  gap: 10px; /* Add some spacing between elements */
+  align-items: center; 
+  gap: 10px; 
 }
 
 .ideal-parameter-example {
@@ -39,7 +39,7 @@
 }
 
 .water-parameter-profile-table-body th:hover {
-  background-color: #ddd; /* Change this to any color you want */
+  background-color: #ddd; 
   cursor: pointer;
 }
 
@@ -47,17 +47,17 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px; /* Optional: Add some space above */
+  margin-top: 20px; 
 
   .plus-parameter-profile-button {
-    font-size: 18px; /* Increase text size */
-    padding: 12px 24px; /* Increase padding for width and height */
-    height: 70px; /* Adjust height based on padding */
-    width: 70px; /* Default background color */
+    font-size: 18px; 
+    padding: 12px 24px; 
+    height: 70px; 
+    width: 70px; 
     border: none;
 
     &:hover .anticon {
-      color: red; /* Change icon color to red on hover */
+      color: red; 
     }
   }
 }

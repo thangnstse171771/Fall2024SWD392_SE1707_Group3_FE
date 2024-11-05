@@ -14,13 +14,12 @@ const AddRecommendations = ({ isOpen, onClose, categories, waterParameters, onAd
       const values = await form.validateFields();
       setLoading(true);
 
-      // Make API call to create recommendation
       await api.post("/api/productRecommends/createProductRecommend", values);
 
       toast.success("Recommendation added successfully");
       form.resetFields();
       onClose();
-      onAddSuccess(); // Refresh data after adding
+      onAddSuccess(); 
     } catch (error) {
       toast.error("Failed to add recommendation");
       console.error("Error adding recommendation:", error);
