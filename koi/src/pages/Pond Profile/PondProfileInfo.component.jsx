@@ -175,45 +175,49 @@ const PondProfileInfo = ({ refresh }) => {
                 <Input placeholder="Enter pond name" />
               </Form.Item>
 
-              <Form.Item
-                label="Pond Image URL"
-                name="pondImage"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input the pond image URL!",
-                  },
-                ]}
-              >
-                <Input placeholder="Pond image URL" readOnly />
-              </Form.Item>
-
-              <Form.Item>
-                <input
-                  type="file"
-                  onChange={handleFileChange}
-                  ref={fileInputRef}
-                />
-                {imageUploadProgress ? (
-                  <div className="w-16 h-16">
-                    <CircularProgress
-                      variant="determinate"
-                      value={imageUploadProgress}
-                      style={{ marginTop: "8px" }}
-                    />
-                  </div>
-                ) : (
-                  <Button
-                    onClick={handleUploadImage}
-                    style={{ marginTop: "8px" }}
+              {userType === "Customer" && (
+                <>
+                  <Form.Item
+                    label="Pond Image URL"
+                    name="pondImage"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input the pond image URL!",
+                      },
+                    ]}
                   >
-                    Upload Image
-                  </Button>
-                )}
-              </Form.Item>
+                    <Input placeholder="Pond image URL" readOnly />
+                  </Form.Item>
 
-              {imageUploadError && (
-                <p style={{ color: "red" }}>{imageUploadError}</p>
+                  <Form.Item>
+                    <input
+                      type="file"
+                      onChange={handleFileChange}
+                      ref={fileInputRef}
+                    />
+                    {imageUploadProgress ? (
+                      <div className="w-16 h-16">
+                        <CircularProgress
+                          variant="determinate"
+                          value={imageUploadProgress}
+                          style={{ marginTop: "8px" }}
+                        />
+                      </div>
+                    ) : (
+                      <Button
+                        onClick={handleUploadImage}
+                        style={{ marginTop: "8px" }}
+                      >
+                        Upload Image
+                      </Button>
+                    )}
+                  </Form.Item>
+
+                  {imageUploadError && (
+                    <p style={{ color: "red" }}>{imageUploadError}</p>
+                  )}
+                </>
               )}
 
               <Form.Item
