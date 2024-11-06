@@ -7,9 +7,8 @@ import {
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
-import { CircularProgressbar } from "react-circular-progressbar";
 import { app } from "../../firebase";
-import "react-circular-progressbar/dist/styles.css";
+import { CircularProgress } from "@mui/material";
 
 const { Option, OptGroup } = Select;
 
@@ -187,9 +186,10 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
           >
             {imageUploadProgress ? (
               <div className="w-16 h-16">
-                <CircularProgressbar
+                <CircularProgress
+                  variant="determinate"
                   value={imageUploadProgress}
-                  text={`${imageUploadProgress || 0}%`}
+                  // text={`${imageUploadProgress || 0}%`}
                 />
               </div>
             ) : (

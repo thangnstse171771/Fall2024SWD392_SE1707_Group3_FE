@@ -1,5 +1,13 @@
-import React from "react";
-import { Modal, Form, Input, Button } from "antd";
+import React, { useState, useEffect, useRef } from "react";
+import { Modal, Form, Input, Button, message } from "antd";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
+import { app } from "../../firebase";
+import { CircularProgress } from "@mui/material";
 
 const AddPondPopup = ({
   open,
@@ -10,10 +18,69 @@ const AddPondPopup = ({
   loading,
 }) => {
   const [form] = Form.useForm();
-  
+  const [file, setFile] = useState(null);
+  const [imageUploadProgress, setImageUploadProgress] = useState(null);
+  const [imageUploadError, setImageUploadError] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const fileInputRef = useRef(null);
+
   const calculatePondSize = (length, width) => {
     return length * width || 0;
   };
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+    setImageUploadError(null);
+  };
+
+  const handleUploadImage = async () => {
+    if (!file) {
+      setImageUploadError("Please select an image");
+      return;
+    }
+    setImageUploadError(null);
+
+    const storage = getStorage(app);
+    const fileName = `${new Date().getTime()}-${file.name}`;
+    const storageRef = ref(storage, fileName);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setImageUploadProgress(progress.toFixed(0));
+      },
+      (error) => {
+        setImageUploadError("Image upload failed");
+        setImageUploadProgress(null);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setImageUploadProgress(null);
+          setImageUploadError(null);
+          form.setFieldsValue({ pondImage: downloadURL });
+          setImagePreview(downloadURL);
+          message.success("Image uploaded successfully!");
+        });
+      }
+    );
+  };
+
+  useEffect(() => {
+    if (handleCancel) {
+      setImagePreview("");
+      setFile(null);
+      setImageUploadProgress(null);
+      setImageUploadError(null);
+      form.resetFields();
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  }, [open, form]);
 
   return (
     <Modal
@@ -23,10 +90,10 @@ const AddPondPopup = ({
       footer={null}
     >
       <Form
-        form={form} 
+        form={form}
         onFinish={(values) => {
           onSubmit(values);
-          form.resetFields(); 
+          form.resetFields();
         }}
         layout="vertical"
         noValidate
@@ -52,25 +119,55 @@ const AddPondPopup = ({
           label="Pond Image URL"
           name="pondImage"
           rules={[
-            { required: true, message: "Please input the pond image URL!" },
+            {
+              required: true,
+              message: "Please upload or input the pond image URL!",
+            },
           ]}
         >
           <Input
             value={pondData.pondImage}
             onChange={handleInputChange}
-            placeholder="Enter pond image URL"
+            placeholder="Enter or upload pond image URL"
+            readOnly
           />
         </Form.Item>
+
+        <Form.Item>
+          <input type="file" onChange={handleFileChange} ref={fileInputRef} />
+          {imageUploadProgress ? (
+            <div className="w-16 h-16">
+              <CircularProgress
+                variant="determinate"
+                value={imageUploadProgress}
+                style={{ marginTop: "8px" }}
+              />
+            </div>
+          ) : (
+            <Button onClick={handleUploadImage} style={{ marginTop: "8px" }}>
+              Upload Image
+            </Button>
+          )}
+        </Form.Item>
+
+        {imagePreview && (
+          <div style={{ margin: "10px 0" }}>
+            <img
+              src={imagePreview}
+              alt="Pond"
+              style={{ width: "100%", maxHeight: "200px", objectFit: "cover" }}
+            />
+          </div>
+        )}
+
+        {imageUploadError && <p style={{ color: "red" }}>{imageUploadError}</p>}
 
         <Form.Item
           label="Pond Length (m)"
           name="pondLength"
           rules={[{ required: true, message: "Please input the pond length!" }]}
         >
-          <Input
-            type="number"
-            placeholder="Enter pond length"
-          />
+          <Input type="number" placeholder="Enter pond length" />
         </Form.Item>
 
         <Form.Item
@@ -78,10 +175,7 @@ const AddPondPopup = ({
           name="pondWidth"
           rules={[{ required: true, message: "Please input the pond width!" }]}
         >
-          <Input
-            type="number"
-            placeholder="Enter pond width"
-          />
+          <Input type="number" placeholder="Enter pond width" />
         </Form.Item>
 
         <Form.Item
@@ -106,11 +200,7 @@ const AddPondPopup = ({
             },
           ]}
         >
-          <Input
-            type="number"
-            readOnly
-            placeholder="Calculated pond size"
-          />
+          <Input type="number" readOnly placeholder="Calculated pond size" />
         </Form.Item>
 
         <Form.Item
@@ -150,8 +240,8 @@ const AddPondPopup = ({
             { required: true, message: "Please input the pond volume!" },
             {
               validator: (_, value) => {
-                const pondSize = form.getFieldValue('pondSize');
-                const pondDepth = form.getFieldValue('pondDepth');
+                const pondSize = form.getFieldValue("pondSize");
+                const pondDepth = form.getFieldValue("pondDepth");
                 const multiply = pondSize * pondDepth;
 
                 if (value < 1.3) {
@@ -220,7 +310,7 @@ const AddPondPopup = ({
             },
             {
               validator: (_, value) => {
-                const pondVolume = form.getFieldValue('pondVolume');
+                const pondVolume = form.getFieldValue("pondVolume");
 
                 if (value < pondVolume * 1.5 || value > pondVolume * 2) {
                   return Promise.reject(
@@ -253,14 +343,14 @@ const AddPondPopup = ({
             {
               validator: async (_, value) => {
                 const pondVolume = form.getFieldValue("pondVolume");
-        
+
                 const parsedValue = parseFloat(value);
                 const parsedVolume = parseFloat(pondVolume);
-        
+
                 if (isNaN(parsedValue) || isNaN(parsedVolume)) {
                   return Promise.reject(new Error("Invalid input values."));
                 }
-        
+
                 if (parsedValue > parsedVolume) {
                   return Promise.reject(
                     new Error("Fish capacity can't exceed pond volume!")
