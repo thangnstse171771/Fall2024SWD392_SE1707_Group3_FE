@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import api from "../../../config/axios";
 import AddRecommendations from "./AddRecommendations";
+import ViewRecommendByCategory from "./ViewRecommendByCategory";
 
 const ManageRecommendations = () => {
   const [open, setOpen] = useState(false);
@@ -19,6 +20,8 @@ const ManageRecommendations = () => {
   const [recommendations, setRecommendations] = useState([]);
   const [categories, setCategories] = useState([]);
   const [waterParameters, setWaterParameters] = useState([]);
+  const [isCategoryModalOpen, setCategoryModalOpen] = useState(false);
+  const [selectedCategoryId, setSelectedCategoryId] = useState(null);
 
   const showPopup = () => {
     setOpen(true);
@@ -64,6 +67,11 @@ const ManageRecommendations = () => {
     return parameter ? parameter.Pond.pondName : "Unknown Pond";
   };
 
+  const openCategoryModal = (categoryId) => {
+    setSelectedCategoryId(categoryId);
+    setCategoryModalOpen(true);
+  };
+
   const tableStyles = {
     container: {
       width: "100%",
@@ -93,7 +101,7 @@ const ManageRecommendations = () => {
         onClose={hidePopup}
         categories={categories}
         waterParameters={waterParameters}
-        onAddSuccess={fetchData} 
+        onAddSuccess={fetchData}
       />
 
       {loading ? (
@@ -137,9 +145,7 @@ const ManageRecommendations = () => {
                   <TableCell align="center" style={{ width: "20%" }}>
                     <Button
                       style={{ color: "rgb(180,0,0)" }}
-                      // onClick={() =>
-                      //   navigate(`/ProductDetails/${product.productId}`)
-                      // }
+                      onClick={() => openCategoryModal(rec.categoryId)}
                     >
                       View
                     </Button>
@@ -150,6 +156,12 @@ const ManageRecommendations = () => {
           </Table>
         </TableContainer>
       )}
+
+      <ViewRecommendByCategory
+        isOpen={isCategoryModalOpen}
+        onClose={() => setCategoryModalOpen(false)}
+        categoryId={selectedCategoryId}
+      />
     </div>
   );
 };
