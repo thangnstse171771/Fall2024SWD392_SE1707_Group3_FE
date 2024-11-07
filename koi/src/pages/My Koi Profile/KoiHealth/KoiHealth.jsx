@@ -10,6 +10,7 @@ import {
   DatePicker,
   message,
   Typography,
+  Empty,
 } from "antd";
 import api from "../../../config/axios";
 import "./KoiHealth.scss";
@@ -45,12 +46,11 @@ const KoiHealth = ({ koi }) => {
         if (response.data.success) {
           setHealthData(response.data.data || []);
         } else {
-          message.error("Failed to fetch Koi health data.");
+          setHealthData([]); // In case no data is returned
         }
       } catch (error) {
-        message.error(
-          error.response?.data?.message || "An unexpected error occurred."
-        );
+        console.error("Error fetching koi health data:", error);
+        setHealthData([]); // Handle error quietly, no pop-up
       } finally {
         setLoading(false);
       }
@@ -94,9 +94,7 @@ const KoiHealth = ({ koi }) => {
         message.error("Failed to add Koi health record.");
       }
     } catch (error) {
-      message.error(
-        error.response?.data?.message || "An unexpected error occurred."
-      );
+      message.error("An unexpected error occurred.");
     }
   };
 
@@ -145,9 +143,7 @@ const KoiHealth = ({ koi }) => {
         message.error("Failed to update Koi health record.");
       }
     } catch (error) {
-      message.error(
-        error.response?.data?.message || "An unexpected error occurred."
-      );
+      message.error("An unexpected error occurred.");
     }
   };
 
@@ -184,9 +180,7 @@ const KoiHealth = ({ koi }) => {
         message.error("Failed to delete Koi health record.");
       }
     } catch (error) {
-      message.error(
-        error.response?.data?.message || "An unexpected error occurred."
-      );
+      message.error("An unexpected error occurred.");
     }
   };
 
@@ -216,6 +210,8 @@ const KoiHealth = ({ koi }) => {
       )}
       {loading ? (
         <Spin tip="Loading health data..." />
+      ) : healthData.length === 0 ? (
+        <Empty description="No health records found for this koi" />
       ) : (
         <Table
           dataSource={paginatedData}

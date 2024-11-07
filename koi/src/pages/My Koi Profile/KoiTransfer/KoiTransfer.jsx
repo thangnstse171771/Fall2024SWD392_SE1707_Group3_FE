@@ -28,13 +28,18 @@ const KoiTransfer = ({ koi, ponds }) => {
       });
 
       if (response.data.success) {
-        setTransfers(response.data.data);
+        // If there are no transfers, just show an empty array
+        if (response.data.data && response.data.data.length > 0) {
+          setTransfers(response.data.data);
+        } else {
+          setTransfers([]); // Set empty transfers when no data
+        }
       } else {
         message.error("Failed to fetch transfer history.");
       }
     } catch (error) {
-      message.error("Error fetching transfer history.");
       console.error("Error fetching transfer history:", error);
+      setTransfers([]); // Set empty transfers state if there's an error
     } finally {
       setLoadingHistory(false);
     }
@@ -105,10 +110,16 @@ const KoiTransfer = ({ koi, ponds }) => {
         >
           <Select placeholder="Select a pond">
             {ponds
-              .filter((pond) => pond.status === "active")
+              .filter(
+                (pond) =>
+                  pond.status === "active" && // Ensure the pond is active
+                  pond.pondCapacity.remainingSlots > 0 && // Ensure the pond has available slots
+                  pond.pondId !== currentPond // Ensure the pond is not the current pond
+              )
               .map((pond) => (
                 <Option key={pond.pondId} value={pond.pondId}>
-                  {pond.pondName}
+                  {pond.pondName} ({pond.pondCapacity.remainingSlots} slots
+                  remaining)
                 </Option>
               ))}
           </Select>
@@ -162,7 +173,7 @@ const KoiTransfer = ({ koi, ponds }) => {
           loading={loadingHistory}
         />
       ) : (
-        <p>No transfer history available for this Koi.</p>
+        <p>No transfer history available for this Koi.</p> // Friendly message when no history
       )}
     </div>
   );

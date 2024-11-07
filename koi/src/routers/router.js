@@ -47,7 +47,7 @@ export const router = createBrowserRouter([
         path: "/manage-koi",
         element: (
           <ProtectedRoute
-            allowedRoles={["Customer", "Admin", "Manager", "Staff"]}
+            allowedRoles={["Customer"]}
           >
             <ManageKoi />
           </ProtectedRoute>
@@ -57,7 +57,7 @@ export const router = createBrowserRouter([
         path: "/manage-koi/my-koi",
         element: (
           <ProtectedRoute
-            allowedRoles={["Customer", "Admin", "Manager", "Staff"]}
+            allowedRoles={["Customer"]}
           >
             <MyKoi />
           </ProtectedRoute>
