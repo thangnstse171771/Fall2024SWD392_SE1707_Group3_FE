@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Modal, Form, Input, Button, message } from "antd";
+import { Modal, Form, Input, Button, message, Slider } from "antd";
 import {
   getStorage,
   ref,
@@ -23,10 +23,14 @@ const AddPondPopup = ({
   const [imageUploadError, setImageUploadError] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
+  const [pondVolume, setPondVolume] = useState(null);
+  const [aeroCapacityRange, setAeroCapacityRange] = useState([0, 0]);
 
-  const calculatePondSize = (length, width) => {
-    return length * width || 0;
-  };
+  useEffect(() => {
+    if (pondVolume) {
+      setAeroCapacityRange([pondVolume * 1.5, pondVolume * 2]);
+    }
+  }, [pondVolume]);
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -97,11 +101,6 @@ const AddPondPopup = ({
         }}
         layout="vertical"
         noValidate
-        onValuesChange={(changedValues, allValues) => {
-          const { pondLength, pondWidth } = allValues;
-          const pondSize = calculatePondSize(pondLength, pondWidth);
-          form.setFieldsValue({ pondSize });
-        }}
       >
         <Form.Item
           label="Pond Name"
@@ -134,7 +133,7 @@ const AddPondPopup = ({
           />
         </Form.Item>
 
-        <Form.Item label="Pond Image" >
+        <Form.Item label="Pond Image">
           <input type="file" onChange={handleFileChange} ref={fileInputRef} />
           {imageUploadProgress ? (
             <div className="w-16 h-16">
@@ -164,22 +163,6 @@ const AddPondPopup = ({
         {imageUploadError && <p style={{ color: "red" }}>{imageUploadError}</p>}
 
         <Form.Item
-          label="Pond Length (m)"
-          name="pondLength"
-          rules={[{ required: true, message: "Please input the pond length!" }]}
-        >
-          <Input type="number" placeholder="Enter pond length" />
-        </Form.Item>
-
-        <Form.Item
-          label="Pond Width (m)"
-          name="pondWidth"
-          rules={[{ required: true, message: "Please input the pond width!" }]}
-        >
-          <Input type="number" placeholder="Enter pond width" />
-        </Form.Item>
-
-        <Form.Item
           label="Pond Size (m²) (3 - 33)"
           name="pondSize"
           rules={[
@@ -201,7 +184,7 @@ const AddPondPopup = ({
             },
           ]}
         >
-          <Input type="number" readOnly placeholder="Calculated pond size" />
+          <Input type="number" placeholder="Pond size" />
         </Form.Item>
 
         <Form.Item
@@ -262,8 +245,10 @@ const AddPondPopup = ({
         >
           <Input
             type="number"
-            value={pondData.pondVolume}
-            onChange={handleInputChange}
+            onChange={(e) => {
+              handleInputChange(e);
+              setPondVolume(parseFloat(e.target.value)); 
+            }}
             placeholder="Enter pond volume"
           />
         </Form.Item>
@@ -302,7 +287,7 @@ const AddPondPopup = ({
         </Form.Item>
 
         <Form.Item
-          label="Pond Aeration Capacity (m³/hour) (Volume * 1.5 or * 2)"
+          label="Pond Aeration Capacity (m³/hour)"
           name="pondAeroCapacity"
           rules={[
             {
@@ -325,11 +310,13 @@ const AddPondPopup = ({
             },
           ]}
         >
-          <Input
-            type="number"
+          <Slider
+            min={aeroCapacityRange[0]}
+            max={aeroCapacityRange[1]}
+            onChange={(value) => handleInputChange({ target: { name: "pondAeroCapacity", value } })}
             value={pondData.pondAeroCapacity}
-            onChange={handleInputChange}
-            placeholder="Enter pond aeration capacity"
+            tooltip={{ formatter: (value) => `${value} m³/hour` }}
+            step={0.01}
           />
         </Form.Item>
 
@@ -347,6 +334,12 @@ const AddPondPopup = ({
 
                 const parsedValue = parseFloat(value);
                 const parsedVolume = parseFloat(pondVolume);
+
+                if (value < 0) {
+                  return Promise.reject(
+                    new Error("Pond Capacity can't be below 0!")
+                  );
+                }
 
                 if (isNaN(parsedValue) || isNaN(parsedVolume)) {
                   return Promise.reject(new Error("Invalid input values."));
