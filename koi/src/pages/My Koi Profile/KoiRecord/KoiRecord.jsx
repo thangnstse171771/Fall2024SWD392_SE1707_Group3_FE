@@ -125,6 +125,16 @@ const KoiRecord = ({ koi }) => {
     { title: "Weight (kg)", dataIndex: "weight", key: "weight" },
     { title: "Body Shape", dataIndex: "bodyShape", key: "bodyShape" },
     { title: "Age (months)", dataIndex: "age", key: "age" },
+    {
+      title: "Calculated Weight (kg)",
+      dataIndex: "calculateWeight",
+      key: "calculateWeight",
+    },
+    {
+      title: "Food Requirement (kg)",
+      dataIndex: "foodRequire",
+      key: "foodRequire",
+    },
   ];
 
   // Calculate paginated data
