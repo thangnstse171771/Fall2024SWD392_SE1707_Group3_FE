@@ -47,10 +47,11 @@ const KoiRecord = ({ koi }) => {
 
           setKoiRecords(filteredRecords || []);
         } else {
-          toast.error("Failed to fetch koi records.");
+          setKoiRecords([]); // If no records found, just set an empty array
         }
       } catch (error) {
-        toast.error("Error fetching koi records.");
+        console.error("Error fetching koi records:", error);
+        setKoiRecords([]); // If error occurs, set records to empty
       } finally {
         setLoading(false);
       }
@@ -176,7 +177,9 @@ const KoiRecord = ({ koi }) => {
         </Button>
       )}
 
-      {koiRecords.length === 0 ? (
+      {loading ? (
+        <Spin size="large" />
+      ) : koiRecords.length === 0 ? (
         <Empty description="No koi records found for this fish" />
       ) : (
         <Table
