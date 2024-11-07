@@ -84,9 +84,6 @@ const RecommendationsProducts = () => {
             >
               <Meta
                 title={recommend.Product.productName}
-                description={`Price: ${
-                  recommend.Product.productPrice || "N/A"
-                }`}
               />
             </Card>
           ))}

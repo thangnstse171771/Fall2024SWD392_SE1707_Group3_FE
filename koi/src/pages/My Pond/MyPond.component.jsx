@@ -90,7 +90,10 @@ function MyPond() {
       }
       handleCancel();
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to create pond. Please try again.");
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to create pond. Please try again."
+      );
       console.error("Error creating pond:", error);
     } finally {
       setLoading(false);
@@ -115,11 +118,15 @@ function MyPond() {
 
   const handleDelete = async (pondId) => {
     try {
-      await api.put(`/api/pond/deletePondByOwner/${pondId}`, {}, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await api.put(
+        `/api/pond/deletePondByOwner/${pondId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       fetchPondList();
       toast.success("Pond Deleted Successfully!");
     } catch (error) {
@@ -172,7 +179,7 @@ function MyPond() {
             </tr>
           </thead>
           <tbody className="pond-table-body">
-            {pondList.length > 0 ? (
+            {pondList.filter((pond) => pond.status === "active").length > 0 ? (
               pondList
                 .filter((pond) => pond.status === "active")
                 .map((pond) => (
