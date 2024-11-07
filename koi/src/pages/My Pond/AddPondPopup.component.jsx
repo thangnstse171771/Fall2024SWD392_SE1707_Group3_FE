@@ -78,7 +78,7 @@ const AddPondPopup = ({
       setFile(null);
       setImageUploadProgress(null);
       setImageUploadError(null);
-      setAeroCapacityRange([0, 0])
+      setAeroCapacityRange([0, 0]);
       form.resetFields();
 
       if (fileInputRef.current) {
@@ -124,18 +124,15 @@ const AddPondPopup = ({
               message: "Please upload or input the pond image URL!",
             },
           ]}
-          hidden
         >
           <Input
+            type="hidden"
             value={pondData.pondImage}
             onChange={handleInputChange}
             placeholder="Enter or upload pond image URL"
             readOnly
           />
-        </Form.Item>
-
-        <Form.Item label="Pond Image">
-          <input type="file" onChange={handleFileChange} ref={fileInputRef} />
+          <Input type="file" onChange={handleFileChange} ref={fileInputRef} />
           {imageUploadProgress ? (
             <div className="w-16 h-16">
               <CircularProgress
@@ -145,9 +142,23 @@ const AddPondPopup = ({
               />
             </div>
           ) : (
-            <Button onClick={handleUploadImage} style={{ marginTop: "8px" }}>
-              Upload Image
-            </Button>
+            <div>
+              <Button onClick={handleUploadImage} style={{ marginTop: "8px" }}>
+                Upload Image
+              </Button>
+              {imageUploadError && (
+                <p
+                  style={{
+                    color: "red",
+                    marginTop: "0",
+                    marginBottom: "0",
+                    textAlign: "left",
+                  }}
+                >
+                  {imageUploadError}
+                </p>
+              )}
+            </div>
           )}
         </Form.Item>
 
@@ -160,8 +171,6 @@ const AddPondPopup = ({
             />
           </div>
         )}
-
-        {imageUploadError && <p style={{ color: "red" }}>{imageUploadError}</p>}
 
         <Form.Item
           label="Pond Size (m²) (3 - 33)"

@@ -320,7 +320,9 @@ const PondProfileInfo = ({ refresh }) => {
                   onChange={(value) =>
                     form.setFieldsValue({ pondAeroCapacity: value })
                   }
-                  tooltip={{ formatter: (value) => `${value.toFixed(2)} m³/hour` }}
+                  tooltip={{
+                    formatter: (value) => `${value.toFixed(2)} m³/hour`,
+                  }}
                   step={0.01}
                 />
               </Form.Item>
@@ -400,18 +402,19 @@ const PondProfileInfo = ({ refresh }) => {
                         />
                       </div>
                     ) : (
-                      <Button
-                        onClick={handleUploadImage}
-                        style={{ marginTop: "8px" }}
-                      >
-                        Upload Image
-                      </Button>
+                      <div>
+                        <Button
+                          onClick={handleUploadImage}
+                          style={{ marginTop: "8px" }}
+                        >
+                          Upload Image
+                        </Button>
+                        {imageUploadError && (
+                          <p style={{ color: "red", textAlign: "left", marginBottom: "0", marginTop: "0" }}>{imageUploadError}</p>
+                        )}
+                      </div>
                     )}
                   </Form.Item>
-
-                  {imageUploadError && (
-                    <p style={{ color: "red" }}>{imageUploadError}</p>
-                  )}
                 </>
               )}
 
