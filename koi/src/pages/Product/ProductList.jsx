@@ -275,7 +275,24 @@ export default function ProductList() {
               <Form.Item
                 name="productPrice"
                 label="Price"
-                rules={[{ required: true, message: "Please enter price" }]}
+                rules={[
+                  { required: true, message: "Please enter price" },
+                  {
+                    validator: (_, value) => {
+                      if (value < 0) {
+                        return Promise.reject(
+                          new Error("Product price can't be 0!")
+                        );
+                      }
+                      if (value > 9999) {
+                        return Promise.reject(
+                          new Error("Product price can't go above 9999!")
+                        );
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
               >
                 <InputNumber style={{ width: "100%" }} />
               </Form.Item>

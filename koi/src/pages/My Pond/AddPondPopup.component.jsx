@@ -78,6 +78,7 @@ const AddPondPopup = ({
       setFile(null);
       setImageUploadProgress(null);
       setImageUploadError(null);
+      setAeroCapacityRange([0, 0])
       form.resetFields();
 
       if (fileInputRef.current) {
