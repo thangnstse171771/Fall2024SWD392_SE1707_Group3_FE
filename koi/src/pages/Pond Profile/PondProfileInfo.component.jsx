@@ -357,11 +357,12 @@ const PondProfileInfo = ({ refresh }) => {
                         message: "Please input the pond image URL!",
                       },
                     ]}
+                    hidden
                   >
                     <Input placeholder="Pond image URL" readOnly />
                   </Form.Item>
 
-                  <Form.Item>
+                  <Form.Item label="Pond Image">
                     <input
                       type="file"
                       onChange={handleFileChange}
