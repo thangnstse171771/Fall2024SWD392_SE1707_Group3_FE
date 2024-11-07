@@ -43,10 +43,11 @@ const BlogManagement = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (response.data) {
-        const activeBlogs = response.data.filter(
-          (blog) => blog.blogStatus === "active"
+        const blogsWithStatus = response.data.filter(
+          (blog) =>
+            blog.blogStatus === "waiting" || blog.blogStatus === "active"
         );
-        setBlogs(activeBlogs);
+        setBlogs(blogsWithStatus);
       }
     } catch (error) {
       message.error("Error fetching blog data.");
@@ -94,6 +95,7 @@ const BlogManagement = () => {
       blogTitle: values.blogTitle.trim(),
       blogContent: values.blogContent.trim(),
       image: formData.image || values.image.trim(),
+      blogStatus: "waiting", // Set status to "waiting" initially
     };
 
     try {
@@ -106,7 +108,7 @@ const BlogManagement = () => {
         await api.post("/api/blog/createBlog", payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        message.success("Blog created successfully!");
+        message.success("Your post is waiting for approval.");
       }
       form.resetFields();
       setIsModalVisible(false);
@@ -174,6 +176,24 @@ const BlogManagement = () => {
           }}
         />
       ),
+    },
+    {
+      title: "Status",
+      dataIndex: "blogStatus",
+      key: "blogStatus",
+      render: (status) => {
+        if (status === "waiting") {
+          return (
+            <span style={{ color: "orange" }}>
+              Your post is waiting for approval
+            </span>
+          );
+        }
+        if (status === "active") {
+          return <span style={{ color: "green" }}>Approved</span>;
+        }
+        return <span>{status}</span>;
+      },
     },
     {
       title: "Actions",
