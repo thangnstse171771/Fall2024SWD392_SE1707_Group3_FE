@@ -42,7 +42,7 @@ const Profile = () => {
     }
   }, []);
 
-  useEffect(() => {
+  const fetchUserData = () => {
     if (userId) {
       api
         .get(`/api/user/${userId}`)
@@ -62,11 +62,16 @@ const Profile = () => {
             userAddress: data.userAddress,
             image: data.image || "",
           });
+          setFile(null); 
         })
         .catch((error) => {
           console.error("Error fetching user data:", error);
         });
     }
+  };
+
+  useEffect(() => {
+    fetchUserData();
   }, [userId]);
 
   const handleChange = (e) => {
@@ -139,102 +144,112 @@ const Profile = () => {
     }
   };
 
+  const handleCancel = () => {
+    setIsEditing(false);
+    fetchUserData(); // Reset fields to original data
+  };
+
   return (
     <div className="profile-container">
       <img src={KoiBackground} alt="KoiBackground" className="koi-background" />
       <div className="profile-content">
-        <div className="sidebar">
-          <div className="profile-pic">
-            <img src={userInfo.image} alt="User Avatar" />
-          </div>
-          <ul>
-            <li>View Profile</li>
-          </ul>
-        </div>
-
         <div className="form-area">
+          <div className="sidebar">
+            <div className="profile-pic">
+              <img
+                src={updatedInfo.image ? updatedInfo.image : userInfo.image}
+                alt="User Avatar"
+              />
+            </div>
+            <div>
+              <h3>My Profile</h3>
+            </div>
+          </div>
           <h2>{userInfo.username}</h2>
           <p>User Type: {userInfo.usertype}</p>
           <p>Email: {userInfo.email}</p>
 
           {isEditing ? (
-            <form onSubmit={handleSubmit}>
-              <div className="input-group">
-                <label htmlFor="userPhoneNumber">Phone Number</label>
-                <input
-                  type="text"
-                  id="userPhoneNumber"
-                  name="userPhoneNumber"
-                  value={updatedInfo.userPhoneNumber || ""}
-                  onChange={handleChange}
-                  placeholder="Enter phone number"
-                  required
-                />
-              </div>
-
-              <div className="input-group">
-                <label htmlFor="userAddress">Address</label>
-                <input
-                  type="text"
-                  id="userAddress"
-                  name="userAddress"
-                  value={updatedInfo.userAddress || ""}
-                  onChange={handleChange}
-                  placeholder="Enter address"
-                  required
-                />
-              </div>
-              <div className="upload-container">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setFile(e.target.files[0])}
-                  className="upload-input"
-                />
-                <button
-                  type="button"
-                  onClick={handleImageUpload}
-                  disabled={imageUploadProgress}
-                  className="upload-button"
-                >
-                  {imageUploadProgress ? (
-                    <div className="upload-progress">
-                      <CircularProgress
-                        variant="determinate"
-                        value={imageUploadProgress}
-                      />
-                    </div>
-                  ) : (
-                    "Upload Image"
-                  )}
-                </button>
-              </div>
-
-              {imageUploadError && (
-                <div className="error-message">
-                  <Alert message={imageUploadError} type="error" showIcon />
+            <div>
+              <form className="profile-form-input" onSubmit={handleSubmit}>
+                <div className="input-group">
+                  <label htmlFor="userPhoneNumber">Phone Number</label>
+                  <input
+                    type="text"
+                    id="userPhoneNumber"
+                    name="userPhoneNumber"
+                    value={updatedInfo.userPhoneNumber || ""}
+                    onChange={handleChange}
+                    placeholder="Enter phone number"
+                    required
+                  />
                 </div>
-              )}
 
-              {updatedInfo.image && (
-                <div className="image-preview">
-                  <img src={updatedInfo.image} alt="Profile" />
+                <div className="input-group">
+                  <label htmlFor="userAddress">Address</label>
+                  <input
+                    type="text"
+                    id="userAddress"
+                    name="userAddress"
+                    value={updatedInfo.userAddress || ""}
+                    onChange={handleChange}
+                    placeholder="Enter address"
+                    required
+                  />
                 </div>
-              )}
+                <div className="upload-container">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => setFile(e.target.files[0])}
+                    className="upload-input"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleImageUpload}
+                    disabled={imageUploadProgress}
+                    className="upload-button"
+                  >
+                    {imageUploadProgress ? (
+                      <div className="upload-progress">
+                        <CircularProgress
+                          variant="determinate"
+                          value={imageUploadProgress}
+                        />
+                      </div>
+                    ) : (
+                      "Upload Image"
+                    )}
+                  </button>
+                </div>
 
-              <div className="form-actions">
-                <button type="submit" className="btn-submit">
-                  Save Changes
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setIsEditing(false)}
-                  className="btn-cancel"
-                >
-                  Cancel
-                </button>
-              </div>
-            </form>
+                {imageUploadError && (
+                  <p
+                    style={{
+                      color: "red",
+                      marginTop: "0",
+                      marginBottom: "0",
+                      textAlign: "center",
+                    }}
+                  >
+                    {imageUploadError}
+                  </p>
+                )}
+
+                <div className="form-actions">
+                  <button type="submit" className="btn-submit">
+                    Save Changes
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCancel}
+                    className="btn-cancel"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
           ) : (
             <>
               <p>
