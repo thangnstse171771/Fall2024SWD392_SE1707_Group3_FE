@@ -95,7 +95,7 @@ const BlogManagement = () => {
   const handleUpdateBlogStatus = async (blogId, status) => {
     const token = sessionStorage.getItem("token"); // Lấy token từ sessionStorage nếu có
     const payload = {
-      blogStatus: status, // "active" hoặc "inActive"
+      blogStatus: status,
     };
 
     try {
@@ -123,16 +123,31 @@ const BlogManagement = () => {
 
     try {
       if (editingBlog) {
-        await api.put(`/api/blog/updateBlog/${editingBlog.blogId}`, payload, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        console.log(payload.blogStatus);
+
+        // Sử dụng Promise.all để thực hiện hai yêu cầu cùng lúc
+        await Promise.all([
+          api.put(`/api/blog/updateBlog/${editingBlog.blogId}`, payload, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          api.put(
+            `/api/blog/updateBlogStatus/${editingBlog.blogId}`,
+            { blogStatus: "waiting" },
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          ),
+        ]);
+
         message.success("Blog updated successfully!");
+        window.location.reload();
       } else {
         await api.post("/api/blog/createBlog", payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
         message.success("Your post is waiting for approval.");
       }
+
       form.resetFields();
       setIsModalVisible(false);
       fetchBlogs();
