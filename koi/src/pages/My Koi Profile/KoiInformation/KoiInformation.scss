@@ -5,7 +5,14 @@
   border-radius: 8px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-
+  .koi-profile__image {
+    border-radius: 8px;
+    width: 300px;
+    height: 150px;
+    object-fit: cover;
+    margin-bottom: 10px;
+    border: 2px solid #ddd;
+  }
   p {
     margin-bottom: 8px;
     font-size: 16px;
@@ -63,5 +70,32 @@
     &:hover {
       background-color: #1890ff;
     }
+  }
+}
+.edit-modal {
+  .ant-modal-content {
+    padding: 20px;
+  }
+
+  .upload-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    .upload-input {
+      flex: 1;
+    }
+
+    .upload-progress {
+      margin-left: 10px;
+    }
+  }
+
+  .image-preview img {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    border-radius: 8px;
+    margin-top: 10px;
   }
 }

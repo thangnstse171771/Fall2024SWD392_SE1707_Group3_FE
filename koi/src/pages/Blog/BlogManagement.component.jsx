@@ -1,6 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { Card, Table, Button, Modal, Form, Input, message, Spin } from "antd";
+import {
+  Card,
+  Table,
+  Button,
+  Modal,
+  Form,
+  Input,
+  message,
+  Spin,
+  Alert,
+} from "antd";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { app } from "../../firebase";
 import api from "../../config/axios";
+import { CircularProgress } from "@mui/material";
+import "./BlogManagement.scss"; // Create a separate SCSS file for styling
 
 const BlogManagement = () => {
   const [blogs, setBlogs] = useState([]);
@@ -8,6 +27,10 @@ const BlogManagement = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingBlog, setEditingBlog] = useState(null);
   const [form] = Form.useForm();
+  const [file, setFile] = useState(null);
+  const [imageUploadProgress, setImageUploadProgress] = useState(null);
+  const [imageUploadError, setImageUploadError] = useState(null);
+  const [formData, setFormData] = useState({});
 
   useEffect(() => {
     fetchBlogs();
@@ -20,7 +43,10 @@ const BlogManagement = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (response.data) {
-        setBlogs(response.data);
+        const activeBlogs = response.data.filter(
+          (blog) => blog.blogStatus === "active"
+        );
+        setBlogs(activeBlogs);
       }
     } catch (error) {
       message.error("Error fetching blog data.");
@@ -29,15 +55,45 @@ const BlogManagement = () => {
     }
   };
 
+  const handleUploadImage = async () => {
+    if (!file) {
+      setImageUploadError("Please select an image");
+      return;
+    }
+    setImageUploadError(null);
+
+    const storage = getStorage(app);
+    const fileName = new Date().getTime() + "-" + file.name;
+    const storageRef = ref(storage, fileName);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setImageUploadProgress(progress.toFixed(0));
+      },
+      (error) => {
+        setImageUploadError("Image upload failed");
+        setImageUploadProgress(null);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setImageUploadProgress(null);
+          setImageUploadError(null);
+          setFormData({ ...formData, image: downloadURL });
+        });
+      }
+    );
+  };
+
   const handleCreateOrUpdateBlog = async (values) => {
     const token = sessionStorage.getItem("token");
-    const { blogTitle, blogContent, imageUrl } = values; // Extract values
-
-    // Prepare the payload to match API requirements
     const payload = {
-      blogTitle,
-      blogContent,
-      image: imageUrl, // Use 'image' instead of 'imageUrl'
+      blogTitle: values.blogTitle.trim(),
+      blogContent: values.blogContent.trim(),
+      image: formData.image || values.image.trim(),
     };
 
     try {
@@ -90,8 +146,9 @@ const BlogManagement = () => {
       form.setFieldsValue({
         blogTitle: blog.blogTitle,
         blogContent: blog.blogContent,
-        imageUrl: blog.image, // Adjust for the correct field name
+        imageUrl: blog.image,
       });
+      setFormData({ image: blog.image });
     }
     setIsModalVisible(true);
   };
@@ -108,7 +165,13 @@ const BlogManagement = () => {
         <img
           src={imageUrl}
           alt="Blog"
-          style={{ width: 100, height: 100, objectFit: "cover" }} // Adjust size and fit as needed
+          style={{
+            width: 120,
+            height: 120,
+            objectFit: "cover",
+            borderRadius: "8px",
+            boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+          }}
         />
       ),
     },
@@ -138,55 +201,100 @@ const BlogManagement = () => {
         type="primary"
         className="add-blog-btn"
         onClick={() => showModal()}
-        style={{ marginBottom: 16 }}
+        style={{
+          marginBottom: 16,
+          backgroundColor: "#4CAF50",
+          borderRadius: "5px",
+        }}
       >
         Add Blog
       </Button>
 
-      {loading ? (
-        <Spin tip="Loading blogs..." />
-      ) : (
-        <Table columns={columns} dataSource={blogs} rowKey="blogId" />
-      )}
+      <Table
+        columns={columns}
+        dataSource={blogs}
+        rowKey="blogId"
+        loading={loading}
+        pagination={{
+          pageSize: 10,
+          showSizeChanger: true,
+          pageSizeOptions: ["10", "20", "50"],
+        }}
+        style={{
+          boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+          borderRadius: "8px",
+        }}
+      />
 
       <Modal
-        title={editingBlog ? "Edit Blog" : "Create Blog"}
+        title={editingBlog ? "Edit Blog" : "Add Blog"}
         visible={isModalVisible}
-        onCancel={() => {
-          setIsModalVisible(false);
-          form.resetFields();
-        }}
+        onCancel={() => setIsModalVisible(false)}
         footer={null}
+        style={{ borderRadius: "8px" }}
       >
         <Form form={form} onFinish={handleCreateOrUpdateBlog}>
           <Form.Item
             name="blogTitle"
             label="Title"
-            rules={[
-              { required: true, message: "Please input the blog title!" },
-            ]}
+            rules={[{ required: true, message: "Title is required!" }]}
           >
-            <Input />
+            <Input placeholder="Enter blog title" />
           </Form.Item>
+
           <Form.Item
             name="blogContent"
             label="Content"
-            rules={[
-              { required: true, message: "Please input the blog content!" },
-            ]}
+            rules={[{ required: true, message: "Content is required!" }]}
           >
-            <Input.TextArea rows={4} />
+            <Input.TextArea rows={4} placeholder="Enter blog content" />
           </Form.Item>
-          <Form.Item
-            name="imageUrl"
-            label="Image URL"
-            rules={[{ required: true, message: "Please input the image URL!" }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              {editingBlog ? "Update Blog" : "Create Blog"}
+
+          {/* Image Upload Section */}
+          <div className="upload-container">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                setFile(e.target.files[0]);
+                setFormData({ ...formData, image: null });
+              }}
+              className="upload-input"
+            />
+            <Button
+              type="button"
+              onClick={handleUploadImage}
+              disabled={imageUploadProgress}
+              className="upload-btn"
+            >
+              {imageUploadProgress ? (
+                <CircularProgress
+                  variant="determinate"
+                  value={imageUploadProgress}
+                />
+              ) : (
+                "Upload Image"
+              )}
+            </Button>
+          </div>
+
+          {imageUploadError && (
+            <Alert message={imageUploadError} type="error" showIcon />
+          )}
+
+          {formData.image && (
+            <div className="image-preview">
+              <img
+                src={formData.image}
+                alt="Blog"
+                style={{ width: "100%", height: "auto", borderRadius: "8px" }}
+              />
+            </div>
+          )}
+
+          <Form.Item className="form-footer">
+            <Button type="primary" htmlType="submit" className="submit-btn">
+              {editingBlog ? "Update Blog" : "Add Blog"}
             </Button>
           </Form.Item>
         </Form>

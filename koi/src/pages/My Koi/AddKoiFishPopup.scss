@@ -1,0 +1,67 @@
+.add-koi-popup {
+  .upload-container {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    border: 2px dashed #32a89d;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    background-color: #f8f9fa;
+  }
+
+  .upload-input {
+    display: none;
+  }
+
+  .upload-button {
+    background-color: #32a89d;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    transition: background-color 0.3s ease;
+
+    &:hover {
+      background-color: #28a385;
+    }
+
+    &:disabled {
+      background-color: #b0bec5;
+      cursor: not-allowed;
+    }
+  }
+
+  .upload-image-btn {
+    background-color: #007bff;
+    &:hover {
+      background-color: #0069d9;
+    }
+  }
+
+  .image-preview {
+    margin-top: 20px;
+    max-width: 100%;
+    height: auto;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+
+    img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+    }
+  }
+
+  .error-message {
+    margin-top: 10px;
+    color: #ff4d4f;
+  }
+}
