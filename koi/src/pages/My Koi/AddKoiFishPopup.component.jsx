@@ -20,7 +20,7 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
   const [formData, setFormData] = useState({});
 
-  const handleUpdloadImage = async () => {
+  const handleUploadImage = async () => {
     try {
       if (!file) {
         setImageUploadError("Please select an image");
@@ -46,6 +46,7 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             setImageUploadProgress(null);
             setImageUploadError(null);
+            form.setFieldsValue({ koiImage: downloadURL });
             setFormData({ ...formData, image: downloadURL });
           });
         }
@@ -69,7 +70,7 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
 
     const formattedValues = {
       koiName: koiNameTrimmed,
-      koiImage: formData.image || values.image.trim(),
+      koiImage: formData.image || values.koiImage,
       koiGender: values.gender,
       koiBreed: values.breed,
       koiOrigin: values.origin,
@@ -167,40 +168,47 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
         </Form.Item>
 
         {/* Image Upload Section */}
-        <div className="upload-container">
-          <input
+        <Form.Item
+          label="Koi Image URL"
+          name="koiImage"
+          rules={[
+            {
+              required: true,
+              message: "Please upload or input the koi image URL!",
+            },
+          ]}
+        >
+          <Input type="hidden" value={formData.image || ""} readOnly />
+          <Input
             type="file"
-            accept="image/*"
-            onChange={(e) => {
-              setFile(e.target.files[0]);
-              setFormData({ ...formData, image: null });
-            }}
-            className="upload-input"
+            onChange={(e) => setFile(e.target.files[0])}
           />
-          <Button
-            type="button"
-            onClick={handleUpdloadImage}
-            disabled={imageUploadProgress}
-            className="upload-button"
-          >
-            {imageUploadProgress ? (
-              <div className="upload-progress">
-                <CircularProgress
-                  variant="determinate"
-                  value={imageUploadProgress}
-                />
-              </div>
-            ) : (
-              "Upload Image"
-            )}
-          </Button>
-        </div>
-
-        {imageUploadError && (
-          <div className="error-message">
-            <Alert message={imageUploadError} type="error" showIcon />
-          </div>
-        )}
+          {imageUploadProgress ? (
+            <div className="w-16 h-16">
+              <CircularProgress
+                variant="determinate"
+                value={imageUploadProgress}
+                style={{ marginTop: "8px" }}
+              />
+            </div>
+          ) : (
+            <Button onClick={handleUploadImage} style={{ marginTop: "8px" }}>
+              Upload Image
+            </Button>
+          )}
+          {imageUploadError && (
+            <p
+              style={{
+                color: "red",
+                marginTop: "0",
+                marginBottom: "0",
+                textAlign: "left",
+              }}
+            >
+              {imageUploadError}
+            </p>
+          )}
+        </Form.Item>
 
         {formData.image && (
           <div className="image-preview">
