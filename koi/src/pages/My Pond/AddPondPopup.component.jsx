@@ -124,6 +124,7 @@ const AddPondPopup = ({
               message: "Please upload or input the pond image URL!",
             },
           ]}
+          hidden
         >
           <Input
             value={pondData.pondImage}
@@ -133,7 +134,7 @@ const AddPondPopup = ({
           />
         </Form.Item>
 
-        <Form.Item>
+        <Form.Item label="Pond Image" >
           <input type="file" onChange={handleFileChange} ref={fileInputRef} />
           {imageUploadProgress ? (
             <div className="w-16 h-16">
