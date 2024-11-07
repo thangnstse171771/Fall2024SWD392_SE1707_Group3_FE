@@ -43,7 +43,10 @@ const BlogManagement = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (response.data) {
-        setBlogs(response.data);
+        const activeBlogs = response.data.filter(
+          (blog) => blog.blogStatus === "active"
+        );
+        setBlogs(activeBlogs);
       }
     } catch (error) {
       message.error("Error fetching blog data.");
