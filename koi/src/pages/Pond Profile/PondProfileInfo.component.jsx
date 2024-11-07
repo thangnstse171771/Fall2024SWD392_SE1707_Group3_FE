@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { Form, Input, Button, message } from "antd";
+import { Form, Input, Button, message, Slider } from "antd";
 import api from "../../config/axios";
 import "./PondProfile.scss";
 import { toast } from "react-toastify";
@@ -25,6 +25,7 @@ const PondProfileInfo = ({ refresh }) => {
   const [imageUploadError, setImageUploadError] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const fileInputRef = useRef(null);
+  const [aeroCapacityRange, setAeroCapacityRange] = useState([0, 0]);
 
   const token = sessionStorage.getItem("token");
 
@@ -81,6 +82,11 @@ const PondProfileInfo = ({ refresh }) => {
 
       setProfile(pondData);
       form.setFieldsValue(pondData);
+
+      const pondVolume = pondData.pondVolume;
+      if (pondVolume) {
+        setAeroCapacityRange([pondVolume * 1.5, pondVolume * 2]);
+      }
     } catch (err) {
       setError(err.response?.data?.message);
       toast.error(err.response?.data?.message || "Failed to load pond data.");
@@ -175,8 +181,6 @@ const PondProfileInfo = ({ refresh }) => {
                 <Input placeholder="Enter pond name" />
               </Form.Item>
 
-              
-
               <Form.Item
                 label="Pond Size (m²) (3 - 33)"
                 name="pondSize"
@@ -248,7 +252,15 @@ const PondProfileInfo = ({ refresh }) => {
                   },
                 ]}
               >
-                <Input type="number" placeholder="Enter pond volume" />
+                <Input
+                  type="number"
+                  placeholder="Enter pond volume"
+                  onChange={(e) => {
+                    const value = parseFloat(e.target.value);
+                    form.setFieldsValue({ pondVolume: value });
+                    setAeroCapacityRange([value * 1.5, value * 2]);
+                  }}
+                />
               </Form.Item>
 
               <Form.Item
@@ -302,9 +314,13 @@ const PondProfileInfo = ({ refresh }) => {
                   },
                 ]}
               >
-                <Input
-                  type="number"
-                  placeholder="Enter pond aeration capacity"
+                <Slider
+                  min={aeroCapacityRange[0]}
+                  max={aeroCapacityRange[1]}
+                  onChange={(value) =>
+                    form.setFieldsValue({ pondAeroCapacity: value })
+                  }
+                  tooltip={{ formatter: (value) => `${value} m³/hour` }}
                 />
               </Form.Item>
 
@@ -323,6 +339,12 @@ const PondProfileInfo = ({ refresh }) => {
                       // Ensure we parse the values to numbers for proper comparison
                       const parsedValue = parseFloat(value);
                       const parsedVolume = parseFloat(pondVolume);
+
+                      if (value < 0) {
+                        return Promise.reject(
+                          new Error("Pond Capacity can't be below 0!")
+                        );
+                      }
 
                       if (isNaN(parsedValue) || isNaN(parsedVolume)) {
                         return Promise.reject(
