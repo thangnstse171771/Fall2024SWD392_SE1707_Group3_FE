@@ -247,7 +247,7 @@ const AddPondPopup = ({
             type="number"
             onChange={(e) => {
               handleInputChange(e);
-              setPondVolume(parseFloat(e.target.value)); 
+              setPondVolume(parseFloat(e.target.value));
             }}
             placeholder="Enter pond volume"
           />
@@ -313,9 +313,11 @@ const AddPondPopup = ({
           <Slider
             min={aeroCapacityRange[0]}
             max={aeroCapacityRange[1]}
-            onChange={(value) => handleInputChange({ target: { name: "pondAeroCapacity", value } })}
+            onChange={(value) =>
+              handleInputChange({ target: { name: "pondAeroCapacity", value } })
+            }
             value={pondData.pondAeroCapacity}
-            tooltip={{ formatter: (value) => `${value} m³/hour` }}
+            tooltip={{ formatter: (value) => `${value.toFixed(2)} m³/hour` }}
             step={0.01}
           />
         </Form.Item>

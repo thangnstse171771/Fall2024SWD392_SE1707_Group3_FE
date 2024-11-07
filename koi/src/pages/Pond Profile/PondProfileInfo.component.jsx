@@ -320,7 +320,8 @@ const PondProfileInfo = ({ refresh }) => {
                   onChange={(value) =>
                     form.setFieldsValue({ pondAeroCapacity: value })
                   }
-                  tooltip={{ formatter: (value) => `${value} m³/hour` }}
+                  tooltip={{ formatter: (value) => `${value.toFixed(2)} m³/hour` }}
+                  step={0.01}
                 />
               </Form.Item>
 
