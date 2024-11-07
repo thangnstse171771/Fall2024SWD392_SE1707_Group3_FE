@@ -9,6 +9,7 @@ import {
 } from "firebase/storage";
 import { app } from "../../firebase";
 import { CircularProgress } from "@mui/material";
+import "./AddKoiFishPopup.scss";
 
 const { Option, OptGroup } = Select;
 
@@ -59,7 +60,6 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
   const handleFinish = (values) => {
     const koiNameTrimmed = values.name.trim();
 
-    // Kiểm tra xem tên có ít nhất một từ không
     if (!koiNameTrimmed) {
       return Modal.error({
         title: "Validation Error",
@@ -143,6 +143,7 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
       visible={open}
       onCancel={handleCancel}
       footer={null}
+      className="add-koi-popup"
     >
       <Form form={form} onFinish={handleFinish}>
         <Form.Item
@@ -165,9 +166,8 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
           <Input />
         </Form.Item>
 
-
-
-        <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
+        {/* Image Upload Section */}
+        <div className="upload-container">
           <input
             type="file"
             accept="image/*"
@@ -175,21 +175,19 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
               setFile(e.target.files[0]);
               setFormData({ ...formData, image: null });
             }}
+            className="upload-input"
           />
           <Button
             type="button"
-            gradientDuoTone="purpleToBlue"
-            size="sm"
-            outline
             onClick={handleUpdloadImage}
             disabled={imageUploadProgress}
+            className="upload-button"
           >
             {imageUploadProgress ? (
-              <div className="w-16 h-16">
+              <div className="upload-progress">
                 <CircularProgress
                   variant="determinate"
                   value={imageUploadProgress}
-                  // text={`${imageUploadProgress || 0}%`}
                 />
               </div>
             ) : (
@@ -198,14 +196,16 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
           </Button>
         </div>
 
-        {imageUploadError && <Alert color="failure">{imageUploadError}</Alert>}
+        {imageUploadError && (
+          <div className="error-message">
+            <Alert message={imageUploadError} type="error" showIcon />
+          </div>
+        )}
 
         {formData.image && (
-          <img
-            src={formData.image}
-            alt="upload"
-            className="w-full h-72 object-cover"
-          />
+          <div className="image-preview">
+            <img src={formData.image} alt="Koi Fish" />
+          </div>
         )}
 
         <Form.Item
@@ -267,7 +267,7 @@ const AddKoiFishPopup = ({ open, onSubmit, handleCancel, ponds }) => {
           </Select>
         </Form.Item>
 
-        <Form.Item>
+        <Form.Item className="form-footer">
           <Button type="primary" htmlType="submit">
             Add Koi Fish
           </Button>
