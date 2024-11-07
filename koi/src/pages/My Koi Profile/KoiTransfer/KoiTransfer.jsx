@@ -105,10 +105,15 @@ const KoiTransfer = ({ koi, ponds }) => {
         >
           <Select placeholder="Select a pond">
             {ponds
-              .filter((pond) => pond.status === "active")
+              .filter(
+                (pond) =>
+                  pond.status === "active" &&
+                  pond.pondCapacity.remainingSlots > 0
+              ) // Filter by active status and remainingSlots > 0
               .map((pond) => (
                 <Option key={pond.pondId} value={pond.pondId}>
-                  {pond.pondName}
+                  {pond.pondName} ({pond.pondCapacity.remainingSlots} slots
+                  remaining)
                 </Option>
               ))}
           </Select>
