@@ -347,9 +347,9 @@ const AddPondPopup = ({
                 const parsedValue = parseFloat(value);
                 const parsedVolume = parseFloat(pondVolume);
 
-                if (value < 0) {
+                if (value < 1) {
                   return Promise.reject(
-                    new Error("Pond Capacity can't be below 0!")
+                    new Error("Pond Capacity can't be below 1!")
                   );
                 }
 
