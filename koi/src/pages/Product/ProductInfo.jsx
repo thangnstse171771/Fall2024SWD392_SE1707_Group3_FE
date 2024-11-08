@@ -4,6 +4,11 @@ import { Form, Input, Button, Switch, Spin, Alert } from "antd";
 import { toast } from "react-toastify";
 import api from "../../config/axios";
 import noImage from "../../assets/noimage.jpg";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+
+import { app } from "../../firebase";
+
+const storage = getStorage(app); // Initialize Firebase storage
 
 const ProductInfo = () => {
   const { id } = useParams();
@@ -15,6 +20,12 @@ const ProductInfo = () => {
   const [isEditable, setIsEditable] = useState(false);
   const [backgroundImg, setBackgroundImg] = useState(noImage);
   const labelStyle = { fontWeight: "bold", color: "rgb(255,0,0)" };
+
+  const uploadImage = async (file) => {
+    const storageRef = ref(storage, `products/${file.name}`);
+    await uploadBytes(storageRef, file);
+    return await getDownloadURL(storageRef); // Trả về URL của ảnh đã upload
+  };
 
   const fetchProductDetails = async () => {
     setLoading(true);
@@ -43,7 +54,7 @@ const ProductInfo = () => {
         productDescription: values.productDescription,
         productPrice: values.productPrice,
         isActive: "waiting",
-        image: values.image,
+        image: backgroundImg, // Sử dụng URL ảnh đã upload
       };
       await api.put(`/api/products/updateProduct/${id}`, updatedProduct);
       toast.success("Product updated successfully!");
@@ -90,12 +101,19 @@ const ProductInfo = () => {
       });
       toast.success("Product rejected successfully!");
       setLoading(false);
-      fetchProductDetails();
+      // fetchProductDetails();
 
       navigate("/ManageWorkplace");
     } catch (error) {
       toast.error("Failed to reject product.");
       setLoading(false);
+    }
+  };
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0]; // Lấy file ảnh được chọn
+    if (file) {
+      const imageUrl = await uploadImage(file); // Upload ảnh lên Firebase và lấy URL
+      setBackgroundImg(imageUrl); // Cập nhật URL của ảnh trong state
     }
   };
 
@@ -144,7 +162,7 @@ const ProductInfo = () => {
               >
                 <Input placeholder="Product name" disabled={!isEditable} />
               </Form.Item>
-              <Form.Item
+              {/* <Form.Item
                 label={<span style={labelStyle}>Status</span>}
                 name="isActive"
                 valuePropName="checked"
@@ -154,7 +172,7 @@ const ProductInfo = () => {
                   onChange={handleStatusChange}
                   disabled={true}
                 />
-              </Form.Item>
+              </Form.Item> */}
               <Form.Item
                 label={<span style={labelStyle}>Product Price ($)</span>}
                 name="productPrice"
@@ -162,6 +180,21 @@ const ProductInfo = () => {
                   {
                     required: true,
                     message: "Please input the product price!",
+                  },
+                  {
+                    validator: (_, value) => {
+                      if (value < 1) {
+                        return Promise.reject(
+                          new Error("Product Price can't be less than 1!")
+                        );
+                      }
+                      if (value > 9999) {
+                        return Promise.reject(
+                          new Error("Product price can't exceed 9999!")
+                        );
+                      }
+                      return Promise.resolve();
+                    },
                   },
                 ]}
               >
@@ -190,14 +223,13 @@ const ProductInfo = () => {
                   disabled={!isEditable}
                 />
               </Form.Item>
-              <Form.Item
-                label={<span style={labelStyle}>Image URL</span>}
-                name="image"
-                rules={[
-                  { required: true, message: "Please input the image URL!" },
-                ]}
-              >
-                <Input placeholder="Enter image URL" disabled={!isEditable} />
+              <Form.Item label={<span style={labelStyle}>Product Image</span>}>
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageChange(e)}
+                  disabled={!isEditable}
+                />
               </Form.Item>
               <Form.Item>
                 <Button type="primary" onClick={toggleEdit}>

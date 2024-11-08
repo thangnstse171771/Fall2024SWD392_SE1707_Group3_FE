@@ -32,6 +32,8 @@ const BlogManagement = () => {
   const [imageUploadError, setImageUploadError] = useState(null);
   const [formData, setFormData] = useState({});
 
+  const userType = localStorage.getItem("usertype");
+
   useEffect(() => {
     fetchBlogs();
   }, []);
@@ -45,7 +47,9 @@ const BlogManagement = () => {
       if (response.data) {
         const blogsWithStatus = response.data.filter(
           (blog) =>
-            blog.blogStatus === "waiting" || blog.blogStatus === "active"
+            blog.blogStatus === "waiting" ||
+            blog.blogStatus === "active" ||
+            blog.blogStatus === "inActive"
         );
         setBlogs(blogsWithStatus);
       }
@@ -88,6 +92,25 @@ const BlogManagement = () => {
       }
     );
   };
+  const handleUpdateBlogStatus = async (blogId, status) => {
+    const token = sessionStorage.getItem("token"); // Lấy token từ sessionStorage nếu có
+    const payload = {
+      blogStatus: status,
+    };
+
+    try {
+      // Gửi PUT request tới API để cập nhật trạng thái của blog
+      await api.put(`/api/blog/updateBlogStatus/${blogId}`, payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      message.success(
+        `Blog ${status === "active" ? "approved" : "rejected"} successfully!`
+      );
+      fetchBlogs(); // Sau khi cập nhật, gọi lại hàm fetchBlogs để lấy danh sách blog mới
+    } catch (error) {
+      message.error("Error updating blog status.");
+    }
+  };
 
   const handleCreateOrUpdateBlog = async (values) => {
     const token = sessionStorage.getItem("token");
@@ -100,16 +123,31 @@ const BlogManagement = () => {
 
     try {
       if (editingBlog) {
-        await api.put(`/api/blog/updateBlog/${editingBlog.blogId}`, payload, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        console.log(payload.blogStatus);
+
+        // Sử dụng Promise.all để thực hiện hai yêu cầu cùng lúc
+        await Promise.all([
+          api.put(`/api/blog/updateBlog/${editingBlog.blogId}`, payload, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          api.put(
+            `/api/blog/updateBlogStatus/${editingBlog.blogId}`,
+            { blogStatus: "waiting" },
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          ),
+        ]);
+
         message.success("Blog updated successfully!");
+        window.location.reload();
       } else {
         await api.post("/api/blog/createBlog", payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
         message.success("Your post is waiting for approval.");
       }
+
       form.resetFields();
       setIsModalVisible(false);
       fetchBlogs();
@@ -183,17 +221,22 @@ const BlogManagement = () => {
       key: "blogStatus",
       render: (status) => {
         if (status === "waiting") {
-          return (
-            <span style={{ color: "orange" }}>
-              Your post is waiting for approval
-            </span>
-          );
+          return <span style={{ color: "orange" }}>Waiting for approval</span>;
         }
         if (status === "active") {
           return <span style={{ color: "green" }}>Approved</span>;
         }
+        if (status === "inActive") {
+          return <span style={{ color: "red" }}>Inactive</span>;
+        }
         return <span>{status}</span>;
       },
+      filters: [
+        { text: "Waiting for approval", value: "waiting" },
+        { text: "Approved", value: "active" },
+        { text: "Inactive", value: "inActive" },
+      ],
+      onFilter: (value, record) => record.blogStatus.includes(value),
     },
     {
       title: "Actions",
@@ -210,6 +253,28 @@ const BlogManagement = () => {
           >
             Delete
           </Button>
+
+          {/* Nút Approve và Reject cho tất cả người dùng */}
+          {userType === "Manager" && (
+            <>
+              <Button
+                type="link"
+                onClick={() => handleUpdateBlogStatus(record.blogId, "active")}
+                style={{ color: "green" }}
+              >
+                Approve
+              </Button>
+              <Button
+                type="link"
+                onClick={() =>
+                  handleUpdateBlogStatus(record.blogId, "inActive")
+                }
+                style={{ color: "red" }}
+              >
+                Reject
+              </Button>
+            </>
+          )}
         </div>
       ),
     },

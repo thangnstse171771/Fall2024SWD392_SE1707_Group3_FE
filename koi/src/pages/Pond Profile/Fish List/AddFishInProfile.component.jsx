@@ -151,15 +151,18 @@ const AddFishInProfile = ({ open, onCancel, onSubmit, loading }) => {
         </Form.Item>
 
         <Form.Item
-          label="Koi Image URL"
+          label="Koi Image"
           name="koiImage"
-          rules={[{ required: true, message: "Please provide an image URL!" }]}
+          rules={[{ required: true, message: "Please provide an image!" }]}
         >
-          <Input placeholder="Koi image URL" readOnly value={form.getFieldValue("koiImage")}/>
-        </Form.Item>
+          <Input
+            type="hidden"
+            placeholder="Koi image URL"
+            readOnly
+            value={form.getFieldValue("koiImage")}
+          />
 
-        <Form.Item>
-          <input type="file" onChange={handleFileChange} ref={fileInputRef} />
+          <Input type="file" onChange={handleFileChange} ref={fileInputRef} />
           {imageUploadProgress ? (
             <div className="w-16 h-16">
               <CircularProgress
@@ -169,9 +172,23 @@ const AddFishInProfile = ({ open, onCancel, onSubmit, loading }) => {
               />
             </div>
           ) : (
-            <Button onClick={handleUploadImage} style={{ marginTop: "8px" }}>
-              Upload Image
-            </Button>
+            <div>
+              <Button onClick={handleUploadImage} style={{ marginTop: "8px" }}>
+                Upload Image
+              </Button>
+              {imageUploadError && (
+                <p
+                  style={{
+                    color: "red",
+                    marginTop: "0",
+                    marginBottom: "0",
+                    textAlign: "left",
+                  }}
+                >
+                  {imageUploadError}
+                </p>
+              )}
+            </div>
           )}
         </Form.Item>
 
@@ -184,8 +201,6 @@ const AddFishInProfile = ({ open, onCancel, onSubmit, loading }) => {
             />
           </div>
         )}
-
-        {imageUploadError && <p style={{ color: "red" }}>{imageUploadError}</p>}
 
         <Form.Item
           label="Gender"
