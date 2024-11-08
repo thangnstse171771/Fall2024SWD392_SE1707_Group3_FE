@@ -51,7 +51,6 @@ function Header() {
       </div>
       <div className="navbar-links">
         <Link to="/">HOME</Link>
-         Demo
         {userType === "Customer" && <Link to="/manage-koi">MANAGE KOI</Link>}
 
         <Link to="/ShopCenter">SHOP</Link>
