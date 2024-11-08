@@ -129,7 +129,7 @@ const KoiRecord = ({ koi }) => {
       };
     } else if (age >= 25) {
       return {
-        weight: { min: 1, max: 15 },
+        weight: { min: 1 },
         length: { min: 35, max: 126 },
       };
     }
@@ -217,17 +217,24 @@ const KoiRecord = ({ koi }) => {
           <Form.Item
             label="Age (months)"
             name="age"
-            rules={[{ required: true, message: "Please input age!" }]}
-            onChange={(e) => {
-              const { value } = e.target;
-              const { weight, length } = validateWeightAndLength(Number(value));
-              form.setFieldsValue({
-                weight: weight ? form.getFieldValue("weight") : undefined,
-                length: length ? form.getFieldValue("length") : undefined,
-              });
-            }}
+            rules={[
+              { required: true, message: "Please input age!" },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (value <= 0) {
+                    return Promise.reject(new Error("Age must be positive!"));
+                  }
+                  return Promise.resolve();
+                },
+              }),
+            ]}
           >
-            <Input type="number" />
+            <Input
+              type="number"
+              step="0.01"
+              min={0}
+              onInput={(e) => e.preventDefault()}
+            />
           </Form.Item>
 
           <Form.Item
@@ -251,7 +258,12 @@ const KoiRecord = ({ koi }) => {
               }),
             ]}
           >
-            <Input type="number" />
+            <Input
+              type="number"
+              step="0.01"
+              min={0}
+              onInput={(e) => e.preventDefault()}
+            />
           </Form.Item>
 
           <Form.Item
@@ -275,7 +287,12 @@ const KoiRecord = ({ koi }) => {
               }),
             ]}
           >
-            <Input type="number" />
+            <Input
+              type="number"
+              step="0.01"
+              min={0}
+              onInput={(e) => e.preventDefault()}
+            />
           </Form.Item>
 
           <Form.Item
