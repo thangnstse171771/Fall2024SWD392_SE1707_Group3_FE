@@ -338,7 +338,24 @@ const KoiHealth = ({ koi }) => {
           <Form.Item
             name="price"
             label="Price ($)"
-            rules={[{ required: true, message: "Please enter price!" }]}
+            rules={[
+              { required: true, message: "Please enter price" },
+              {
+                validator: (_, value) => {
+                  if (value < 1) {
+                    return Promise.reject(
+                      new Error("Price can't be less than 1!")
+                    );
+                  }
+                  if (value > 9999) {
+                    return Promise.reject(
+                      new Error("Price can't exceed 9999!")
+                    );
+                  }
+                  return Promise.resolve();
+                },
+              },
+            ]}
           >
             <Input type="number" min={0} />
           </Form.Item>
