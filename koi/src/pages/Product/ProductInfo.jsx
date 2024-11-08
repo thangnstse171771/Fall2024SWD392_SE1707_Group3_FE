@@ -181,6 +181,21 @@ const ProductInfo = () => {
                     required: true,
                     message: "Please input the product price!",
                   },
+                  {
+                    validator: (_, value) => {
+                      if (value < 1) {
+                        return Promise.reject(
+                          new Error("Product Price can't be less than 1!")
+                        );
+                      }
+                      if (value > 9999) {
+                        return Promise.reject(
+                          new Error("Product price can't exceed 9999!")
+                        );
+                      }
+                      return Promise.resolve();
+                    },
+                  },
                 ]}
               >
                 <Input
