@@ -46,20 +46,20 @@ export default function ManageKoiAdmin() {
   };
 
   // Hàm xóa Koi
-  const deleteKoiFish = async (fishId) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this koi fish?"
-    );
-    if (!confirmDelete) return;
-    try {
-      await api.put(`/api/koi/deleteKoiByUser/${fishId}`);
-      // Xóa thành công, cập nhật lại danh sách koi
-      setKoiFish(koiFish.filter((koi) => koi.fishId !== fishId));
-    } catch (error) {
-      console.error("Failed to delete koi fish:", error);
-      alert("Failed to delete koi fish. Please try again later.");
-    }
-  };
+  // const deleteKoiFish = async (fishId) => {
+  //   const confirmDelete = window.confirm(
+  //     "Are you sure you want to delete this koi fish?"
+  //   );
+  //   if (!confirmDelete) return;
+  //   try {
+  //     await api.put(`/api/koi/deleteKoiByUser/${fishId}`);
+  //     // Xóa thành công, cập nhật lại danh sách koi
+  //     setKoiFish(koiFish.filter((koi) => koi.fishId !== fishId));
+  //   } catch (error) {
+  //     console.error("Failed to delete koi fish:", error);
+  //     alert("Failed to delete koi fish. Please try again later.");
+  //   }
+  // };
 
   useEffect(() => {
     fetchKoiFish();
@@ -155,7 +155,7 @@ export default function ManageKoiAdmin() {
                   View
                 </Button>
 
-                <DeleteKoi koiId={koi.fishId} onDelete={deleteKoiFish} />
+                {/* <DeleteKoi koiId={koi.fishId} onDelete={deleteKoiFish} /> */}
               </TableCell>
             </TableRow>
           ))}

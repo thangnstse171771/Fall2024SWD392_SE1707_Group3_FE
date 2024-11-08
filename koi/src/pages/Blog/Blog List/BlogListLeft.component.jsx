@@ -10,7 +10,11 @@ const BlogListLeft = () => {
   const fetchFeaturedBlog = async () => {
     try {
       const response = await api.get(`/api/blog/getBlogById/2`);
-      setFeaturedBlog(response.data);
+      if (response.data.blogStatus === "active") {
+        setFeaturedBlog(response.data);
+      } else {
+        setFeaturedBlog(null);
+      }
     } catch (error) {
       toast.error("Error fetching featured blog!");
       console.error("Error fetching featured blog:", error);
@@ -20,7 +24,8 @@ const BlogListLeft = () => {
   const fetchAllBlogs = async () => {
     try {
       const response = await api.get(`/api/blog/getAllBlogs`);
-      setBlogs(response.data);
+      const activeBlogs = response.data.filter(blog => blog.blogStatus === "active");
+      setBlogs(activeBlogs);
     } catch (error) {
       toast.error("Error fetching blogs!");
       console.error("Error fetching featured blog:", error);
@@ -34,22 +39,24 @@ const BlogListLeft = () => {
 
   return (
     <div>
-      <div className="featured-card">
-        <h3 className="featured-text">FEATURED</h3>
-        <div className="featured-image">
-          <img src={featuredBlog.image} alt="Featured" />
-          <div className="featured-overlay">
-            <Link to={`/blog/${featuredBlog.blogId}`} className="featured-title">
-              <h4 >{featuredBlog.blogTitle}</h4>
-            </Link>
-            <h4 className="featured-desc">
-              {featuredBlog.blogContent
-                ? `${featuredBlog.blogContent.slice(0, 70)}...`
-                : ""}
-            </h4>
+      {featuredBlog && (
+        <div className="featured-card">
+          <h3 className="featured-text">FEATURED</h3>
+          <div className="featured-image">
+            <img src={featuredBlog.image} alt="Featured" />
+            <div className="featured-overlay">
+              <Link to={`/blog/${featuredBlog.blogId}`} className="featured-title">
+                <h4>{featuredBlog.blogTitle}</h4>
+              </Link>
+              <h4 className="featured-desc">
+                {featuredBlog.blogContent
+                  ? `${featuredBlog.blogContent.slice(0, 70)}...`
+                  : ""}
+              </h4>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div className="small-blog-list">
         {blogs.slice(0, 3).map((blog) => (

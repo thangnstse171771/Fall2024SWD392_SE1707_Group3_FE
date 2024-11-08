@@ -1,5 +1,13 @@
-import React from "react";
-import { Modal, Form, Input, Button } from "antd";
+import React, { useState, useEffect, useRef } from "react";
+import { Modal, Form, Input, Button, message, Slider } from "antd";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
+import { app } from "../../firebase";
+import { CircularProgress } from "@mui/material";
 
 const AddPondPopup = ({
   open,
@@ -10,10 +18,74 @@ const AddPondPopup = ({
   loading,
 }) => {
   const [form] = Form.useForm();
-  
-  const calculatePondSize = (length, width) => {
-    return length * width || 0;
+  const [file, setFile] = useState(null);
+  const [imageUploadProgress, setImageUploadProgress] = useState(null);
+  const [imageUploadError, setImageUploadError] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const fileInputRef = useRef(null);
+  const [pondVolume, setPondVolume] = useState(null);
+  const [aeroCapacityRange, setAeroCapacityRange] = useState([0, 0]);
+
+  useEffect(() => {
+    if (pondVolume) {
+      setAeroCapacityRange([pondVolume * 1.5, pondVolume * 2]);
+    }
+  }, [pondVolume]);
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+    setImageUploadError(null);
   };
+
+  const handleUploadImage = async () => {
+    if (!file) {
+      setImageUploadError("Please select an image");
+      return;
+    }
+    setImageUploadError(null);
+
+    const storage = getStorage(app);
+    const fileName = `${new Date().getTime()}-${file.name}`;
+    const storageRef = ref(storage, fileName);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setImageUploadProgress(progress.toFixed(0));
+      },
+      (error) => {
+        setImageUploadError("Image upload failed");
+        setImageUploadProgress(null);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setImageUploadProgress(null);
+          setImageUploadError(null);
+          form.setFieldsValue({ pondImage: downloadURL });
+          setImagePreview(downloadURL);
+          message.success("Image uploaded successfully!");
+        });
+      }
+    );
+  };
+
+  useEffect(() => {
+    if (handleCancel) {
+      setImagePreview("");
+      setFile(null);
+      setImageUploadProgress(null);
+      setImageUploadError(null);
+      setAeroCapacityRange([0, 0]);
+      form.resetFields();
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  }, [open, form]);
 
   return (
     <Modal
@@ -23,18 +95,13 @@ const AddPondPopup = ({
       footer={null}
     >
       <Form
-        form={form} 
+        form={form}
         onFinish={(values) => {
           onSubmit(values);
-          form.resetFields(); 
+          form.resetFields();
         }}
         layout="vertical"
         noValidate
-        onValuesChange={(changedValues, allValues) => {
-          const { pondLength, pondWidth } = allValues;
-          const pondSize = calculatePondSize(pondLength, pondWidth);
-          form.setFieldsValue({ pondSize });
-        }}
       >
         <Form.Item
           label="Pond Name"
@@ -52,37 +119,58 @@ const AddPondPopup = ({
           label="Pond Image URL"
           name="pondImage"
           rules={[
-            { required: true, message: "Please input the pond image URL!" },
+            {
+              required: true,
+              message: "Please upload or input the pond image URL!",
+            },
           ]}
         >
           <Input
+            type="hidden"
             value={pondData.pondImage}
             onChange={handleInputChange}
-            placeholder="Enter pond image URL"
+            placeholder="Enter or upload pond image URL"
+            readOnly
           />
+          <Input type="file" onChange={handleFileChange} ref={fileInputRef} />
+          {imageUploadProgress ? (
+            <div className="w-16 h-16">
+              <CircularProgress
+                variant="determinate"
+                value={imageUploadProgress}
+                style={{ marginTop: "8px" }}
+              />
+            </div>
+          ) : (
+            <div>
+              <Button onClick={handleUploadImage} style={{ marginTop: "8px" }}>
+                Upload Image
+              </Button>
+              {imageUploadError && (
+                <p
+                  style={{
+                    color: "red",
+                    marginTop: "0",
+                    marginBottom: "0",
+                    textAlign: "left",
+                  }}
+                >
+                  {imageUploadError}
+                </p>
+              )}
+            </div>
+          )}
         </Form.Item>
 
-        <Form.Item
-          label="Pond Length (m)"
-          name="pondLength"
-          rules={[{ required: true, message: "Please input the pond length!" }]}
-        >
-          <Input
-            type="number"
-            placeholder="Enter pond length"
-          />
-        </Form.Item>
-
-        <Form.Item
-          label="Pond Width (m)"
-          name="pondWidth"
-          rules={[{ required: true, message: "Please input the pond width!" }]}
-        >
-          <Input
-            type="number"
-            placeholder="Enter pond width"
-          />
-        </Form.Item>
+        {imagePreview && (
+          <div style={{ margin: "10px 0" }}>
+            <img
+              src={imagePreview}
+              alt="Pond"
+              style={{ width: "100%", maxHeight: "200px", objectFit: "cover" }}
+            />
+          </div>
+        )}
 
         <Form.Item
           label="Pond Size (m²) (3 - 33)"
@@ -106,11 +194,7 @@ const AddPondPopup = ({
             },
           ]}
         >
-          <Input
-            type="number"
-            readOnly
-            placeholder="Calculated pond size"
-          />
+          <Input type="number" placeholder="Pond size" />
         </Form.Item>
 
         <Form.Item
@@ -150,8 +234,8 @@ const AddPondPopup = ({
             { required: true, message: "Please input the pond volume!" },
             {
               validator: (_, value) => {
-                const pondSize = form.getFieldValue('pondSize');
-                const pondDepth = form.getFieldValue('pondDepth');
+                const pondSize = form.getFieldValue("pondSize");
+                const pondDepth = form.getFieldValue("pondDepth");
                 const multiply = pondSize * pondDepth;
 
                 if (value < 1.3) {
@@ -171,8 +255,10 @@ const AddPondPopup = ({
         >
           <Input
             type="number"
-            value={pondData.pondVolume}
-            onChange={handleInputChange}
+            onChange={(e) => {
+              handleInputChange(e);
+              setPondVolume(parseFloat(e.target.value));
+            }}
             placeholder="Enter pond volume"
           />
         </Form.Item>
@@ -211,7 +297,7 @@ const AddPondPopup = ({
         </Form.Item>
 
         <Form.Item
-          label="Pond Aeration Capacity (m³/hour) (Volume * 1.5 or * 2)"
+          label="Pond Aeration Capacity (m³/hour)"
           name="pondAeroCapacity"
           rules={[
             {
@@ -220,7 +306,7 @@ const AddPondPopup = ({
             },
             {
               validator: (_, value) => {
-                const pondVolume = form.getFieldValue('pondVolume');
+                const pondVolume = form.getFieldValue("pondVolume");
 
                 if (value < pondVolume * 1.5 || value > pondVolume * 2) {
                   return Promise.reject(
@@ -234,11 +320,15 @@ const AddPondPopup = ({
             },
           ]}
         >
-          <Input
-            type="number"
+          <Slider
+            min={aeroCapacityRange[0]}
+            max={aeroCapacityRange[1]}
+            onChange={(value) =>
+              handleInputChange({ target: { name: "pondAeroCapacity", value } })
+            }
             value={pondData.pondAeroCapacity}
-            onChange={handleInputChange}
-            placeholder="Enter pond aeration capacity"
+            tooltip={{ formatter: (value) => `${value.toFixed(2)} m³/hour` }}
+            step={0.01}
           />
         </Form.Item>
 
@@ -253,14 +343,20 @@ const AddPondPopup = ({
             {
               validator: async (_, value) => {
                 const pondVolume = form.getFieldValue("pondVolume");
-        
+
                 const parsedValue = parseFloat(value);
                 const parsedVolume = parseFloat(pondVolume);
-        
+
+                if (value < 1) {
+                  return Promise.reject(
+                    new Error("Pond Capacity can't be below 1!")
+                  );
+                }
+
                 if (isNaN(parsedValue) || isNaN(parsedVolume)) {
                   return Promise.reject(new Error("Invalid input values."));
                 }
-        
+
                 if (parsedValue > parsedVolume) {
                   return Promise.reject(
                     new Error("Fish capacity can't exceed pond volume!")

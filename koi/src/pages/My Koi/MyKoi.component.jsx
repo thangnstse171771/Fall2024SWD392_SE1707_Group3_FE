@@ -153,7 +153,7 @@ const MyKoi = () => {
       </div>
       <div className="koi-grid">
         {currentKoi.length === 0 ? (
-          <p>No Koi fish found.</p>
+          <p>You need to add pond before add koi</p>
         ) : (
           currentKoi.map((koi) => (
             <Card

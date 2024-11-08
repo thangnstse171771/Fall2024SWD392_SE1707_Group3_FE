@@ -1,9 +1,64 @@
-import { Modal, Input, Button, Form, Select } from "antd";
+import { useState, useEffect, useRef } from "react";
+import { Modal, Input, Button, Form, Select, message } from "antd";
 import CountrySelect from "react-select-country-list";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { app } from "../../../firebase";
+import { CircularProgress } from "@mui/material";
+
 const { Option, OptGroup } = Select;
 
 const AddFishInProfile = ({ open, onCancel, onSubmit, loading }) => {
   const [form] = Form.useForm();
+  const [file, setFile] = useState(null);
+  const [imageUploadProgress, setImageUploadProgress] = useState(null);
+  const [imageUploadError, setImageUploadError] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const fileInputRef = useRef(null);
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+    setImageUploadError(null);
+  };
+
+  const handleUploadImage = async () => {
+    if (!file) {
+      setImageUploadError("Please select an image");
+      return;
+    }
+    setImageUploadError(null);
+
+    const storage = getStorage(app);
+    const fileName = `${new Date().getTime()}-${file.name}`;
+    const storageRef = ref(storage, fileName);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setImageUploadProgress(progress.toFixed(0));
+      },
+      (error) => {
+        setImageUploadError("Image upload failed");
+        setImageUploadProgress(null);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setImageUploadProgress(null);
+          setImageUploadError(null);
+          form.setFieldsValue({ koiImage: downloadURL });
+          setImagePreview(downloadURL);
+          message.success("Image uploaded successfully!");
+        });
+      }
+    );
+  };
 
   const koiBreeds = [
     {
@@ -62,13 +117,27 @@ const AddFishInProfile = ({ open, onCancel, onSubmit, loading }) => {
 
   const countries = CountrySelect().getData();
 
+  useEffect(() => {
+    if (onCancel) {
+      setImagePreview("");
+      setFile(null);
+      setImageUploadProgress(null);
+      setImageUploadError(null);
+      form.resetFields();
+
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  }, [open, form]);
+
   return (
     <Modal title="Add New Fish" open={open} onCancel={onCancel} footer={null}>
       <Form
-        form={form} 
+        form={form}
         onFinish={(values) => {
           onSubmit(values);
-          form.resetFields(); 
+          form.resetFields();
         }}
         layout="vertical"
         noValidate
@@ -82,12 +151,56 @@ const AddFishInProfile = ({ open, onCancel, onSubmit, loading }) => {
         </Form.Item>
 
         <Form.Item
-          label="Koi Image URL"
+          label="Koi Image"
           name="koiImage"
-          rules={[{ required: true, message: "Please provide an image URL!" }]}
+          rules={[{ required: true, message: "Please provide an image!" }]}
         >
-          <Input placeholder="Enter Koi image URL" />
+          <Input
+            type="hidden"
+            placeholder="Koi image URL"
+            readOnly
+            value={form.getFieldValue("koiImage")}
+          />
+
+          <Input type="file" onChange={handleFileChange} ref={fileInputRef} />
+          {imageUploadProgress ? (
+            <div className="w-16 h-16">
+              <CircularProgress
+                variant="determinate"
+                value={imageUploadProgress}
+                style={{ marginTop: "8px" }}
+              />
+            </div>
+          ) : (
+            <div>
+              <Button onClick={handleUploadImage} style={{ marginTop: "8px" }}>
+                Upload Image
+              </Button>
+              {imageUploadError && (
+                <p
+                  style={{
+                    color: "red",
+                    marginTop: "0",
+                    marginBottom: "0",
+                    textAlign: "left",
+                  }}
+                >
+                  {imageUploadError}
+                </p>
+              )}
+            </div>
+          )}
         </Form.Item>
+
+        {imagePreview && (
+          <div style={{ margin: "10px 0" }}>
+            <img
+              src={imagePreview}
+              alt="KoiFish"
+              style={{ width: "100%", maxHeight: "200px", objectFit: "cover" }}
+            />
+          </div>
+        )}
 
         <Form.Item
           label="Gender"
@@ -141,7 +254,7 @@ const AddFishInProfile = ({ open, onCancel, onSubmit, loading }) => {
           </Button>
           <Button
             onClick={() => {
-              form.resetFields(); 
+              form.resetFields();
               onCancel();
             }}
             style={{ marginLeft: "8px" }}

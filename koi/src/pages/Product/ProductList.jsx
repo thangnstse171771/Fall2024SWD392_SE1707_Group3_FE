@@ -1,3 +1,4 @@
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import React, { useState, useEffect } from "react";
 import {
   Table,
@@ -9,64 +10,40 @@ import {
   Paper,
   CircularProgress,
 } from "@mui/material";
-import {
-  Button,
-  message,
-  Modal,
-  Form,
-  Input,
-  InputNumber,
-  Select, // Import Select for category options
-} from "antd";
+import { Button, message, Modal, Form, Input, InputNumber, Select } from "antd";
 import { useNavigate } from "react-router-dom";
 import api from "../../config/axios";
 import noImage from "../../assets/noimage.jpg";
 
-const { Option } = Select; // Destructure Option from Select
+import { app } from "../../firebase";
+
+const storage = getStorage(app); // Initialize Firebase storage
+const { Option } = Select;
 
 export default function ProductList() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
-  // const [imagePreview, setImagePreview] = useState(null);
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const [imagePreview, setImagePreview] = useState(noImage);
+  const [categories, setCategories] = useState([]);
+  const [imageFile, setImageFile] = useState(null);
+  const [error, setError] = useState(null); // Define error state
 
-  const [categories, setCategories] = useState([]); // State để lưu danh sách danh mục
   const fetchCategories = async () => {
     try {
-      const response = await api.get("/api/categories/getAllCategories", {
-        headers: {
-          accept: "application/json",
-        },
-      });
-
-      if (response.data && Array.isArray(response.data)) {
-        const fetchedCategories = response.data.map((category) => ({
-          id: category.categoryId, // Assuming categoryId is present
-          name: category.categoryName,
-        }));
-        setCategories(fetchedCategories); // Lưu danh sách danh mục
-      } else {
-        console.error("No categories found.");
-      }
+      const response = await api.get("/api/categories/getAllCategories");
+      const fetchedCategories = response.data.map((category) => ({
+        id: category.categoryId,
+        name: category.categoryName,
+      }));
+      setCategories(fetchedCategories);
     } catch (error) {
       console.error("Error fetching categories:", error);
+      setError("Failed to fetch categories");
     } finally {
-      setLoading(false); // Đặt trạng thái tải là false sau khi hoàn thành
-    }
-  };
-  const handleRemoveProduct = async (productId) => {
-    try {
-      await api.patch(`/api/products/updateProductActiveStatus/${productId}`, {
-        isActive: "inActive",
-      });
-      message.success("Product removed successfully!");
-      fetchProducts(); // Refresh product list
-    } catch (error) {
-      message.error("Failed to remove product. Please try again.");
+      setLoading(false);
     }
   };
 
@@ -74,11 +51,10 @@ export default function ProductList() {
     try {
       setLoading(true);
       const response = await api.get("/api/products/getAllProducts");
-      console.log(response.data);
-
       setProducts(response.data);
     } catch (error) {
-      setError("Failed to fetch product data. Please try again later.");
+      console.error("Failed to fetch product data:", error);
+      setError("Failed to fetch product data");
     } finally {
       setLoading(false);
     }
@@ -86,39 +62,67 @@ export default function ProductList() {
 
   useEffect(() => {
     fetchProducts();
-    fetchCategories(); // Call fetchCategories to load categories on component mount
+    fetchCategories();
   }, []);
 
   const handleOpenModal = () => {
     form.resetFields();
-
-    console.log("Setting imagePreview to noImage:", noImage);
     setImagePreview(noImage);
+    setImageFile(null); // Reset image file
     setIsModalVisible(true);
   };
 
   const handleCloseModal = () => setIsModalVisible(false);
 
-  const handleImageUrlChange = (e) => {
-    const url = e.target.value;
-    setImagePreview(url ? url : noImage);
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file)); // Show image preview
+    }
+  };
+
+  const uploadImage = async (file) => {
+    const storageRef = ref(storage, `products/${file.name}`);
+    await uploadBytes(storageRef, file);
+    return getDownloadURL(storageRef); // Return the image URL
   };
 
   const handleFormSubmit = async (values) => {
     const userId = localStorage.getItem("userId");
+    let imageUrl = noImage;
+
+    if (imageFile) {
+      imageUrl = await uploadImage(imageFile);
+    }
+
     const payload = {
       ...values,
       userId,
-      isActive: "waiting", // Set isActive to false by default
+      isActive: "waiting",
+      image: imageUrl,
     };
-    console.log(payload);
+
     try {
       await api.post("/api/products/createProduct", payload);
       message.success("Product created successfully!");
-      fetchProducts(); // Refresh product list
+      fetchProducts();
       handleCloseModal();
     } catch (error) {
       message.error("Failed to create product. Please try again.");
+    }
+  };
+
+  const handleRemoveProduct = async (productId) => {
+    try {
+      await api.post(`/api/products/updateProductActiveStatus/${productId}`, {
+        isActive: "inactive",
+      });
+      message.success("Product removed successfully!");
+      fetchProducts();
+    } catch (error) {
+      console.error("Failed to remove product:", error);
+      message.error("Failed to remove product. Please try again.");
     }
   };
 
@@ -225,7 +229,6 @@ export default function ProductList() {
         </Table>
       </TableContainer>
 
-      {/* Modal for creating new product */}
       <Modal
         title="Create New Product"
         visible={isModalVisible}
@@ -275,43 +278,58 @@ export default function ProductList() {
               <Form.Item
                 name="productPrice"
                 label="Price"
-                rules={[{ required: true, message: "Please enter price" }]}
+                rules={[
+                  { required: true, message: "Please enter price" },
+                  {
+                    validator: (_, value) => {
+                      if (value < 1) {
+                        return Promise.reject(
+                          new Error("Product Price can't be less than 1!")
+                        );
+                      }
+                      if (value > 9999) {
+                        return Promise.reject(
+                          new Error("Product price can't exceed 9999!")
+                        );
+                      }
+                      return Promise.resolve();
+                    },
+                  },
+                ]}
               >
                 <InputNumber style={{ width: "100%" }} />
               </Form.Item>
-              <Form.Item
-                name="image"
-                label="Image URL"
-                rules={[{ required: true, message: "Please enter image URL" }]}
+              <Button
+                type="primary"
+                htmlType="submit"
+                loading={loading}
+                style={{
+                  marginTop: "16px",
+                  backgroundColor: "rgb(180,0,0)",
+                  borderColor: "rgb(180,0,0)",
+                }}
               >
-                <Input onChange={handleImageUrlChange} />
-              </Form.Item>
-              <Form.Item>
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  style={{
-                    backgroundColor: "rgb(180,0,0)",
-                    borderColor: "rgb(180,0,0)",
-                  }}
-                >
-                  Submit
-                </Button>
-              </Form.Item>
+                Submit
+              </Button>
             </Form>
           </div>
-          <div style={{ flex: "1" }}>
-            {imagePreview && (
-              <img
-                src={imagePreview}
-                alt="Preview"
-                style={{
-                  maxWidth: "100%",
-                  maxHeight: "200px",
-                  objectFit: "cover",
-                }}
-              />
-            )}
+          <div style={{ flex: "1", textAlign: "center" }}>
+            <img
+              src={imagePreview}
+              alt="Product Preview"
+              style={{
+                width: "100%",
+                maxWidth: "300px",
+                maxHeight: "300px",
+                objectFit: "contain",
+              }}
+            />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageChange}
+              style={{ marginTop: "16px" }}
+            />
           </div>
         </div>
       </Modal>

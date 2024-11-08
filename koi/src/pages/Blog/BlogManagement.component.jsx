@@ -1,6 +1,25 @@
 import React, { useEffect, useState } from "react";
-import { Card, Table, Button, Modal, Form, Input, message, Spin } from "antd";
+import {
+  Card,
+  Table,
+  Button,
+  Modal,
+  Form,
+  Input,
+  message,
+  Spin,
+  Alert,
+} from "antd";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { app } from "../../firebase";
 import api from "../../config/axios";
+import { CircularProgress } from "@mui/material";
+import "./BlogManagement.scss"; // Create a separate SCSS file for styling
 
 const BlogManagement = () => {
   const [blogs, setBlogs] = useState([]);
@@ -8,6 +27,12 @@ const BlogManagement = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingBlog, setEditingBlog] = useState(null);
   const [form] = Form.useForm();
+  const [file, setFile] = useState(null);
+  const [imageUploadProgress, setImageUploadProgress] = useState(null);
+  const [imageUploadError, setImageUploadError] = useState(null);
+  const [formData, setFormData] = useState({});
+
+  const userType = localStorage.getItem("usertype");
 
   useEffect(() => {
     fetchBlogs();
@@ -20,7 +45,13 @@ const BlogManagement = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (response.data) {
-        setBlogs(response.data);
+        const blogsWithStatus = response.data.filter(
+          (blog) =>
+            blog.blogStatus === "waiting" ||
+            blog.blogStatus === "active" ||
+            blog.blogStatus === "inActive"
+        );
+        setBlogs(blogsWithStatus);
       }
     } catch (error) {
       message.error("Error fetching blog data.");
@@ -29,29 +60,94 @@ const BlogManagement = () => {
     }
   };
 
+  const handleUploadImage = async () => {
+    if (!file) {
+      setImageUploadError("Please select an image");
+      return;
+    }
+    setImageUploadError(null);
+
+    const storage = getStorage(app);
+    const fileName = new Date().getTime() + "-" + file.name;
+    const storageRef = ref(storage, fileName);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setImageUploadProgress(progress.toFixed(0));
+      },
+      (error) => {
+        setImageUploadError("Image upload failed");
+        setImageUploadProgress(null);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setImageUploadProgress(null);
+          setImageUploadError(null);
+          setFormData({ ...formData, image: downloadURL });
+        });
+      }
+    );
+  };
+  const handleUpdateBlogStatus = async (blogId, status) => {
+    const token = sessionStorage.getItem("token"); // Lấy token từ sessionStorage nếu có
+    const payload = {
+      blogStatus: status,
+    };
+
+    try {
+      // Gửi PUT request tới API để cập nhật trạng thái của blog
+      await api.put(`/api/blog/updateBlogStatus/${blogId}`, payload, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      message.success(
+        `Blog ${status === "active" ? "approved" : "rejected"} successfully!`
+      );
+      fetchBlogs(); // Sau khi cập nhật, gọi lại hàm fetchBlogs để lấy danh sách blog mới
+    } catch (error) {
+      message.error("Error updating blog status.");
+    }
+  };
+
   const handleCreateOrUpdateBlog = async (values) => {
     const token = sessionStorage.getItem("token");
-    const { blogTitle, blogContent, imageUrl } = values; // Extract values
-
-    // Prepare the payload to match API requirements
     const payload = {
-      blogTitle,
-      blogContent,
-      image: imageUrl, // Use 'image' instead of 'imageUrl'
+      blogTitle: values.blogTitle.trim(),
+      blogContent: values.blogContent.trim(),
+      image: formData.image || values.image.trim(),
+      blogStatus: "waiting", // Set status to "waiting" initially
     };
 
     try {
       if (editingBlog) {
-        await api.put(`/api/blog/updateBlog/${editingBlog.blogId}`, payload, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        console.log(payload.blogStatus);
+
+        // Sử dụng Promise.all để thực hiện hai yêu cầu cùng lúc
+        await Promise.all([
+          api.put(`/api/blog/updateBlog/${editingBlog.blogId}`, payload, {
+            headers: { Authorization: `Bearer ${token}` },
+          }),
+          api.put(
+            `/api/blog/updateBlogStatus/${editingBlog.blogId}`,
+            { blogStatus: "waiting" },
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          ),
+        ]);
+
         message.success("Blog updated successfully!");
+        window.location.reload();
       } else {
         await api.post("/api/blog/createBlog", payload, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        message.success("Blog created successfully!");
+        message.success("Your post is waiting for approval.");
       }
+
       form.resetFields();
       setIsModalVisible(false);
       fetchBlogs();
@@ -90,8 +186,9 @@ const BlogManagement = () => {
       form.setFieldsValue({
         blogTitle: blog.blogTitle,
         blogContent: blog.blogContent,
-        imageUrl: blog.image, // Adjust for the correct field name
+        imageUrl: blog.image,
       });
+      setFormData({ image: blog.image });
     }
     setIsModalVisible(true);
   };
@@ -108,9 +205,38 @@ const BlogManagement = () => {
         <img
           src={imageUrl}
           alt="Blog"
-          style={{ width: 100, height: 100, objectFit: "cover" }} // Adjust size and fit as needed
+          style={{
+            width: 120,
+            height: 120,
+            objectFit: "cover",
+            borderRadius: "8px",
+            boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
+          }}
         />
       ),
+    },
+    {
+      title: "Status",
+      dataIndex: "blogStatus",
+      key: "blogStatus",
+      render: (status) => {
+        if (status === "waiting") {
+          return <span style={{ color: "orange" }}>Waiting for approval</span>;
+        }
+        if (status === "active") {
+          return <span style={{ color: "green" }}>Approved</span>;
+        }
+        if (status === "inActive") {
+          return <span style={{ color: "red" }}>Inactive</span>;
+        }
+        return <span>{status}</span>;
+      },
+      filters: [
+        { text: "Waiting for approval", value: "waiting" },
+        { text: "Approved", value: "active" },
+        { text: "Inactive", value: "inActive" },
+      ],
+      onFilter: (value, record) => record.blogStatus.includes(value),
     },
     {
       title: "Actions",
@@ -127,6 +253,28 @@ const BlogManagement = () => {
           >
             Delete
           </Button>
+
+          {/* Nút Approve và Reject cho tất cả người dùng */}
+          {userType === "Manager" && (
+            <>
+              <Button
+                type="link"
+                onClick={() => handleUpdateBlogStatus(record.blogId, "active")}
+                style={{ color: "green" }}
+              >
+                Approve
+              </Button>
+              <Button
+                type="link"
+                onClick={() =>
+                  handleUpdateBlogStatus(record.blogId, "inActive")
+                }
+                style={{ color: "red" }}
+              >
+                Reject
+              </Button>
+            </>
+          )}
         </div>
       ),
     },
@@ -138,55 +286,100 @@ const BlogManagement = () => {
         type="primary"
         className="add-blog-btn"
         onClick={() => showModal()}
-        style={{ marginBottom: 16 }}
+        style={{
+          marginBottom: 16,
+          backgroundColor: "#4CAF50",
+          borderRadius: "5px",
+        }}
       >
         Add Blog
       </Button>
 
-      {loading ? (
-        <Spin tip="Loading blogs..." />
-      ) : (
-        <Table columns={columns} dataSource={blogs} rowKey="blogId" />
-      )}
+      <Table
+        columns={columns}
+        dataSource={blogs}
+        rowKey="blogId"
+        loading={loading}
+        pagination={{
+          pageSize: 10,
+          showSizeChanger: true,
+          pageSizeOptions: ["10", "20", "50"],
+        }}
+        style={{
+          boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+          borderRadius: "8px",
+        }}
+      />
 
       <Modal
-        title={editingBlog ? "Edit Blog" : "Create Blog"}
+        title={editingBlog ? "Edit Blog" : "Add Blog"}
         visible={isModalVisible}
-        onCancel={() => {
-          setIsModalVisible(false);
-          form.resetFields();
-        }}
+        onCancel={() => setIsModalVisible(false)}
         footer={null}
+        style={{ borderRadius: "8px" }}
       >
         <Form form={form} onFinish={handleCreateOrUpdateBlog}>
           <Form.Item
             name="blogTitle"
             label="Title"
-            rules={[
-              { required: true, message: "Please input the blog title!" },
-            ]}
+            rules={[{ required: true, message: "Title is required!" }]}
           >
-            <Input />
+            <Input placeholder="Enter blog title" />
           </Form.Item>
+
           <Form.Item
             name="blogContent"
             label="Content"
-            rules={[
-              { required: true, message: "Please input the blog content!" },
-            ]}
+            rules={[{ required: true, message: "Content is required!" }]}
           >
-            <Input.TextArea rows={4} />
+            <Input.TextArea rows={4} placeholder="Enter blog content" />
           </Form.Item>
-          <Form.Item
-            name="imageUrl"
-            label="Image URL"
-            rules={[{ required: true, message: "Please input the image URL!" }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit">
-              {editingBlog ? "Update Blog" : "Create Blog"}
+
+          {/* Image Upload Section */}
+          <div className="upload-container">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                setFile(e.target.files[0]);
+                setFormData({ ...formData, image: null });
+              }}
+              className="upload-input"
+            />
+            <Button
+              type="button"
+              onClick={handleUploadImage}
+              disabled={imageUploadProgress}
+              className="upload-btn"
+            >
+              {imageUploadProgress ? (
+                <CircularProgress
+                  variant="determinate"
+                  value={imageUploadProgress}
+                />
+              ) : (
+                "Upload Image"
+              )}
+            </Button>
+          </div>
+
+          {imageUploadError && (
+            <Alert message={imageUploadError} type="error" showIcon />
+          )}
+
+          {formData.image && (
+            <div className="image-preview">
+              <img
+                src={formData.image}
+                alt="Blog"
+                style={{ width: "100%", height: "auto", borderRadius: "8px" }}
+              />
+            </div>
+          )}
+
+          <Form.Item className="form-footer">
+            <Button type="primary" htmlType="submit" className="submit-btn">
+              {editingBlog ? "Update Blog" : "Add Blog"}
             </Button>
           </Form.Item>
         </Form>

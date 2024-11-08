@@ -1,7 +1,14 @@
 import React, { useState } from "react";
-import { Card, Button, Modal, Form, Input, Select } from "antd";
-import { useLocation } from "react-router-dom";
+import { Card, Button, Modal, Form, Input, Select, Alert } from "antd";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { app } from "../../../firebase";
 import CountrySelect from "react-select-country-list";
+import { CircularProgress } from "@mui/material";
 import "./KoiInformation.scss";
 
 const { Option, OptGroup } = Select;
@@ -9,8 +16,10 @@ const { Option, OptGroup } = Select;
 const KoiInformation = ({ koi, onUpdate, ponds }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [form] = Form.useForm();
-  const location = useLocation();
-  const viewOnly = location.state?.viewOnly || false;
+  const [file, setFile] = useState(null);
+  const [imageUploadError, setImageUploadError] = useState(null);
+  const [imageUploadProgress, setImageUploadProgress] = useState(null);
+  const [formData, setFormData] = useState({ image: koi.koiImage });
 
   const koiBreeds = [
     {
@@ -67,24 +76,54 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
     },
   ];
 
-  const handleEdit = () => {
-    if (!viewOnly) {
-      form.setFieldsValue({
-        name: koi.koiName,
-        image: koi.koiImage,
-        gender: koi.koiGender,
-        breed: koi.koiBreed,
-        origin: koi.koiOrigin,
-        pondId: koi.currentPondId,
-      });
-      setIsEditing(true);
+  const countries = CountrySelect().getData();
+
+  const handleUploadImage = async () => {
+    if (!file) {
+      setImageUploadError("Please select an image");
+      return;
     }
+    setImageUploadError(null);
+    const storage = getStorage(app);
+    const fileName = new Date().getTime() + "-" + file.name;
+    const storageRef = ref(storage, fileName);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setImageUploadProgress(progress.toFixed(0));
+      },
+      (error) => {
+        setImageUploadError("Image upload failed");
+        setImageUploadProgress(null);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setImageUploadProgress(null);
+          setImageUploadError(null);
+          setFormData({ ...formData, image: downloadURL });
+        });
+      }
+    );
+  };
+
+  const handleEdit = () => {
+    form.setFieldsValue({
+      name: koi.koiName,
+      gender: koi.koiGender,
+      breed: koi.koiBreed,
+      origin: koi.koiOrigin,
+      pondId: koi.currentPondId,
+    });
+    setIsEditing(true);
   };
 
   const handleUpdateKoi = async (values) => {
     const koiNameTrimmed = values.name.trim();
 
-    // Kiểm tra xem tên có ít nhất một từ không
     if (!koiNameTrimmed) {
       return Modal.error({
         title: "Validation Error",
@@ -94,12 +133,13 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
 
     const formattedValues = {
       koiName: koiNameTrimmed,
-      koiImage: values.image.trim(),
+      koiImage: formData.image,
       koiGender: values.gender,
       koiBreed: values.breed,
       koiOrigin: values.origin,
       currentPondId: parseInt(values.pondId),
     };
+
     await onUpdate(formattedValues);
     setIsEditing(false);
   };
@@ -109,12 +149,13 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
       <Card className="koi-info-card" title="Koi Information">
         <div className="koi-profile__header">
           <img
-            src={koi.koiImage}
+            src={formData.image}
             alt={koi.koiName}
             className="koi-profile__image"
           />
           <h1 className="koi-profile__title">{koi.koiName}</h1>
         </div>
+        {/* Koi details */}
         <p>
           <strong>Name:</strong> {koi.koiName}
         </p>
@@ -128,49 +169,78 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
           <strong>Origin:</strong> {koi.koiOrigin || "N/A"}
         </p>
 
-        {!viewOnly && (
-          <div className="edit-btn-container">
-            <Button className="edit-btn" onClick={handleEdit}>
-              Edit
-            </Button>
-          </div>
-        )}
+        <div className="edit-btn-container">
+          <Button className="edit-btn" onClick={handleEdit}>
+            Edit
+          </Button>
+        </div>
       </Card>
 
       <Modal
         className="edit-modal"
         title="Edit Koi Information"
-        visible={isEditing && !viewOnly}
+        visible={isEditing}
         onCancel={() => setIsEditing(false)}
         footer={null}
       >
-        <Form form={form} layout="vertical" onFinish={handleUpdateKoi}>
+        <Form form={form} onFinish={handleUpdateKoi}>
           <Form.Item
             name="name"
             label="Koi Name"
             rules={[
               { required: true, message: "Please input the koi name!" },
               {
-                validator: (_, value) => {
-                  if (value && value.trim() === "") {
-                    return Promise.reject(
-                      new Error("Koi name must contain at least one word!")
-                    );
-                  }
-                  return Promise.resolve();
-                },
+                validator: (_, value) =>
+                  value && value.trim() === ""
+                    ? Promise.reject("Koi name must contain at least one word!")
+                    : Promise.resolve(),
               },
             ]}
           >
             <Input />
           </Form.Item>
-          <Form.Item
-            name="image"
-            label="Image URL"
-            rules={[{ required: true, message: "Please input the image URL!" }]}
-          >
-            <Input />
-          </Form.Item>
+
+          {/* Image Upload Section */}
+          <div className="upload-container">
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                setFile(e.target.files[0]);
+                setFormData({ ...formData, image: null });
+              }}
+              className="upload-input"
+            />
+            <Button
+              type="button"
+              onClick={handleUploadImage}
+              disabled={imageUploadProgress}
+              className="upload-btn"
+            >
+              {imageUploadProgress ? (
+                <CircularProgress
+                  variant="determinate"
+                  value={imageUploadProgress}
+                />
+              ) : (
+                "Upload Image"
+              )}
+            </Button>
+          </div>
+
+          {imageUploadError && (
+            <div className="error-message">
+              <Alert message={imageUploadError} type="error" showIcon />
+            </div>
+          )}
+
+          {formData.image && (
+            <div className="image-preview">
+              <img src={formData.image} alt="Koi Fish" />
+            </div>
+          )}
+
+          {/* Other form fields */}
           <Form.Item
             name="gender"
             label="Gender"
@@ -181,6 +251,7 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
               <Option value="Female">Female</Option>
             </Select>
           </Form.Item>
+
           <Form.Item
             name="breed"
             label="Breed"
@@ -198,24 +269,22 @@ const KoiInformation = ({ koi, onUpdate, ponds }) => {
               ))}
             </Select>
           </Form.Item>
+
           <Form.Item
             name="origin"
             label="Origin"
-            rules={[{ required: true, message: "Please input the origin!" }]}
+            rules={[{ required: true, message: "Please select the origin!" }]}
           >
             <Select placeholder="Select country">
-              {CountrySelect()
-                .getData()
-                .map((country) => (
-                  <Option key={country.value} value={country.value}>
-                    {country.label}
-                  </Option>
-                ))}
+              {countries.map((country) => (
+                <Option key={country.value} value={country.value}>
+                  {country.label}
+                </Option>
+              ))}
             </Select>
           </Form.Item>
-
-          <Form.Item>
-            <Button type="primary" htmlType="submit" className="submit-btn">
+          <Form.Item className="form-footer">
+            <Button type="primary" htmlType="submit">
               Update Koi Fish
             </Button>
           </Form.Item>

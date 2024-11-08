@@ -1,20 +1,20 @@
 .pond-profile-page {
-  height: 100vh; 
+  height: 100vh;
   display: flex;
   flex-direction: column;
   margin-bottom: 50px;
   height: auto;
 
   .pond-profile-header {
-    width: 100%; 
-    padding-left: 20px; 
-    box-sizing: border-box; 
+    width: 100%;
+    padding-left: 20px;
+    box-sizing: border-box;
   }
 
   .pond-profile-body {
     width: 100%;
-    max-width: 1400px; 
-    margin: 0 auto; 
+    max-width: 1400px;
+    margin: 0 auto;
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -22,8 +22,8 @@
 
     .pond-profile-info {
       display: flex;
-      align-items: center; 
-      justify-content: space-between; 
+      align-items: center;
+      justify-content: space-between;
       gap: 20px;
 
       .pond-form-container {
@@ -35,32 +35,34 @@
 
         form {
           display: flex;
-          flex-wrap: wrap; 
+          flex-wrap: wrap;
           width: 100%;
-          max-width: 900px; 
-          gap: 20px; 
-      
+          max-width: 900px;
+          gap: 20px;
+
           .ant-form-item {
-            flex: 1 1 calc(50% - 20px); 
-            min-width: 250px; 
+            flex: 1 1 calc(50% - 20px);
+            min-width: 250px;
           }
-      
-          .ant-form-item:last-child {
-            flex-basis: 100%; 
+
+          .pond-profile-button-group {
             display: flex;
-            justify-content: flex-end; 
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-top: 20px;
           }
         }
       }
 
       .koi-profile-img {
-        max-width: 50%; 
-        height: auto; 
-        border-radius: 8px; 
+        max-width: 50%;
+        height: auto;
+        border-radius: 8px;
       }
 
       .pond-profile-info > div {
-        flex-grow: 1; 
+        flex-grow: 1;
       }
 
       .fish-count-text {
@@ -73,7 +75,7 @@
 
       .submit-pond-edit-button {
         display: flex;
-        justify-content: flex-end; 
+        justify-content: flex-end;
         margin-top: 20px;
       }
       .submit-pond-edit-button button {

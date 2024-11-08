@@ -11,7 +11,8 @@ const BlogListRight = () => {
   const fetchAllBlogs = async () => {
     try {
       const response = await api.get(`/api/blog/getAllBlogs`);
-      setBlogs(response.data);
+      const activeBlogs = response.data.filter(blog => blog.blogStatus === "active");
+      setBlogs(activeBlogs);
     } catch (error) {
       toast.error("Error fetching blogs!");
       console.error("Error fetching featured blog:", error);

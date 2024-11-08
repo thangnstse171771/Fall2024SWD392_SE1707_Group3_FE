@@ -1,20 +1,75 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { Form, Input, Button } from "antd";
+import { Form, Input, Button, message, Slider } from "antd";
 import api from "../../config/axios";
 import "./PondProfile.scss";
 import { toast } from "react-toastify";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
+import { app } from "../../firebase";
+import { CircularProgress } from "@mui/material";
 
 const PondProfileInfo = ({ refresh }) => {
   const { id } = useParams();
 
-  const [form] = Form.useForm(); 
-  const [loading, setLoading] = useState(true); 
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState({});
   const [error, setError] = useState(null);
+  const [file, setFile] = useState(null);
+  const [imageUploadProgress, setImageUploadProgress] = useState(null);
+  const [imageUploadError, setImageUploadError] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const fileInputRef = useRef(null);
+  const [aeroCapacityRange, setAeroCapacityRange] = useState([0, 0]);
+
   const token = sessionStorage.getItem("token");
 
   const userType = localStorage.getItem("usertype");
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+    setImageUploadError(null);
+  };
+
+  const handleUploadImage = async () => {
+    if (!file) {
+      setImageUploadError("Please select an image");
+      return;
+    }
+    setImageUploadError(null);
+
+    const storage = getStorage(app);
+    const fileName = `${new Date().getTime()}-${file.name}`;
+    const storageRef = ref(storage, fileName);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setImageUploadProgress(progress.toFixed(0));
+      },
+      (error) => {
+        setImageUploadError("Image upload failed");
+        setImageUploadProgress(null);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setImageUploadProgress(null);
+          setImageUploadError(null);
+          form.setFieldsValue({ pondImage: downloadURL });
+          setImagePreview(downloadURL);
+          message.success("Image uploaded successfully!");
+        });
+      }
+    );
+  };
 
   const fetchPondDetails = async () => {
     try {
@@ -26,7 +81,12 @@ const PondProfileInfo = ({ refresh }) => {
       const pondData = response.data.data;
 
       setProfile(pondData);
-      form.setFieldsValue(pondData); 
+      form.setFieldsValue(pondData);
+
+      const pondVolume = pondData.pondVolume;
+      if (pondVolume) {
+        setAeroCapacityRange([pondVolume * 1.5, pondVolume * 2]);
+      }
     } catch (err) {
       setError(err.response?.data?.message);
       toast.error(err.response?.data?.message || "Failed to load pond data.");
@@ -60,8 +120,8 @@ const PondProfileInfo = ({ refresh }) => {
 
       if (response.status === 200) {
         toast.success("Pond updated successfully!");
-        fetchPondDetails(); 
-        form.resetFields(); 
+        fetchPondDetails();
+        form.resetFields();
       } else {
         throw new Error("Failed to update pond.");
       }
@@ -69,6 +129,21 @@ const PondProfileInfo = ({ refresh }) => {
       toast.error(error.response?.data?.message || "Failed to update pond.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleRevert = () => {
+    fetchPondDetails();
+    setFile(null);
+
+    setImageUploadProgress(null);
+    setImageUploadError(null);
+
+    form.setFieldsValue({ pondImage: profile.pondImage || "" });
+    setImagePreview(profile.pondImage || "");
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
   };
 
@@ -86,7 +161,7 @@ const PondProfileInfo = ({ refresh }) => {
         <div className="pond-profile-info">
           <img
             className="koi-profile-img"
-            src={profile.pondImage}
+            src={imagePreview ? imagePreview : profile.pondImage}
             alt={profile.pondName}
           />
           <div className="pond-form-container">
@@ -104,19 +179,6 @@ const PondProfileInfo = ({ refresh }) => {
                 ]}
               >
                 <Input placeholder="Enter pond name" />
-              </Form.Item>
-
-              <Form.Item
-                label="Pond Image URL"
-                name="pondImage"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input the pond image URL!",
-                  },
-                ]}
-              >
-                <Input placeholder="Enter pond image URL" />
               </Form.Item>
 
               <Form.Item
@@ -190,7 +252,15 @@ const PondProfileInfo = ({ refresh }) => {
                   },
                 ]}
               >
-                <Input type="number" placeholder="Enter pond volume" />
+                <Input
+                  type="number"
+                  placeholder="Enter pond volume"
+                  onChange={(e) => {
+                    const value = parseFloat(e.target.value);
+                    form.setFieldsValue({ pondVolume: value });
+                    setAeroCapacityRange([value * 1.5, value * 2]);
+                  }}
+                />
               </Form.Item>
 
               <Form.Item
@@ -244,9 +314,16 @@ const PondProfileInfo = ({ refresh }) => {
                   },
                 ]}
               >
-                <Input
-                  type="number"
-                  placeholder="Enter pond aeration capacity"
+                <Slider
+                  min={aeroCapacityRange[0]}
+                  max={aeroCapacityRange[1]}
+                  onChange={(value) =>
+                    form.setFieldsValue({ pondAeroCapacity: value })
+                  }
+                  tooltip={{
+                    formatter: (value) => `${value.toFixed(2)} m³/hour`,
+                  }}
+                  step={0.01}
                 />
               </Form.Item>
 
@@ -265,6 +342,12 @@ const PondProfileInfo = ({ refresh }) => {
                       // Ensure we parse the values to numbers for proper comparison
                       const parsedValue = parseFloat(value);
                       const parsedVolume = parseFloat(pondVolume);
+
+                      if (value < 1) {
+                        return Promise.reject(
+                          new Error("Pond Capacity can't be below 1!")
+                        );
+                      }
 
                       if (isNaN(parsedValue) || isNaN(parsedVolume)) {
                         return Promise.reject(
@@ -288,7 +371,54 @@ const PondProfileInfo = ({ refresh }) => {
                 />
               </Form.Item>
 
-              <Form.Item>
+              {userType === "Customer" && (
+                <>
+                  <Form.Item
+                    label="Pond Image URL"
+                    name="pondImage"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input the pond image URL!",
+                      },
+                    ]}
+                    hidden
+                  >
+                    <Input placeholder="Pond image URL" readOnly />
+                  </Form.Item>
+
+                  <Form.Item label="Pond Image">
+                    <input
+                      type="file"
+                      onChange={handleFileChange}
+                      ref={fileInputRef}
+                    />
+                    {imageUploadProgress ? (
+                      <div className="w-16 h-16">
+                        <CircularProgress
+                          variant="determinate"
+                          value={imageUploadProgress}
+                          style={{ marginTop: "8px" }}
+                        />
+                      </div>
+                    ) : (
+                      <div>
+                        <Button
+                          onClick={handleUploadImage}
+                          style={{ marginTop: "8px" }}
+                        >
+                          Upload Image
+                        </Button>
+                        {imageUploadError && (
+                          <p style={{ color: "red", textAlign: "left", marginBottom: "0", marginTop: "0" }}>{imageUploadError}</p>
+                        )}
+                      </div>
+                    )}
+                  </Form.Item>
+                </>
+              )}
+
+              <div className="pond-profile-button-group">
                 <div>
                   Pond Slots:{" "}
                   {profile.pondCapacity
@@ -296,27 +426,25 @@ const PondProfileInfo = ({ refresh }) => {
                     : "N/A"}
                   /{profile.pondCapacityOfKoiFish}
                 </div>
-              </Form.Item>
-              {userType === "Customer" && (
-                <Form.Item>
-                  <Button
-                    onClick={() => {
-                      fetchPondDetails();
-                    }}
-                    style={{ marginRight: "8px" }}
-                  >
-                    Revert
-                  </Button>
-                  <Button
-                    type="primary"
-                    danger
-                    htmlType="submit"
-                    loading={loading}
-                  >
-                    Save Changes
-                  </Button>
-                </Form.Item>
-              )}
+                {userType === "Customer" && (
+                  <div>
+                    <Button
+                      onClick={handleRevert}
+                      style={{ marginRight: "8px" }}
+                    >
+                      Revert
+                    </Button>
+                    <Button
+                      type="primary"
+                      danger
+                      htmlType="submit"
+                      loading={loading}
+                    >
+                      Save Changes
+                    </Button>
+                  </div>
+                )}
+              </div>
             </Form>
           </div>
         </div>

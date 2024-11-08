@@ -62,6 +62,7 @@ const PondFishList = ({ onFishAdded }) => {
       setOpen(false);
       onFishAdded();
     } catch (error) {
+      setOpen(false);
       toast.error(error.response?.data?.message || "Failed to add koi fish!");
     } finally {
       setLoading(false);
