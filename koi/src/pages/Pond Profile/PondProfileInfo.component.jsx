@@ -213,9 +213,14 @@ const PondProfileInfo = ({ refresh }) => {
                   { required: true, message: "Please input the pond depth!" },
                   {
                     validator: (_, value) => {
-                      if (value > 2) {
+                      if (value < 0.9) {
                         return Promise.reject(
-                          new Error("Pond depth cannot exceed 2 meters!")
+                          new Error("Pond depth must be at least 0.9 meters!")
+                        );
+                      }
+                      if (value > 3) {
+                        return Promise.reject(
+                          new Error("Pond depth cannot exceed 3 meters!")
                         );
                       }
                       return Promise.resolve();
