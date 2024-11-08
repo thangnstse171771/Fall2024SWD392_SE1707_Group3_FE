@@ -224,6 +224,9 @@ const KoiRecord = ({ koi }) => {
                   if (value <= 0) {
                     return Promise.reject(new Error("Age must be positive!"));
                   }
+                  if (value > 2712) {
+                    return Promise.reject(new Error("Age can't exceed 2712!"));
+                  }
                   return Promise.resolve();
                 },
               }),
