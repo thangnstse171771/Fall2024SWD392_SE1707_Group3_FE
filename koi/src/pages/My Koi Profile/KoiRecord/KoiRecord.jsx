@@ -224,6 +224,9 @@ const KoiRecord = ({ koi }) => {
                   if (value <= 0) {
                     return Promise.reject(new Error("Age must be positive!"));
                   }
+                  if (value > 2712) {
+                    return Promise.reject(new Error("Age can't exceed 2712!"));
+                  }
                   return Promise.resolve();
                 },
               }),
@@ -275,12 +278,12 @@ const KoiRecord = ({ koi }) => {
                 validator(_, value) {
                   const age = getFieldValue("age");
                   const { weight } = validateWeightAndLength(age);
-                  if (value >= weight.min && value <= weight.max) {
+                  if (value >= weight.min) {
                     return Promise.resolve();
                   }
                   return Promise.reject(
                     new Error(
-                      `Weight must be between ${weight.min} and ${weight.max} kg!`
+                      `Weight must be equal or greater than ${weight.min} kg!`
                     )
                   );
                 },
